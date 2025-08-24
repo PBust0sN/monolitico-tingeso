@@ -1,0 +1,19 @@
+capas de spring boot
+- persistencia (@Repository)
+	se escribe una por una, cada clase debe encapsular las operaciones
+	que se hacen contra la base de datos, SELECT, INSERT, UPDATE, DELETE
+- logica de negocio (@Service)
+	implementa las reglas de negocio, estas son por ejemplo las restricciones
+	que tiene la aplicacion para funcionar, (ej. en una toma de ramos
+	un requisito es que para tomar x ramo es necesario aprobar uno previo)
+- controladores (@RestController)
+	recibe las peticiones del frontend y se las pasa a la logica de negocios
+	es como un intermediario de peticiones	
+
+metodos deben tener maximo 40 lineas, y no mas de 3 parametros por metodos
+
+
+Si necesito mas dependencias, revisar mvn repository, y ver el año de compatibilidad
+
+
+mysql, se referencia la workbench
