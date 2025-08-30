@@ -5,22 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Table(name = "FEE")
+@Table(name = "TOOLS_RECORDS")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Entity
-public class FeeEntity {
-
+public class ToolsRecordsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false)
-    private Long feeId;
-
+    private Long idToolsRecords;
 
     private Long toolId;
-    private Double amount;
-    private Long extraCharges;
-    private String description;
-    private Long loanId;
+    private Long recordId;
 }

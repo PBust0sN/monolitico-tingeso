@@ -20,3 +20,5 @@ const remove = id => {
     return httpClient.remove(`/api/loans/${id}`
     );
 }
+
+export default { getAll, get, create, update, remove};

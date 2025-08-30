@@ -15,9 +15,11 @@ public class StaffEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private Long staff_id;
+    private Long staffId;
 
     private String staffRut;
-    private String staff_name;
+    private String staffName;
     private String staffMail;
+    private String password;
+    private Long roleId;
 }

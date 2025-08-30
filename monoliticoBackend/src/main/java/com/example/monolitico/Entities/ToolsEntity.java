@@ -15,10 +15,13 @@ public class ToolsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private Long tool_id;
+    private Long toolId;
 
     private String toolName;
-    private String initial_state;
+    private String initialState;
     private String disponibility;
     private String category;
+    private Long loanFee;
+    private Long repostitionFee;
+    private Long diaryFineFee;
 }

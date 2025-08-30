@@ -17,10 +17,12 @@ public class RecordsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private Long record_id;
+    private Long recordId;
 
     private Date recordDate;
     private String description;
     private String recordType;
-    private Double record_amount;
+    private Double recordAmount;
+    private Long clientId;
+    private Long loanId;
 }

@@ -20,3 +20,6 @@ const remove = id => {
     return httpClient.remove(`/api/tools/${id}`
     );
 }
+
+
+export default { getAll, get, create, update, remove};

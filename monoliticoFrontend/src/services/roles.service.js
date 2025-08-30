@@ -20,3 +20,5 @@ const remove = id => {
     return httpClient.remove(`/api/roles/${id}`
     );
 }
+
+export default { getAll, get, create, update, remove};
