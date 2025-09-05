@@ -52,4 +52,11 @@ public class FineService {
         }
         return true;
     }
+
+    public boolean hasLessOrEqual5FinesByClientId(Long id){
+        if(fineRepository.getFineEntityByClientIdAndTypeIs(id, "fine").size()<=5){
+            return true;
+        }
+        return false;
+    }
 }

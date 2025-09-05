@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface ToolsLoansRepository extends JpaRepository<ToolsLoansEntity, Long> {
 
-    public List<ToolsLoansEntity> findByLoanId(Long loanId);
-    public List<ToolsLoansEntity> findByToolId(Long toolId);
+    public List<Long> findByLoanId(Long loanId);
+    public List<Long> findByToolId(Long toolId);
 }

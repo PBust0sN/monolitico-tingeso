@@ -2,7 +2,8 @@ package com.example.monolitico.Service;
 
 import com.example.monolitico.Entities.ClientEntity;
 import com.example.monolitico.Entities.LoansEntity;
-import com.example.monolitico.Repositories.ClientRepository;
+import com.example.monolitico.Entities.ToolsEntity;
+import com.example.monolitico.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,19 @@ public class ClientService {
 
     @Autowired
     ClientRepository clientRepository;
+
+    @Autowired
+    ClientLoansRepository clientLoansRepository;
+
+    @Autowired
+    ToolsService toolsService;
+
+    @Autowired
+    LoansService loansService;
+    @Autowired
+    private ToolsLoansService toolsLoansService;
+    @Autowired
+    private ToolsLoansRepository toolsLoansRepository;
 
     //Getter of all clients
     public List<ClientEntity> getAllClients(){
@@ -81,5 +95,20 @@ public class ClientService {
         //if all the loans are up to date, then the client hasn't loans behind
         return false;
     }
+
+    public boolean HasTheSameToolInLoanByClientId(Long clientId, Long toolId){
+        List<Long> activeLoans = clientLoansRepository.findByClientId(clientId);
+
+        for(Long loanId : activeLoans){
+            List<Long> tools = toolsLoansRepository.findByLoanId(loanId);
+            for(Long toolId1 : tools){
+                if(toolId1.equals(toolId)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
 }
