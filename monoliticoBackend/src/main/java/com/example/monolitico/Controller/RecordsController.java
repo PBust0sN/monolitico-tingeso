@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
 
 @RestController
@@ -37,6 +38,12 @@ public class RecordsController {
     public ResponseEntity<RecordsEntity> updateRecord(@RequestBody RecordsEntity recordsEntity){
         RecordsEntity updateRecord = recordsServices.updateRecord(recordsEntity);
         return ResponseEntity.ok(updateRecord);
+    }
+
+    @GetMapping("/{date1}/{date2}")
+    public ResponseEntity<List<RecordsEntity>> getRecordsByDate(@PathVariable Date date1, @PathVariable Date date2){
+        List<RecordsEntity> records = recordsServices.findByRecordDatesBetween(date1,date2);
+        return ResponseEntity.ok(records);
     }
 
     @DeleteMapping("/{id}")

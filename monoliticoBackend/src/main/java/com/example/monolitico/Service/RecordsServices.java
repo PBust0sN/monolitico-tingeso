@@ -1,10 +1,12 @@
 package com.example.monolitico.Service;
 
+import com.example.monolitico.Controller.RecordsController;
 import com.example.monolitico.Entities.RecordsEntity;
 import com.example.monolitico.Repositories.RecordsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -41,5 +43,10 @@ public class RecordsServices {
         }catch(Exception e){
             throw new Exception(e.getMessage());
         }
+    }
+
+    //get records between dates
+    public List<RecordsEntity> findByRecordDatesBetween(Date start_date, Date end_date){
+        return recordsRepository.findByRecordDateBetween(start_date,end_date);
     }
 }

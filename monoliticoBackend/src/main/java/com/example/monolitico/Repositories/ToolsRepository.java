@@ -2,6 +2,7 @@ package com.example.monolitico.Repositories;
 
 import com.example.monolitico.Entities.ToolsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,4 +13,10 @@ public interface ToolsRepository extends JpaRepository<ToolsEntity,Long> {
     public List<ToolsEntity> findByDisponibility(String disponibility);
     public List<ToolsEntity> findByCategory(String category);
 
+    //the stock is the amount of rows that have the field disponibility in 'Disponible'
+    @Query(value = """
+        SELECT COUNT(*) FROM tools
+        WHERE tools.disponibility = 'Disponible' AND tools.tool_name = :tool_name
+        """, nativeQuery = true)
+    public Long findStockByToolName(String tool_name);
 }

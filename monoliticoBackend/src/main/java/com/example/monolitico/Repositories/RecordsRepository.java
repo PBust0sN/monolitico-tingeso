@@ -8,6 +8,6 @@ import java.util.Date;
 import java.util.List;
 @Repository
 public interface RecordsRepository extends JpaRepository<RecordsEntity, Long> {
-    public List<RecordsEntity> findByRecordDate(Date record_date);
+    public List<RecordsEntity> findByRecordDateBetween(Date start_date, Date end_date);
     public List<RecordsEntity> findByRecordType(String record_type);
 }

@@ -1,9 +1,6 @@
 package com.example.monolitico.Service;
 
-import com.example.monolitico.Entities.ClientEntity;
-import com.example.monolitico.Entities.LoansEntity;
-import com.example.monolitico.Entities.RecordsEntity;
-import com.example.monolitico.Entities.ToolsEntity;
+import com.example.monolitico.Entities.*;
 import com.example.monolitico.Repositories.LoansRepository;
 import com.example.monolitico.Repositories.ToolsLoansRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +31,9 @@ public class LoansService {
 
     @Autowired
     ToolsLoansRepository toolsLoansRepository;
+
+    @Autowired
+    ToolsLoansService toolsLoansService;
     @Autowired
     private RecordsServices recordsServices;
 
@@ -87,6 +87,13 @@ public class LoansService {
                 //we substract the stock of the tools
                 tool.setInitialState("Prestada");
 
+                //we add the relation in the tool_loan table
+                ToolsLoansEntity toolsLoansEntity = new ToolsLoansEntity();
+                toolsLoansEntity.setToolId(tool_id);
+                toolsLoansEntity.setLoanId(loansEntity.getLoanId());
+                toolsLoansService.saveToolsLoans(toolsLoansEntity);
+
+                //we update the tool info
                 toolsService.updateTool(tool);
             }
 
