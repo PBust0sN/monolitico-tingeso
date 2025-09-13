@@ -24,9 +24,7 @@ public class ClientService {
 
     @Autowired
     ToolsService toolsService;
-
-    @Autowired
-    LoansService loansService;
+    ;
     @Autowired
     private ToolsLoansService toolsLoansService;
     @Autowired
