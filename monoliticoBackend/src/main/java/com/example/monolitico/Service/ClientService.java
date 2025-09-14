@@ -24,7 +24,7 @@ public class ClientService {
 
     @Autowired
     ToolsService toolsService;
-    ;
+
     @Autowired
     private ToolsLoansService toolsLoansService;
     @Autowired
@@ -60,17 +60,11 @@ public class ClientService {
         }
     }
 
-    //get all active loans of a client
-    public List<LoansEntity> getAllLoansById(Long id){
-        return clientRepository.getAllLoansByClientId(id);
-    }
-
     //calculate if the client has expired loans
     public boolean hasExpiredLoansById(Long id){
         //first we find all teh pending loans of a client
         List<LoansEntity> loans = clientRepository.getAllLoansByClientId(id);
 
-        List<Boolean> expiredList = new ArrayList<>();
         //then we substract the return date minus delivery date
         for(LoansEntity loan : loans){
             //formating the delivery date

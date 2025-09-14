@@ -1,5 +1,6 @@
 package com.example.monolitico.Controller;
 
+import com.example.monolitico.DTO.NewLoanDTO;
 import com.example.monolitico.Entities.LoansEntity;
 import com.example.monolitico.Service.LoansService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,23 @@ public class LoansController {
     public ResponseEntity<LoansEntity> deleteLoan(@PathVariable Long id) throws  Exception{
         var isDeleted = loansService.deleteLoan(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/new")
+    public ResponseEntity<List<String>> saveNewLoan(@RequestBody NewLoanDTO newLoan){
+        List<String> errors = loansService.AddLoan(
+                newLoan.getStaff_id(),
+                newLoan.getClient_id(),
+                newLoan.getTools_id(),
+                newLoan.getDays()
+        );
+        return ResponseEntity.ok(errors);
+    }
+
+    @PostMapping("/return")
+    public ResponseEntity<Optional<LoansEntity>> returnLoan(@RequestBody LoansEntity loan){
+        Optional<LoansEntity> returN = loansService.returnLoan(loan);
+        return ResponseEntity.ok(returN);
     }
 }
 

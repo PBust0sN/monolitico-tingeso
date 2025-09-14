@@ -56,59 +56,72 @@ public class LoansService {
 
         //verify that the client is allowed to have another loan
         ClientEntity client = clientService.getClientById(client_id);
-        // we create a loan
-        LoansEntity loansEntity = new LoansEntity();
-
-        //set the date
-        LocalDateTime date = LocalDateTime.now();
-        loansEntity.setDate(Date.valueOf(date.toLocalDate().toString()));
-
-        //set deliverydate
-        loansEntity.setDeliveryDate(Date.valueOf(date.toLocalDate().toString()));
-
-        //set the return date
-        loansEntity.setReturnDate(Date.valueOf(date.plusDays(days).toLocalDate().toString()));
         //if avaliable is true then the client is allowed for another loan
         if (client.getAvaliable()
                 && !fineService.hasFinesByClientId(client_id)
                 && !fineService.hasFinesOfToolReposition(client_id)
-                && checkDates(loansEntity)) {
+                && !clientService.hasExpiredLoansById(client_id)) {
 
-            loansEntity.setLoanType("prestamo");
-            loansEntity.setStaffId(staff_id);
+            // we create a loan
+            LoansEntity loansEntity = new LoansEntity();
 
-            Long amount = 0L;
-            //we add the tools in the list to the tools loans table
-            for (Long tool_id : tools_ids) {
-                ToolsEntity tool = toolsService.getToolsById(tool_id);
+            //set the date
+            LocalDateTime date = LocalDateTime.now();
+            loansEntity.setDate(Date.valueOf(date.toLocalDate().toString()));
 
-                amount += tool.getLoanFee();
+            //set deliverydate
+            loansEntity.setDeliveryDate(Date.valueOf(date.toLocalDate().toString()));
 
-                //we substract the stock of the tools
-                tool.setInitialState("Prestada");
+            //set the return date
+            loansEntity.setReturnDate(Date.valueOf(date.plusDays(days).toLocalDate().toString()));
 
-                //we add the relation in the tool_loan table
-                ToolsLoansEntity toolsLoansEntity = new ToolsLoansEntity();
-                toolsLoansEntity.setToolId(tool_id);
-                toolsLoansEntity.setLoanId(loansEntity.getLoanId());
-                toolsLoansService.saveToolsLoans(toolsLoansEntity);
+            //if the dates entered in the newloan are wrong, then throw error
+            if(checkDates(loansEntity)) {
+                errors.add("dates are place bad");
+            }else{
+                loansEntity.setLoanType("prestamo");
+                loansEntity.setStaffId(staff_id);
 
-                //we update the tool info
-                toolsService.updateTool(tool);
+                Long amount = 0L;
+                //we add the tools in the list to the tools loans table
+                for (Long tool_id : tools_ids) {
+                    ToolsEntity tool = toolsService.getToolsById(tool_id);
+
+                    //if the client has the same tool already loan to him then throw a error
+                    if(clientService.HasTheSameToolInLoanByClientId(client_id, tool_id)){
+                        errors.add("you have a loan with: ".concat(tool.getToolName()));
+                    }else{
+                        amount += tool.getLoanFee();
+
+                        //we substract the stock of the tools
+                        tool.setInitialState("Prestada");
+
+                        //we add the relation in the tool_loan table
+                        ToolsLoansEntity toolsLoansEntity = new ToolsLoansEntity();
+                        toolsLoansEntity.setToolId(tool_id);
+                        toolsLoansEntity.setLoanId(loansEntity.getLoanId());
+                        toolsLoansService.saveToolsLoans(toolsLoansEntity);
+
+                        //we update the tool info
+                        toolsService.updateTool(tool);
+                    }
+                }
+                //if we have encountered 0 errors then we continue the process
+                if(errors.isEmpty()){
+                    loansEntity.setAmount(amount);
+
+                    saveLoan(loansEntity);
+
+                    //we have to generate a new move in the kardex
+                    RecordsEntity record =  new RecordsEntity();
+                    record.setRecordType("Loan");
+
+                    //we get teh actual time
+                    record.setRecordDate(Date.valueOf(date.toLocalDate().toString())); // hora actual
+                    record.setLoanId(loansEntity.getLoanId());
+                    record.setClientId(client_id);
+                }
             }
-
-            loansEntity.setAmount(amount);
-
-            saveLoan(loansEntity);
-
-            //we have to generate a new move in the kardex
-            RecordsEntity record =  new RecordsEntity();
-            record.setRecordType("Loan");
-
-            //obtenemos la hora actual
-            record.setRecordDate(Date.valueOf(date.toLocalDate().toString())); // hora actual
-            record.setLoanId(loansEntity.getLoanId());
-            record.setClientId(client_id);
         }
         errors.add("Client is not avaliable or has fines");
         return errors;
@@ -145,7 +158,7 @@ public class LoansService {
             fineAmount = calculateFine(loansEntity.getLoanId());
             repoAmount = calculateRepoFine(loansEntity.getLoanId());
         }
-        //obtenemos la hora actual
+        //get the actual time
         LocalDateTime date = LocalDateTime.now();
         loansEntity.setDate(Date.valueOf(date.toLocalDate().toString()));
         loansEntity.setExtraCharges(repoAmount + fineAmount);
@@ -184,8 +197,6 @@ public class LoansService {
 
 
         }
-
-
         return saveLoan(loansEntity);
     }
 
