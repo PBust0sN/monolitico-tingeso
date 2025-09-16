@@ -8,6 +8,14 @@ const create = data => {
     return httpClient.post('/api/loans/', data);
 }
 
+const newLoan = data => {
+    return httpClient.post('/api/loans/new', data);
+}
+
+const returnLoan = data => {
+    return httpClient.post('/api/loans/return', data);
+}
+
 const get = id => {
     return httpClient.get(`/api/loans/${id}`);
 }
@@ -21,4 +29,4 @@ const remove = id => {
     );
 }
 
-export default { getAll, get, create, update, remove};
+export default { getAll, get, create, newLoan, returnLoan, update, remove};

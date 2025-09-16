@@ -7,7 +7,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import PaidIcon from "@mui/icons-material/Paid";
+import AddBoxIcon from '@mui/icons-material/AddBox';
 import CalculateIcon from "@mui/icons-material/Calculate";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import DiscountIcon from "@mui/icons-material/Discount";
@@ -16,6 +16,9 @@ import MedicationLiquidIcon from "@mui/icons-material/MedicationLiquid";
 import MoreTimeIcon from "@mui/icons-material/MoreTime";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
+import HandymanIcon from '@mui/icons-material/Handyman';
+import RestorePageIcon from '@mui/icons-material/RestorePage';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 
 export default function Sidemenu({ open, toggleDrawer }) {
   const navigate = useNavigate();
@@ -39,34 +42,34 @@ export default function Sidemenu({ open, toggleDrawer }) {
           <ListItemIcon>
             <PeopleAltIcon />
           </ListItemIcon>
-          <ListItemText primary="Empleados" />
+          <ListItemText primary="Clientes" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => navigate("/extraHours/list")}>
+        <ListItemButton onClick={() => navigate("/tool/list")}>
           <ListItemIcon>
-            <MoreTimeIcon />
+            <HandymanIcon />
           </ListItemIcon>
-          <ListItemText primary="Horas Extra" />
+          <ListItemText primary="Herramientas" />
         </ListItemButton>
 
         <ListItemButton onClick={() => navigate("/paycheck/list")}>
           <ListItemIcon>
-            <PaidIcon />
+            <AddBoxIcon />
           </ListItemIcon>
-          <ListItemText primary="Planilla Sueldos" />
+          <ListItemText primary="Nuevo Prestamo" />
         </ListItemButton>
 
         <ListItemButton onClick={() => navigate("/paycheck/calculate")}>
           <ListItemIcon>
-            <CalculateIcon />
+            <RestorePageIcon />
           </ListItemIcon>
-          <ListItemText primary="Calcular Planilla" />
+          <ListItemText primary="Devolver" />
         </ListItemButton>
         <ListItemButton onClick={() => navigate("/reports/AnualReport")}>
           <ListItemIcon>
-            <AnalyticsIcon />
+            <BorderColorIcon />
           </ListItemIcon>
-          <ListItemText primary="Gráficos Planillas" />
+          <ListItemText primary="Modificar Planillas" />
         </ListItemButton>
       </List>
 
@@ -97,8 +100,20 @@ export default function Sidemenu({ open, toggleDrawer }) {
 
   return (
     <div>
-      <Drawer anchor={"left"} open={open} onClose={toggleDrawer(false)}>
-        {listOptions()}
+      <Drawer
+  anchor="left"
+  open={open}
+  onClose={toggleDrawer(false)}
+  hideBackdrop={true}
+  PaperProps={{
+    sx: {
+      backgroundColor: "rgba(255, 255, 255, 0.71)", // transparente
+      backdropFilter: "blur(8px)",              // opcional: desenfoque
+      boxShadow: "none",                        // opcional: sin sombra
+    }
+  }}
+>
+  {listOptions()}
       </Drawer>
     </div>
   );

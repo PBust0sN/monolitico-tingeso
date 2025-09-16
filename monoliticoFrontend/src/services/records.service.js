@@ -9,7 +9,7 @@ const create = data => {
 }
 
 const get = id => {
-    return httpClient.get(`/api/rorecordsles/${id}`);
+    return httpClient.get(`/api/records/${id}`);
 }
 
 const update = data => {
