@@ -8,12 +8,10 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import CalculateIcon from "@mui/icons-material/Calculate";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import DiscountIcon from "@mui/icons-material/Discount";
 import HailIcon from "@mui/icons-material/Hail";
 import MedicationLiquidIcon from "@mui/icons-material/MedicationLiquid";
-import MoreTimeIcon from "@mui/icons-material/MoreTime";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
 import HandymanIcon from '@mui/icons-material/Handyman';
@@ -54,7 +52,7 @@ export default function Sidemenu({ open, toggleDrawer }) {
 
         <ListItemButton onClick={() => navigate("/loan/list")}>
           <ListItemIcon>
-            <AddBoxIcon />
+            <InsertDriveFileIcon />
           </ListItemIcon>
           <ListItemText primary="Prestamos" />
         </ListItemButton>

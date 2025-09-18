@@ -8,9 +8,11 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Sidemenu from "./Sidemenu";
 import { useState } from "react";
+import { useKeycloak } from "@react-keycloak/web";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { keycloak, initialized } = useKeycloak();
 
   const toggleDrawer = (open) => (event) => {
     setOpen(open);
@@ -43,7 +45,25 @@ export default function Navbar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             ToolRent: Sistema de Renta De Herramientas
           </Typography>
-          <Button variant="outlined" color="inherit">Login</Button>
+          {initialized && (
+            <>
+              {keycloak.authenticated ? (
+                <>
+                  <Typography sx={{ mr: 2 }}>
+                    {keycloak.tokenParsed?.preferred_username ||
+                      keycloak.tokenParsed?.email}
+                  </Typography>
+                  <Button variant="outlined" color="inherit" onClick={() => keycloak.logout()}>
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <Button variant="outlined" color="inherit" onClick={() => keycloak.login()}>
+                  Login
+                </Button>
+              )}
+            </>
+          )}
         </Toolbar>
       </AppBar>
 
