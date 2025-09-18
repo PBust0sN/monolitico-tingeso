@@ -8,6 +8,7 @@ import ClientList from './components/ClientList';
 import AddTool from './components/AddTool';
 import EditTool from './components/EditTool';
 import EditClient from './components/EditClient';
+import AddClient from './components/AddClient';
 
 function App() {
   const { keycloak, initialized } = useKeycloak();
@@ -38,6 +39,7 @@ function App() {
       <div className="container">
         <NavBar />
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
 
           <Route
@@ -59,6 +61,10 @@ function App() {
           <Route
             path="/client/edit/:client_id"
             element={<PrivateRoute element={<EditClient />} rolesAllowed={["STAFF","ADMIN"]} />}
+          />
+          <Route
+            path="/client/add/"
+            element={<PrivateRoute element={<AddClient />} rolesAllowed={["STAFF","ADMIN"]} />}
           />
         </Routes>
 
