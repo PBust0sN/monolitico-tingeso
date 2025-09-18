@@ -52,11 +52,11 @@ export default function Sidemenu({ open, toggleDrawer }) {
           <ListItemText primary="Herramientas" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => navigate("/paycheck/list")}>
+        <ListItemButton onClick={() => navigate("/loan/list")}>
           <ListItemIcon>
             <AddBoxIcon />
           </ListItemIcon>
-          <ListItemText primary="Nuevo Prestamo" />
+          <ListItemText primary="Prestamos" />
         </ListItemButton>
 
         <ListItemButton onClick={() => navigate("/paycheck/calculate")}>
