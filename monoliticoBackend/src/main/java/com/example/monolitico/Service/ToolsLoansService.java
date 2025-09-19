@@ -41,4 +41,8 @@ public class ToolsLoansService {
             throw new Exception(e.getMessage());
         }
     }
+
+    public List<Long> getToolsIDsByLoanId(Long id){
+        return  toolsLoansRepository.findByLoanId(id);
+    }
 }

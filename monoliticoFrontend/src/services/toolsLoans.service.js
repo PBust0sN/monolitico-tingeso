@@ -21,5 +21,9 @@ const remove = id => {
     );
 }
 
+const getToolsIdByLoanId = id => {
+    return httpClient.get(`/api/loan/tools/${id}`);
+}
 
-export default { getAll, get, create, update, remove};
+
+export default { getAll, get, create, update, remove, getToolsIdByLoanId};

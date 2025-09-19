@@ -39,9 +39,15 @@ public class ToolsLoansController {
         return ResponseEntity.ok(updateFee);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ToolsLoansEntity> deleteToolsLoans(@PathVariable Long id) throws Exception{
         var isDeleted = toolsLoansService.deleteToolsLoans(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/loan/tools/{id}")
+    public ResponseEntity<List<Long>> getToolsIDsByLoanId(@PathVariable Long id){
+        List<Long> toolsIDs = toolsLoansService.getToolsIDsByLoanId(id);
+        return ResponseEntity.ok(toolsIDs);
     }
 }
