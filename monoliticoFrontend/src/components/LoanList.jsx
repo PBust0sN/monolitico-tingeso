@@ -141,7 +141,7 @@ const LoanList = () => {
               </TableRow> 
               {/* Fila de búsqueda y botón */}
               <TableRow>
-                <TableCell colSpan={8} align="left">
+                <TableCell colSpan={10} align="left">
                   <TextField
                     variant="outlined"
                     placeholder="Buscar prestamo Por tipo..."
@@ -161,22 +161,7 @@ const LoanList = () => {
                     }}
                   />
                 </TableCell>
-                <TableCell colSpan={2} align="right">
-                  <Link
-                    to="/loan/add"
-                    style={{ textDecoration: "none" }}
-                  >
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<PersonAddIcon />}
-                      size="large"
-                      sx={{ height: 43, minWidth: 180 }}
-                    >
-                      Nuevo prestamo
-                    </Button>
-                  </Link>
-                </TableCell>
+                
               </TableRow>
               {/* Fila de encabezados */}
               <TableRow>
