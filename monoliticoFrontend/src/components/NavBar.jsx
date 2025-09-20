@@ -6,13 +6,15 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import Sidemenu from "./Sidemenu";
+import Sidemenu from "./SideMenu";
 import { useState } from "react";
 import { useKeycloak } from "@react-keycloak/web";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { keycloak, initialized } = useKeycloak();
+  const navigate = useNavigate();
 
   const toggleDrawer = (open) => (event) => {
     setOpen(open);
@@ -28,7 +30,7 @@ export default function Navbar() {
       zIndex: 1000,
     }}>
       <AppBar position="static"
-        sx={{ backgroundColor: "#b0010176"}}
+        sx={{ backgroundColor: "#011cba76"}}
         >
         <Toolbar>
           <IconButton
@@ -58,7 +60,7 @@ export default function Navbar() {
                   </Button>
                 </>
               ) : (
-                <Button variant="outlined" color="inherit" onClick={() => keycloak.login()}>
+                <Button variant="outlined" color="inherit" onClick={() => navigate("/login")}>
                   Login
                 </Button>
               )}

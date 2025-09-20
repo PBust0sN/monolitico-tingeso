@@ -14,30 +14,19 @@ import NewLoan from './components/NewLoan';
 import LoanInfo from './components/LoanInfo';
 import RecordList from './components/RecordList';
 import AddRecord from './components/AddRecord';
+import Login  from './components/Login';
 
 function App() {
-  const { keycloak, initialized } = useKeycloak();
-  
-  if (!initialized) return <div>Cargando...</div>;
-
-  const isLoggedIn = keycloak.authenticated;
-  const roles = keycloak.tokenParsed?.realm_access?.roles || [];
+  const { keycloak } = useKeycloak();
 
   const PrivateRoute = ({ element, rolesAllowed }) => {
-    if (!isLoggedIn) {
-      keycloak.login();
-      return null;
-    }
+    const roles = keycloak.tokenParsed?.realm_access?.roles || [];
     if (rolesAllowed && !rolesAllowed.some(r => roles.includes(r))) {
       return <h2>No tienes permiso para ver esta página</h2>;
     }
     return element;
   };
-
-  if (!isLoggedIn) { 
-    keycloak.login(); 
-    return null; 
-  }  
+  
 
   return (
     <Router>
@@ -46,6 +35,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
 
           <Route
             path="/tool/list"
