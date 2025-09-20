@@ -12,7 +12,6 @@ import AddClient from './components/AddClient';
 import LoanList from './components/LoanList';
 import NewLoan from './components/NewLoan';
 import LoanInfo from './components/LoanInfo';
-import EditLoan from './components/EditLoan';
 import RecordList from './components/RecordList';
 import AddRecord from './components/AddRecord';
 
@@ -83,10 +82,6 @@ function App() {
           <Route
             path="/loan/info/:loan_id"
             element={<PrivateRoute element={<LoanInfo />} rolesAllowed={["STAFF","ADMIN"]} />}
-          />
-          <Route
-            path="/loan/edit/:loanId"
-            element={<PrivateRoute element={<EditLoan />} rolesAllowed={["STAFF","ADMIN"]} />}
           />
           <Route
             path="/record/list"

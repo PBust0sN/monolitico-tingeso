@@ -74,11 +74,6 @@ const LoanList = () => {
     }
   };
 
-  const handleEdit = (id) => {
-    console.log("Printing id", id);
-    navigate(`/loan/edit/${id}`);
-  };
-
   const handleViewLoan = (id) => {
     console.log("Printing id", id);
     navigate(`/loan/info/${id}`);
@@ -225,16 +220,6 @@ const LoanList = () => {
                         Ver mas
                       </Button>
                       </ThemeProvider>
-                    <Button
-                      variant="contained"
-                      color="info"
-                      size="small"
-                      onClick={() => handleEdit(loan.loanId)}
-                      style={{ marginLeft: "0.5rem" }}
-                      startIcon={<EditIcon />}
-                    >
-                      Editar
-                    </Button>
 
                     <Button
                       variant="contained"
