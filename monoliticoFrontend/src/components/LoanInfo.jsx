@@ -215,7 +215,7 @@ const LoanInfo = () => {
                   <TableCell sx={{ fontWeight: "bold" }}>ID Herramienta</TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>Categoría</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Estado</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Disponibilidad</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -229,9 +229,9 @@ const LoanInfo = () => {
                   tools.map((tool) => (
                     <TableRow key={tool.toolId}>
                       <TableCell>{tool.toolId}</TableCell>
-                      <TableCell>{tool.toolName}</TableCell>
+                      <TableCell>{tool.tool_name}</TableCell>
                       <TableCell>{tool.category}</TableCell>
-                      <TableCell>{tool.initialState}</TableCell>
+                      <TableCell>{tool.disponibility}</TableCell>
                     </TableRow>
                   ))
                 )}
