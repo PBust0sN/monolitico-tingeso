@@ -39,11 +39,11 @@ INSERT INTO tools_loans(id, tool_id, loan_id) VALUES
 (5, 5, 4);
 
 -- record_types (registro nuevas herramientas, préstamo, devolución, baja, reparación)
-INSERT INTO records(record_id, client_id, loan_id, record_date, record_amount, record_type) VALUES
-(1, 1, 1, '2025-08-25', 5000, 'loan'),
-(2, 2, 2, '2025-07-23', 3000, 'loan'),
-(3, 3, 3, '2025-07-31', 5000, 'loan'),
-(4, 2, 4, '2025-08-17', 0, 'return');
+INSERT INTO records(record_id, client_id, loan_id, tool_id, record_date, record_amount, record_type) VALUES
+(1, 1, 1, NULL,'2025-08-25', 5000, 'loan'),
+(2, 2, 2, NULL,'2025-07-23', 3000, 'loan'),
+(3, 3, 3, NULL,'2025-07-31', 5000, 'loan'),
+(4, 2, 4, NULL,'2025-08-17', 0, 'return');
 
 INSERT INTO client_loans(id_client_loans, client_id, loan_id) VALUES
 (1,1, 1),

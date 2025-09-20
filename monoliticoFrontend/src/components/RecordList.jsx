@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import toolsService from "../services/tools.service";
+import { useNavigate } from "react-router-dom";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,7 +8,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Box from "@mui/material/Box"; // <-- Agrega esto si no lo tienes
@@ -17,27 +15,28 @@ import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
-import BuildIcon from '@mui/icons-material/Build';
+import recordsService from "../services/records.service";
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
-const ToolList = () => {
-  const [tools, setTools] = useState([]);
+const RecordList = () => {
+  const [records, setRecords] = useState([]);
   const [search, setSearch] = useState("");
 
-  const filteredTools = tools.filter(tool =>
-  (tool.toolName || "").toLowerCase().includes(search.toLowerCase())
+  const filteredRecord = records.filter(record =>
+  record.recordType.toLowerCase().includes(search.toLowerCase())
 );
 
   const navigate = useNavigate();
 
   const init = () => {
-    toolsService
+    recordsService
       .getAll()
       .then((response) => {
-        setTools(response.data);
+        setRecords(response.data);
       })
       .catch((error) => {
         console.log(
-          "Se ha producido un error al intentar mostrar listado de herramientas.",
+          "Se ha producido un error al intentar mostrar listado de records.",
           error
         );
       });
@@ -47,19 +46,29 @@ const ToolList = () => {
     init();
   }, []);
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    if (isNaN(date)) return "";
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   const handleDelete = (id) => {
     const confirmDelete = window.confirm(
-      "¿Esta seguro que desea borrar esta herramienta?"
+      "¿Esta seguro que desea borrar este record?"
     );
     if (confirmDelete) {
-      toolsService
+      recordsService
         .remove(id)
         .then(() => {
           init();
         })
         .catch((error) => {
           console.log(
-            "Se ha producido un error al intentar eliminar la herramienta",
+            "Se ha producido un error al intentar eliminar el record",
             error
           );
         });
@@ -68,7 +77,7 @@ const ToolList = () => {
 
   const handleEdit = (id) => {
     console.log("Printing id", id);
-    navigate(`/tool/edit/${id}`);
+    navigate(`/record/edit/${id}`);
   };
 
   return (
@@ -103,16 +112,14 @@ const ToolList = () => {
           paddingTop: 6,
         }}
       >
-      
+        
         <TableContainer component={Paper} sx={{ maxWidth: 1400, background: "rgba(198, 198, 198, 0.85)" }}>
-
-
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
-              <TableRow>
+                <TableRow>
                 <TableCell colSpan={9} align="center">
                   <Typography variant="h5" sx={{ color: "black", fontWeight: "bold" }}>
-                    Listado de Herramientas
+                    Records
                   </Typography>
                 </TableCell>
               </TableRow> 
@@ -121,7 +128,7 @@ const ToolList = () => {
                 <TableCell colSpan={7} align="left">
                   <TextField
                     variant="outlined"
-                    placeholder="Buscar herramienta Por Nombre..."
+                    placeholder="Buscar Record Por Tipo..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     sx={{ width: 350, background: "white", borderRadius: 1 }}
@@ -139,20 +146,16 @@ const ToolList = () => {
                   />
                 </TableCell>
                 <TableCell colSpan={2} align="right">
-                  <Link
-                    to="/tool/add"
-                    style={{ textDecoration: "none" }}
-                  >
                     <Button
                       variant="contained"
                       color="primary"
-                      startIcon={<BuildIcon />}
+                      onClick={() => navigate('/record/add')}
+                      startIcon={<CreateNewFolderIcon />}
                       size="large"
                       sx={{ height: 43, minWidth: 180 }}
                     >
-                      Añadir Herramienta
+                      Nuevo Record
                     </Button>
-                  </Link>
                 </TableCell>
               </TableRow>
               {/* Fila de encabezados */}
@@ -160,26 +163,23 @@ const ToolList = () => {
                 <TableCell align="left" sx={{  maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Id
                 </TableCell>
-                <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  Nombre
+                <TableCell align="left" sx={{  maxWidth: 180, fontWeight: "bold", color: "black" }}>
+                  Record Type
                 </TableCell>
                 <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  categoria
+                  Record Date
+                </TableCell>
+                <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
+                  Tool ID
                 </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  loan fee
+                  Client Id
                 </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  reposition fee
+                  Loan ID
                 </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  disponibility
-                </TableCell>
-                <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  diary fine fee
-                </TableCell>
-                <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  state
+                  Record Amount
                 </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Acciones
@@ -187,26 +187,26 @@ const ToolList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredTools.map((tool) => (
+              {filteredRecord.map((record) => (
                 <TableRow
-                  key={tool.toolId}
+                  key={record.recordId}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell align="left" sx={{ maxWidth: 180 }}>{tool.toolId}</TableCell>
-                  <TableCell align="left" sx={{ maxWidth: 180 }}>{tool.tool_name}</TableCell>
-                  <TableCell align="left" sx={{ maxWidth: 180 }}>{tool.category}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.loan_fee}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.reposition_fee}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.disponibility}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.diary_fine_fee}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.initial_state}</TableCell>
-                  <TableCell>
+                  <TableCell align="left" sx={{ maxWidth: 180 }}>{record.recordId}</TableCell>
+                  <TableCell align="left" sx={{ maxWidth: 180 }}>{record.recordType}</TableCell>
+                  <TableCell align="left" sx={{ maxWidth: 180 }}>{formatDate(record.recordDate)}</TableCell>
+                  <TableCell align="center" sx={{ maxWidth: 180 }}>{record.toolId == null ? "N/A" : record.toolId}</TableCell>
+                  <TableCell align="center" sx={{ maxWidth: 180 }}>{record.clientId == null ? "N/A" : record.clientId}</TableCell>
+                  <TableCell align="center" sx={{ maxWidth: 180 }}>{record.loanId == null ? "N/A" : record.loanId}</TableCell>
+                  <TableCell align="center" sx={{ maxWidth: 180 }}>{record.recordAmount}</TableCell>
+                  <TableCell align="left" sx={{ maxWidth: 300 }}>
+                    
                     <Button
                       variant="contained"
                       color="info"
                       size="small"
-                      onClick={() => handleEdit(tool.toolId)}
-                      style={{ marginLeft: "0.5rem" }}
+                      onClick={() => handleEdit(record.recordId)}
+                      style={{ marginLeft: "0.5rem", marginTop: "0.5rem" }}
                       startIcon={<EditIcon />}
                     >
                       Editar
@@ -216,8 +216,8 @@ const ToolList = () => {
                       variant="contained"
                       color="error"
                       size="small"
-                      onClick={() => handleDelete(tool.toolId)}
-                      style={{ marginLeft: "0.5rem" }}
+                      onClick={() => handleDelete(record.recordId)}
+                      style={{ marginLeft: "1.9rem", marginTop: "0.5rem" }}
                       startIcon={<DeleteIcon />}
                     >
                       Eliminar
@@ -233,4 +233,4 @@ const ToolList = () => {
   );
 };
 
-export default ToolList;
+export default RecordList;

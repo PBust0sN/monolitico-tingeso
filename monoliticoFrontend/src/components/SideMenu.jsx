@@ -7,7 +7,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import AddBoxIcon from '@mui/icons-material/AddBox';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import DiscountIcon from "@mui/icons-material/Discount";
 import HailIcon from "@mui/icons-material/Hail";
@@ -17,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import HandymanIcon from '@mui/icons-material/Handyman';
 import RestorePageIcon from '@mui/icons-material/RestorePage';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
+import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 
 export default function Sidemenu({ open, toggleDrawer }) {
   const navigate = useNavigate();
@@ -57,11 +57,11 @@ export default function Sidemenu({ open, toggleDrawer }) {
           <ListItemText primary="Prestamos" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => navigate("/paycheck/calculate")}>
+        <ListItemButton onClick={() => navigate("/record/list")}>
           <ListItemIcon>
-            <RestorePageIcon />
+            <FolderSpecialIcon />
           </ListItemIcon>
-          <ListItemText primary="Devolver" />
+          <ListItemText primary="Records" />
         </ListItemButton>
         <ListItemButton onClick={() => navigate("/reports/AnualReport")}>
           <ListItemIcon>
