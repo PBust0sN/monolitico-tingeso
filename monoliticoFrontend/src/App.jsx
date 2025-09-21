@@ -2,6 +2,8 @@ import './App.css'
 import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom'
 import NavBar from "./components/NavBar"
 import Home from "./components/Home";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
 import { useKeycloak } from "@react-keycloak/web";
 import ToolList from './components/ToolList';
 import ClientList from './components/ClientList';
@@ -15,14 +17,117 @@ import LoanInfo from './components/LoanInfo';
 import RecordList from './components/RecordList';
 import AddRecord from './components/AddRecord';
 import Login  from './components/Login';
+import Typography from "@mui/material/Typography";
 
 function App() {
   const { keycloak } = useKeycloak();
 
   const PrivateRoute = ({ element, rolesAllowed }) => {
+    if(!keycloak.authenticated){
+      return (<Box sx={{ position: "relative", minHeight: "100vh" }}>
+      {/* Fondo difuminado */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage: `url("/fondo.jpg")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          filter: "blur(8px)",
+          zIndex: 0,
+        }}
+      />
+      {/* Frame del login */}
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 1,
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            p: 4,
+            minWidth: 350,
+            maxWidth: 450,
+            width: "90%",
+            background: "rgba(255,255,255,0.85)",
+            color: "#222",
+            borderRadius: "8px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+            textAlign: "center",
+          }}
+        >
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              Inicia Sesión para ver esta pagina
+            </Typography>
+        </Paper>
+      </Box>
+    </Box>
+  );
+    }
     const roles = keycloak.tokenParsed?.realm_access?.roles || [];
     if (rolesAllowed && !rolesAllowed.some(r => roles.includes(r))) {
-      return <h2>No tienes permiso para ver esta página</h2>;
+      return (
+    <Box sx={{ position: "relative", minHeight: "100vh" }}>
+      {/* Fondo difuminado */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage: `url("/fondo.jpg")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          filter: "blur(8px)",
+          zIndex: 0,
+        }}
+      />
+      {/* Frame del login */}
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 1,
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            p: 4,
+            minWidth: 350,
+            maxWidth: 450,
+            width: "90%",
+            background: "rgba(255,255,255,0.85)",
+            color: "#222",
+            borderRadius: "8px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+            textAlign: "center",
+          }}
+        >
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              No tienes permiso para ver esta pagina
+            </Typography>
+        </Paper>
+      </Box>
+    </Box>
+  );
     }
     return element;
   };
