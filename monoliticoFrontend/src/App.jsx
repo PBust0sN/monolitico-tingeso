@@ -18,6 +18,8 @@ import RecordList from './components/RecordList';
 import AddRecord from './components/AddRecord';
 import Login  from './components/Login';
 import Typography from "@mui/material/Typography";
+import FindLoan from './components/ListLoanId';
+import ListLoanId from './components/ListLoanId';
 
 function App() {
   const { keycloak } = useKeycloak();
@@ -185,6 +187,10 @@ function App() {
           <Route
             path="/record/add"
             element={<PrivateRoute element={<AddRecord />} rolesAllowed={["STAFF","ADMIN"]} />}
+          />
+          <Route
+            path="/loan/list/:client_id"
+            element={<PrivateRoute element={<ListLoanId />} rolesAllowed={["STAFF","ADMIN"]} />}
           />
         </Routes>
 

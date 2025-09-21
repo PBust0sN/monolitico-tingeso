@@ -21,6 +21,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { lime, purple } from '@mui/material/colors';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RotateRightIcon from '@mui/icons-material/RotateRight';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const ClientList = () => {
   const [client, setclients] = useState([]);
@@ -231,11 +232,11 @@ const ClientList = () => {
                       variant="contained"
                       color="secondary"
                       size="small"
-                      onClick={() => handleEdit(client.client_id)}
+                      onClick={() => navigate(`/loan/list/${client.client_id}`)}
                       style={{ marginLeft: "0.5rem", marginTop: "0.5rem"}}
-                      startIcon={<RotateRightIcon />}
+                      startIcon={<VisibilityIcon />}
                     >
-                      Return Loan
+                      See Loans
                     </Button>
                     </ThemeProvider>
                     <Button
