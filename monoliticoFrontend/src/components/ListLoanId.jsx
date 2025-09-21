@@ -18,6 +18,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { lime, purple } from '@mui/material/colors';
+import RotateRightIcon from '@mui/icons-material/RotateRight';
 
 const ListLoanId = () => {
   const { client_id } = useParams();
@@ -203,6 +204,16 @@ const ListLoanId = () => {
                         startIcon={<VisibilityIcon />}
                       >
                         Ver más
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        size="small"
+                        onClick={() => navigate(`/loan/return/id/${loan.clientId}/${loan.loanId}`)}
+                        style={{ marginLeft: "0.5rem" }}
+                        startIcon={<RotateRightIcon />}
+                      >
+                        Devolver
                       </Button>
                     </ThemeProvider>
                     <Button

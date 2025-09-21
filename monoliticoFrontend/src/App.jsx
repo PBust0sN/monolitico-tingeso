@@ -18,7 +18,7 @@ import RecordList from './components/RecordList';
 import AddRecord from './components/AddRecord';
 import Login  from './components/Login';
 import Typography from "@mui/material/Typography";
-import FindLoan from './components/ListLoanId';
+import ReturnLoan from './components/ReturnLoan';
 import ListLoanId from './components/ListLoanId';
 
 function App() {
@@ -191,6 +191,10 @@ function App() {
           <Route
             path="/loan/list/:client_id"
             element={<PrivateRoute element={<ListLoanId />} rolesAllowed={["STAFF","ADMIN"]} />}
+          />
+          <Route
+            path="/loan/return/id/:client_id/:loan_id"
+            element={<PrivateRoute element={<ReturnLoan />} rolesAllowed={["STAFF","ADMIN"]} />}
           />
         </Routes>
 
