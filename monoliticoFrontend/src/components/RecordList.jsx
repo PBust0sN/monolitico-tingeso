@@ -46,15 +46,15 @@ const RecordList = () => {
     init();
   }, []);
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    if (isNaN(date)) return "";
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr.length === 10 ? dateStr + "T00:00:00Z" : dateStr);
+  if (isNaN(date)) return dateStr;
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const year = date.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+};
 
 
   return (
