@@ -1,5 +1,6 @@
 package com.example.monolitico.Service;
 
+import com.example.monolitico.DTO.CalculateCostDTO;
 import com.example.monolitico.Entities.*;
 import com.example.monolitico.Repositories.LoansRepository;
 import com.example.monolitico.Repositories.ToolsLoansRepository;
@@ -155,63 +156,64 @@ public class LoansService {
     }
 
     public Optional<LoansEntity> returnLoan(LoansEntity loansEntity) {
-        //if its returned before the return date, then the client don't gets his money back
-        Long repoAmount = 0L;
-        Long fineAmount = 0L;
-        if (reamaningDaysOnLoan(loansEntity.getLoanId()) > 0) {
-            repoAmount = calculateRepoFine(loansEntity.getLoanId());
-        } else if (reamaningDaysOnLoan(loansEntity.getLoanId()) < 0) {
-            fineAmount = calculateFine(loansEntity.getLoanId());
-            repoAmount = calculateRepoFine(loansEntity.getLoanId());
-        }
-        //get the actual time
+        // first we calculate the costs
+        CalculateCostDTO loanCost = calculateCosts(loansEntity.getLoanId());
+
+        // we set date and the extra costs
         LocalDateTime date = LocalDateTime.now();
-        loansEntity.setDate(Date.valueOf(date.toLocalDate().toString()));
-        loansEntity.setExtraCharges(repoAmount + fineAmount);
+        loansEntity.setDate(Date.valueOf(date.toLocalDate()));
+        loansEntity.setExtraCharges(loanCost.getFineAmount() + loanCost.getRepoAmount());
 
-        //generate a kardex move
-        //we have to generate a new move in the kardex
-        RecordsEntity record =  new RecordsEntity();
+        // then create a record
+        RecordsEntity record = new RecordsEntity();
         record.setRecordType("Return");
-
-        record.setRecordAmount(repoAmount+fineAmount);
-        record.setRecordDate(Date.valueOf(date.toLocalDate().toString())); // hora actual
+        record.setRecordAmount(loanCost.getFineAmount() + loanCost.getRepoAmount());
+        record.setRecordDate(Date.valueOf(date.toLocalDate()));
         record.setLoanId(loansEntity.getLoanId());
         record.setClientId(loansEntity.getClientId());
-
         recordsServices.saveRecord(record);
 
-        //we add up the stock for every one of the tools in the loan
-        //fist we have to check the conditions the tools return to the shop
+        // we have to update the tools state
         List<Long> toolsId = toolsLoansRepository.findByLoanId(loansEntity.getLoanId());
-
-        //Disponible, Prestada, En reparación, Dada de baja (STATES)
         for (Long toolId : toolsId) {
             ToolsEntity toolsEntity = toolsService.getToolsById(toolId);
 
-            String toolDisponibility = toolsEntity.getDisponibility();
-            //if the tool is damaged, then we update the initial state of the
-            if(toolDisponibility.equals("Dañada")){
+            if ("Dañada".equals(toolsEntity.getDisponibility())) {
                 toolsEntity.setInitialState("En reparacion");
-                toolsService.updateTool(toolsEntity);
-            }else{
-                //the stock of a tool is determinated by the amount of tools of the same name, that have
-                //the initial state in disponible
+            } else {
                 toolsEntity.setInitialState("Disponible");
-                toolsService.updateTool(toolsEntity);
             }
-
-
+            toolsService.updateTool(toolsEntity);
         }
+
+        // save loan
         return saveLoan(loansEntity);
     }
+
+    public CalculateCostDTO calculateCosts(Long loanId) {
+        CalculateCostDTO dto = new CalculateCostDTO();
+        Long repoAmount = 0L;
+        Long fineAmount = 0L;
+
+        if (reamaningDaysOnLoan(loanId) > 0) {
+            repoAmount = calculateRepoFine(loanId);
+        } else if (reamaningDaysOnLoan(loanId) < 0) {
+            fineAmount = calculateFine(loanId);
+            repoAmount = calculateRepoFine(loanId);
+        }
+        dto.setRepoAmount(repoAmount);
+        dto.setFineAmount(fineAmount);
+        return dto;
+    }
+
 
     public Long calculateRepoFine(Long id){
         List<Long> tools = toolsLoansRepository.findByLoanId(id);
         Long repofine = 0L;
         for(Long toolId : tools){
-
-            repofine += toolsService.getToolsById(toolId).getRepositionFee();
+            if(toolsService.getToolsById(toolId).getInitialState().equals("Dañada")) {
+                repofine += toolsService.getToolsById(toolId).getRepositionFee();
+            }
         }
         return repofine;
     }
@@ -248,7 +250,8 @@ public class LoansService {
             for(Long toolId : tools){
                 //Multa atraso = días de atraso × tarifa diaria de multa.
                 //per tool
-                fine += reamaningDaysOnLoan(id) * toolsService.getToolsById(toolId).getDiaryFineFee();
+                //multiply by -1 because if the loan is behind in days, those are going to be negative
+                fine += -1 * reamaningDaysOnLoan(id) * toolsService.getToolsById(toolId).getDiaryFineFee();
             }
             return fine;
         }

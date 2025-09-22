@@ -1,5 +1,6 @@
 package com.example.monolitico.Controller;
 
+import com.example.monolitico.DTO.CalculateCostDTO;
 import com.example.monolitico.DTO.NewLoanDTO;
 import com.example.monolitico.Entities.LoansEntity;
 import com.example.monolitico.Service.LoansService;
@@ -62,6 +63,12 @@ public class LoansController {
     public ResponseEntity<Optional<LoansEntity>> returnLoan(@RequestBody LoansEntity loan){
         Optional<LoansEntity> returN = loansService.returnLoan(loan);
         return ResponseEntity.ok(returN);
+    }
+
+    @GetMapping("/calculate/cost/{id}")
+    public ResponseEntity<CalculateCostDTO> calculateLoanCost(@PathVariable Long id){
+        CalculateCostDTO cost = loansService.calculateCosts(id);
+        return ResponseEntity.ok(cost);
     }
 }
 

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -9,6 +10,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Button from "@mui/material/Button";
+import loansService from "../services/loans.service";
 
 const estadosHerramienta = [
   "Bueno",
@@ -21,39 +23,23 @@ const estadosHerramienta = [
 const CalculateCost = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const [costDto, setCostDto] = useState(null);
 
-  if (!state || !state.loan || !state.tools || !state.toolStates) {
-    return (
-      <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Typography variant="h6" color="text.secondary">
-          No hay información para calcular costos.
-        </Typography>
-      </Box>
-    );
-  }
-
-  const { loan, tools, toolStates } = state;
-
-  // Ejemplo de cálculo de costos (puedes adaptar la lógica)
-  const calcularCostoHerramienta = (estado) => {
-    switch (estado) {
-      case "Bueno": return 0;
-      case "Regular": return 10;
-      case "Malo": return 30;
-      case "Reparación": return 50;
-      case "Extraviada": return 100;
-      default: return 0;
+  useEffect(() => {
+    if (state && state.loan) {
+      loansService.calculateCost(state.loan.loanId)
+        .then(response => {
+          setCostDto(response.data);
+        })
+        .catch(() => {
+          setCostDto(null);
+        });
     }
-  };
-
-  const totalCost = tools.reduce(
-    (acc, tool) => acc + calcularCostoHerramienta(toolStates[tool.toolId]),
-    0
-  );
+  }, [state]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
-    const date = new Date(dateStr);
+    const date = new Date(dateStr.length === 10 ? dateStr + "T00:00:00Z" : dateStr);
     if (isNaN(date)) return "";
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -95,29 +81,29 @@ const CalculateCost = () => {
         {/* Datos del préstamo */}
         <Paper sx={{ minWidth: 700, maxWidth: 700, width: "100%", mb: 2, background: "rgba(255,255,255,0.85)", p: 2 }}>
           <Typography variant="h6" align="center" sx={{ fontWeight: "bold", mb: 1 }}>
-            Préstamo #{loan.loanId}
+            Préstamo #{state.loan.loanId}
           </Typography>
           <Table size="small">
             <TableBody>
               <TableRow>
                 <TableCell sx={{ fontWeight: "bold" }}>Tipo</TableCell>
-                <TableCell>{loan.loanType}</TableCell>
+                <TableCell>{state.loan.loanType}</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>Cantidad</TableCell>
-                <TableCell>{loan.amount}</TableCell>
+                <TableCell>{state.loan.amount}</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>Entrega</TableCell>
-                <TableCell>{formatDate(loan.deliveryDate)}</TableCell>
+                <TableCell>{formatDate(state.loan.deliveryDate)}</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>Retorno</TableCell>
-                <TableCell>{formatDate(loan.returnDate)}</TableCell>
+                <TableCell>{formatDate(state.loan.returnDate)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell sx={{ fontWeight: "bold" }}>Staff</TableCell>
-                <TableCell>{loan.staffId}</TableCell>
+                <TableCell>{state.loan.staffId}</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>Cliente</TableCell>
-                <TableCell>{loan.clientId}</TableCell>
+                <TableCell>{state.loan.clientId}</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>Cargos Extra</TableCell>
-                <TableCell>{loan.extraCharges}</TableCell>
+                <TableCell>{state.loan.extraCharges}</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>Fecha</TableCell>
-                <TableCell>{formatDate(loan.date)}</TableCell>
+                <TableCell>{formatDate(state.loan.date)}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -135,16 +121,14 @@ const CalculateCost = () => {
                   <TableCell sx={{ fontWeight: "bold" }}>ID</TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>Estado Seleccionado</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Costo</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {tools.map((tool) => (
+                {state.tools.map((tool) => (
                   <TableRow key={tool.toolId}>
                     <TableCell>{tool.toolId}</TableCell>
                     <TableCell>{tool.tool_name}</TableCell>
-                    <TableCell>{toolStates[tool.toolId]}</TableCell>
-                    <TableCell>${calcularCostoHerramienta(toolStates[tool.toolId])}</TableCell>
+                    <TableCell>{state.toolStates[tool.toolId]}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -152,11 +136,27 @@ const CalculateCost = () => {
           </TableContainer>
         </Paper>
 
-        {/* Total */}
-        <Paper sx={{ maxWidth: 700, width: "100%", background: "rgba(255,255,255,0.85)", p: 2, textAlign: "center" }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Costo total: ${totalCost}
+        <Paper sx={{ maxWidth: 450, width: "90%", background: "rgba(255,255,255,0.85)", p: 4, textAlign: "center" }}>
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+            Costos del Préstamo
           </Typography>
+          {costDto ? (
+            <>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Repo Fine: ${costDto.repoAmount}
+              </Typography>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Fine: ${costDto.fineAmount}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="body1" color="text.secondary">
+              No se pudo calcular el costo.
+            </Typography>
+          )}
+          <Button variant="contained" sx={{ mt: 3 }} onClick={() => navigate(-1)}>
+            Volver
+          </Button>
         </Paper>
 
         <Button variant="contained" sx={{ mt: 3 }} onClick={() => navigate(-1)}>

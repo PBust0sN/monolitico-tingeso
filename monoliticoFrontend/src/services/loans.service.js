@@ -29,4 +29,8 @@ const remove = id => {
     );
 }
 
-export default { getAll, get, create, newLoan, returnLoan, update, remove};
+const calculateCost = id => {
+    return httpClient.get(`/api/loans/calculate/cost/${id}`);
+}
+
+export default { getAll, get, create, newLoan, returnLoan, update, remove, calculateCost};
