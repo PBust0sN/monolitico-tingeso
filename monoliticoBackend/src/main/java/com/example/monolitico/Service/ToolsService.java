@@ -114,4 +114,11 @@ public class ToolsService {
         updateTool(tool);
         return tool;
     }
+
+    public ToolsEntity updateStockById(Long id){
+        ToolsEntity tool = getToolsById(id);
+        Long stockAmount = tool.getStock();
+        tool.setStock(stockAmount + 1);
+        return tool;
+    }
 }

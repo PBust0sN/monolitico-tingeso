@@ -25,4 +25,8 @@ const updateState = (id, state) => {
     return httpClient.put(`/api/tools/update/state/${id}?state=${state}`);
 }
 
-export default { getAll, get, create, update, remove, updateState};
+const updateStock = id => {
+    return httpClient.put(`/api/tools/update/stock/${id}`);
+}
+
+export default { getAll, get, create, update, remove, updateState, updateStock};

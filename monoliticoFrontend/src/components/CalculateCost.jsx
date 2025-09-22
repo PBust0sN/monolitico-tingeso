@@ -11,6 +11,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Button from "@mui/material/Button";
 import loansService from "../services/loans.service";
+import toolsService from "../services/tools.service";
 
 const estadosHerramienta = [
   "Bueno",
@@ -47,6 +48,29 @@ const formatDate = (dateStr) => {
   return `${day}/${month}/${year}`;
 };
 
+const handleDevolution = async () => {
+  // update all the tools to "Bueno"
+  const updates = state.tools.map(tool =>
+    toolsService.updateState(tool.toolId, "Bueno")
+  );
+  await Promise.all(updates);
+
+  // add the tools to the stock
+  const stocks = state.tools.map(tool =>
+    toolsService.updateStock(tool.toolId)
+  );
+
+  await Promise.all(stocks);
+
+  // navigates to the devolution page with state
+  navigate(`${location.pathname}/devolution`, {
+    state: {
+      loan: state.loan,
+      toolStates: state.toolStates,
+      tools: state.tools
+    }
+  });
+};
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
       {/* Fondo difuminado */}
@@ -179,13 +203,7 @@ const formatDate = (dateStr) => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => navigate(`${location.pathname}/devolution`, {
-                                        state2: {
-                                          loan: state.loan,
-                                          toolStates: state.toolStates,
-                                          tools: state.tools
-                                        }
-                                      })}
+            onClick={handleDevolution}
           >
             Hacer Devolución
           </Button>

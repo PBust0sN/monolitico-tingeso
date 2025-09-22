@@ -65,4 +65,11 @@ public class ToolsController {
         ToolsEntity updateTool =  toolsService.updateStateById(id, state);
         return ResponseEntity.ok(updateTool);
     }
+
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    @PutMapping("/update/stock/{id}")
+    public  ResponseEntity<ToolsEntity> updateToolStock(@PathVariable Long id){
+        ToolsEntity updateTool = toolsService.updateStockById(id);
+        return ResponseEntity.ok(updateTool);
+    }
 }
