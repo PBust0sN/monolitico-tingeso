@@ -243,9 +243,9 @@ const LoanInfo = () => {
             <Button
             variant="contained"
             sx={{ mt: 2 }}
-            onClick={() => navigate("/loan/list")}
+            onClick={() => navigate("/")}
             >
-            Volver al listado
+            Volver atras
             </Button>
             
 

@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import clientService from "../services/client.service";
@@ -12,24 +13,28 @@ import Button from "@mui/material/Button";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Box from "@mui/material/Box"; // <-- Agrega esto si no lo tienes
+import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { lime, purple } from '@mui/material/colors';
+import { lime, purple, lightGreen, lightBlue } from '@mui/material/colors';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import RotateRightIcon from '@mui/icons-material/RotateRight';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 
 const ClientList = () => {
   const [client, setclients] = useState([]);
   const [search, setSearch] = useState("");
+  const [expandedRow, setExpandedRow] = useState(null);
 
   const filteredClient = client.filter(client =>
-  client.name.toLowerCase().includes(search.toLowerCase())
-);
+    client.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   const navigate = useNavigate();
 
@@ -37,6 +42,8 @@ const ClientList = () => {
     palette: {
       primary: lime,
       secondary: purple,
+      success: lightGreen,
+      error: lightBlue,
     },
   });
 
@@ -78,13 +85,15 @@ const ClientList = () => {
   };
 
   const handleEdit = (id) => {
-    console.log("Printing id", id);
     navigate(`/client/edit/${id}`);
   };
 
   const handleNewLoan = (id) => {
-    console.log("Printing id", id);
     navigate(`/loan/new/${id}`);
+  };
+
+  const handleExpandClick = (id) => {
+    setExpandedRow(expandedRow === id ? null : id);
   };
 
   return (
@@ -119,18 +128,16 @@ const ClientList = () => {
           paddingTop: 6,
         }}
       >
-        
         <TableContainer component={Paper} sx={{ maxWidth: 1400, background: "rgba(198, 198, 198, 0.85)" }}>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
-                <TableRow>
+              <TableRow>
                 <TableCell colSpan={9} align="center">
                   <Typography variant="h5" sx={{ color: "black", fontWeight: "bold" }}>
                     Listado de Clientes
                   </Typography>
                 </TableCell>
-              </TableRow> 
-              {/* Fila de búsqueda y botón */}
+              </TableRow>
               <TableRow>
                 <TableCell colSpan={7} align="left">
                   <TextField
@@ -169,12 +176,11 @@ const ClientList = () => {
                   </Link>
                 </TableCell>
               </TableRow>
-              {/* Fila de encabezados */}
               <TableRow>
-                <TableCell align="left" sx={{  maxWidth: 180, fontWeight: "bold", color: "black" }}>
+                <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Id
                 </TableCell>
-                <TableCell align="left" sx={{  maxWidth: 180, fontWeight: "bold", color: "black" }}>
+                <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Rut
                 </TableCell>
                 <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
@@ -195,77 +201,115 @@ const ClientList = () => {
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   state
                 </TableCell>
-                <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  Acciones
+                <TableCell align="center" sx={{ maxWidth: 80, fontWeight: "bold", color: "black" }}>
+                  Más
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredClient.map((client) => (
-                <TableRow
-                  key={client.client_id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell align="left" sx={{ maxWidth: 180 }}>{client.client_id}</TableCell>
-                  <TableCell align="left" sx={{ maxWidth: 180 }}>{client.rut}</TableCell>
-                  <TableCell align="left" sx={{ maxWidth: 180 }}>{client.last_name}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{client.name}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{client.mail}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{client.phone_number}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{client.avaliable ? "Si" : "No"}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{client.state}</TableCell>
-                  <TableCell align="left" sx={{ maxWidth: 300 }}>
-                    <ThemeProvider theme={theme}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      onClick={() => handleNewLoan(client.client_id)}
-                      style={{ marginLeft: "0.5rem", marginTop: "0.5rem"}}
-                      startIcon={<AddCircleIcon />}
-                    >
-                      New Loan
-                    </Button>
-                    </ThemeProvider>
-                    <ThemeProvider theme={theme}>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      size="small"
-                      onClick={() => navigate(`/loan/list/${client.client_id}`)}
-                      style={{ marginLeft: "0.5rem", marginTop: "0.5rem"}}
-                      startIcon={<VisibilityIcon />}
-                    >
-                      See Loans
-                    </Button>
-                    </ThemeProvider>
-                    <Button
-                      variant="contained"
-                      color="info"
-                      size="small"
-                      onClick={() => handleEdit(client.client_id)}
-                      style={{ marginLeft: "0.5rem", marginTop: "0.5rem" }}
-                      startIcon={<EditIcon />}
-                    >
-                      Editar
-                    </Button>
-
-                    <Button
-                      variant="contained"
-                      color="error"
-                      size="small"
-                      onClick={() => handleDelete(client.client_id)}
-                      style={{ marginLeft: "1.9rem", marginTop: "0.5rem" }}
-                      startIcon={<DeleteIcon />}
-                    >
-                      Eliminar
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                <React.Fragment key={client.client_id}>
+                  <TableRow
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell align="left" sx={{ maxWidth: 180 }}>{client.client_id}</TableCell>
+                    <TableCell align="left" sx={{ maxWidth: 180 }}>{client.rut}</TableCell>
+                    <TableCell align="left" sx={{ maxWidth: 180 }}>{client.last_name}</TableCell>
+                    <TableCell align="center" sx={{ maxWidth: 180 }}>{client.name}</TableCell>
+                    <TableCell align="center" sx={{ maxWidth: 180 }}>{client.mail}</TableCell>
+                    <TableCell align="center" sx={{ maxWidth: 180 }}>{client.phone_number}</TableCell>
+                    <TableCell align="center" sx={{ maxWidth: 180 }}>{client.avaliable ? "Si" : "No"}</TableCell>
+                    <TableCell align="center" sx={{ maxWidth: 180 }}>{client.state}</TableCell>
+                    <TableCell align="center" sx={{ maxWidth: 80 }}>
+                      <IconButton onClick={() => handleExpandClick(client.client_id)}>
+                        <ExpandCircleDownIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={9} sx={{ p: 0, background: "rgba(240,240,240,0.5)" }}>
+                      <Collapse in={expandedRow === client.client_id} timeout="auto" unmountOnExit>
+                        <Box sx={{ display: "flex", gap: 2, p: 2, justifyContent: "center" }}>
+                          <ThemeProvider theme={theme}>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              size="small"
+                              onClick={() => handleNewLoan(client.client_id)}
+                              startIcon={<AddCircleIcon />}
+                            >
+                              Ver Multas
+                            </Button>
+                          </ThemeProvider>
+                          <ThemeProvider theme={theme}>
+                            <Button
+                              variant="contained"
+                              color="success"
+                              size="small"
+                              onClick={() => handleNewLoan(client.client_id)}
+                              startIcon={<AddCircleIcon />}
+                            >
+                              Ver Reportes
+                            </Button>
+                          </ThemeProvider>
+                          <ThemeProvider theme={theme}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              size="small"
+                              onClick={() => handleNewLoan(client.client_id)}
+                              startIcon={<AddCircleIcon />}
+                            >
+                              New Loan
+                            </Button>
+                          </ThemeProvider>
+                          <ThemeProvider theme={theme}>
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              size="small"
+                              onClick={() => navigate(`/loan/list/${client.client_id}`)}
+                              startIcon={<VisibilityIcon />}
+                            >
+                              See Loans
+                            </Button>
+                          </ThemeProvider>
+                          <Button
+                            variant="contained"
+                            color="info"
+                            size="small"
+                            onClick={() => handleEdit(client.client_id)}
+                            startIcon={<EditIcon />}
+                          >
+                            Editar
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="error"
+                            size="small"
+                            onClick={() => handleDelete(client.client_id)}
+                            startIcon={<DeleteIcon />}
+                          >
+                            Eliminar
+                          </Button>
+                        </Box>
+                      </Collapse>
+                    </TableCell>
+                  </TableRow>
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Box sx={{display: "flex", flexDirection: "row", justifyContent: "center", gap: 2, mt: 2}}>
+            <Button
+            variant="contained"
+            sx={{ mt: 2 }}
+            onClick={() => navigate("/")}
+            >
+            Volver atras
+            </Button>
+        </Box>
       </Box>
     </Box>
   );
