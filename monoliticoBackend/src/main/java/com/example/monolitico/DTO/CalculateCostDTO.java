@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 public class CalculateCostDTO {
     private Long repoAmount;
     private Long fineAmount;
+    private Long returnPayment;
 }

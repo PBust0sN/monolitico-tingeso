@@ -194,18 +194,38 @@ public class LoansService {
         CalculateCostDTO dto = new CalculateCostDTO();
         Long repoAmount = 0L;
         Long fineAmount = 0L;
+        Long devolution = 0L;
 
         if (reamaningDaysOnLoan(loanId) > 0) {
             repoAmount = calculateRepoFine(loanId);
+            devolution = calculateReturnPayment(loanId);
         } else if (reamaningDaysOnLoan(loanId) < 0) {
             fineAmount = calculateFine(loanId);
             repoAmount = calculateRepoFine(loanId);
+        }
+        if(devolution - repoAmount >0){
+            dto.setReturnPayment(devolution - repoAmount);
+        }else{
+            dto.setReturnPayment(0L);
         }
         dto.setRepoAmount(repoAmount);
         dto.setFineAmount(fineAmount);
         return dto;
     }
 
+    public Long calculateReturnPayment(Long id){
+        if(reamaningDaysOnLoan(id)>0){
+            //we need to get all the tools in the loan
+            List<Long> tools = toolsLoansRepository.findByLoanId(id);
+            Long amount = 0L;
+
+            for(Long toolId : tools){
+                amount += reamaningDaysOnLoan(id) * toolsService.getToolsById(toolId).getDiaryFineFee();
+            }
+            return amount;
+        }
+        return 0L;
+    }
 
     public Long calculateRepoFine(Long id){
         List<Long> tools = toolsLoansRepository.findByLoanId(id);

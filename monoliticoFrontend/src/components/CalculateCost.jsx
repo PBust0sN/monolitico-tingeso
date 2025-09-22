@@ -135,30 +135,43 @@ const formatDate = (dateStr) => {
             </Table>
           </TableContainer>
         </Paper>
-
-        <Paper sx={{ maxWidth: 450, width: "90%", background: "rgba(255,255,255,0.85)", p: 4, textAlign: "center" }}>
-          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-            Costos del Préstamo
-          </Typography>
-          {costDto ? (
-            <>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Repo Fine: ${costDto.repoAmount}
-              </Typography>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Fine: ${costDto.fineAmount}
-              </Typography>
-            </>
-          ) : (
-            <Typography variant="body1" color="text.secondary">
-              No se pudo calcular el costo.
+        <Box sx={{ display: "flex", gap: 3, width: "100%", maxWidth: 1000, mb: 2 }}>
+          <Paper sx={{ maxWidth: 450, width: "90%", background: "rgba(255,255,255,0.85)", p: 4, textAlign: "center" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+              Costos del Préstamo
             </Typography>
-          )}
-          <Button variant="contained" sx={{ mt: 3 }} onClick={() => navigate(-1)}>
-            Volver
-          </Button>
-        </Paper>
-
+            {costDto ? (
+              <>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Repo Fine: ${costDto.repoAmount}
+                </Typography>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Fine: ${costDto.fineAmount}
+                </Typography>
+              </>
+            ) : (
+              <Typography variant="body1" color="text.secondary">
+                No se pudo calcular el costo.
+              </Typography>
+            )}
+          </Paper>
+          <Paper sx={{ maxWidth: 450, width: "90%", background: "rgba(255,255,255,0.85)", p: 4, textAlign: "center" }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+              Devoluciones
+            </Typography>
+            {costDto ? (
+              <>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Devolution Amount: ${costDto.returnPayment}
+                </Typography>
+              </>
+            ) : (
+              <Typography variant="body1" color="text.secondary">
+                No se pudo calcular la devolución.
+              </Typography>
+            )}
+          </Paper>
+        </Box>
         <Button variant="contained" sx={{ mt: 3 }} onClick={() => navigate(-1)}>
           Volver
         </Button>

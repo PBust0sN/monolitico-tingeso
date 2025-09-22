@@ -219,7 +219,7 @@ const formatDate = (dateStr) => {
               sx={{ mt: 2 }}
               onClick={handleCalculateCosts}
             >
-              Calcular Costos
+              Calcular Costos y Devoluciones
             </Button>
           </Paper>
         </Box>
