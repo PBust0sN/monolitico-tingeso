@@ -20,7 +20,7 @@ const estadosHerramienta = [
   "Extraviada"
 ];
 
-const CalculateCost = () => {
+const ReturnLoanFinal = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [costDto, setCostDto] = useState(null);
@@ -37,15 +37,15 @@ const CalculateCost = () => {
     }
   }, [state]);
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return "";
-  const date = new Date(dateStr.length === 10 ? dateStr + "T00:00:00Z" : dateStr);
-  if (isNaN(date)) return dateStr;
-  const day = String(date.getUTCDate()).padStart(2, "0");
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const year = date.getUTCFullYear();
-  return `${day}/${month}/${year}`;
-};
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr.length === 10 ? dateStr + "T00:00:00Z" : dateStr);
+    if (isNaN(date)) return dateStr;
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
@@ -81,7 +81,7 @@ const formatDate = (dateStr) => {
         {/* Datos del préstamo */}
         <Paper sx={{ minWidth: 700, maxWidth: 700, width: "100%", mb: 2, background: "rgba(255,255,255,0.85)", p: 2 }}>
           <Typography variant="h6" align="center" sx={{ fontWeight: "bold", mb: 1 }}>
-            Préstamo #{state.loan.loanId}
+            Retorno #{state.loan.loanId}
           </Typography>
           <Table size="small">
             <TableBody>
@@ -112,7 +112,7 @@ const formatDate = (dateStr) => {
         {/* Herramientas y estados */}
         <Paper sx={{ width: "100%", maxWidth: 700, background: "rgba(255,255,255,0.85)", p: 2, mb: 2 }}>
           <Typography variant="h6" align="center" sx={{ fontWeight: "bold", mb: 1 }}>
-            Herramientas y estados
+            Herramientas y estados de retorno
           </Typography>
           <TableContainer>
             <Table size="small">
@@ -135,34 +135,37 @@ const formatDate = (dateStr) => {
             </Table>
           </TableContainer>
         </Paper>
+        {/* Bloques lado a lado */}
         <Box sx={{ display: "flex", gap: 3, width: "100%", maxWidth: 1000, mb: 2 }}>
+          {/* Retorno a la izquierda */}
           <Paper sx={{ maxWidth: 450, width: "90%", background: "rgba(255,255,255,0.85)", p: 4, textAlign: "center" }}>
             <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Costos del Préstamo
+              Costos de Retorno
             </Typography>
             {costDto ? (
               <>
                 <Typography variant="h6" sx={{ mb: 2 }}>
-                  Repo Fine: ${costDto.repoAmount}
+                  Multa por reposición: ${costDto.repoAmount}
                 </Typography>
                 <Typography variant="h6" sx={{ mb: 2 }}>
-                  Fine: ${costDto.fineAmount}
+                  Multa: ${costDto.fineAmount}
                 </Typography>
               </>
             ) : (
               <Typography variant="body1" color="text.secondary">
-                No se pudo calcular el costo.
+                No se pudo calcular el costo de retorno.
               </Typography>
             )}
           </Paper>
+          {/* Devolución a la derecha */}
           <Paper sx={{ maxWidth: 450, width: "90%", background: "rgba(255,255,255,0.85)", p: 4, textAlign: "center" }}>
             <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Devoluciones
+              Devolución
             </Typography>
             {costDto ? (
               <>
                 <Typography variant="h6" sx={{ mb: 2 }}>
-                  Devolution Amount: ${costDto.returnPayment}
+                  Cantidad a devolver: ${costDto.returnPayment}
                 </Typography>
               </>
             ) : (
@@ -172,27 +175,12 @@ const formatDate = (dateStr) => {
             )}
           </Paper>
         </Box>
-        <Box sx={{ display: "flex", gap: 2, justifyContent: "center", mt: 3 }}>
-          <Button variant="contained" onClick={() => navigate(-1)}>
-            Volver
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => navigate(`${location.pathname}/devolution`, {
-                                        state2: {
-                                          loan: state.loan,
-                                          toolStates: state.toolStates,
-                                          tools: state.tools
-                                        }
-                                      })}
-          >
-            Hacer Devolución
-          </Button>
-        </Box>
+        <Button variant="contained" sx={{ mt: 3 }} onClick={() => navigate(-1)}>
+          Volver
+        </Button>
       </Box>
     </Box>
   );
 };
 
-export default CalculateCost;
+export default ReturnLoanFinal;
