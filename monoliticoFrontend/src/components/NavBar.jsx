@@ -10,6 +10,7 @@ import Sidemenu from "./SideMenu";
 import { useState } from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import { useNavigate } from "react-router-dom";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -55,9 +56,9 @@ export default function Navbar() {
                     {keycloak.tokenParsed?.preferred_username ||
                       keycloak.tokenParsed?.email}
                   </Typography>
-                  <Button variant="outlined" color="inherit" onClick={() => keycloak.logout()}>
-                    Logout
-                  </Button>
+                  <IconButton color="inherit" onClick={() => keycloak.logout()}>
+                    <LogoutIcon />
+                  </IconButton>
                 </>
               ) : (
                 <Button variant="outlined" color="inherit" onClick={() => navigate("/login")}>

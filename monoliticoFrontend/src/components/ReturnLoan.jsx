@@ -30,6 +30,9 @@ const ReturnLoan = () => {
   const [tools, setTools] = useState([]);
   const [toolStates, setToolStates] = useState({});
   const navigate = useNavigate();
+  const allStatesSelected = tools.every(
+  tool => toolStates[tool.toolId] && toolStates[tool.toolId] !== ""
+);
 
   useEffect(() => {
     loansService.get(loan_id).then((response) => {
@@ -194,11 +197,14 @@ const formatDate = (dateStr) => {
                         <TableCell>
                           <TextField
                             select
+                            required
                             label="Estado"
                             variant="standard"
                             value={toolStates[tool.toolId] || ""}
                             onChange={e => handleStateChange(tool.toolId, e.target.value)}
                             sx={{ minWidth: 120 }}
+                            error={!toolStates[tool.toolId]}
+                            helperText={!toolStates[tool.toolId] ? "Selecciona estado" : ""}
                           >
                             {estadosHerramienta.map((estado) => (
                               <MenuItem key={estado} value={estado}>
@@ -218,6 +224,7 @@ const formatDate = (dateStr) => {
               color="info"
               sx={{ mt: 2 }}
               onClick={handleCalculateCosts}
+              disabled={!allStatesSelected}
             >
               Calcular Costos y Devoluciones
             </Button>
