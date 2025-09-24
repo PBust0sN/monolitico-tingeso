@@ -98,11 +98,21 @@ public class LoansService {
                     //if the client has the same tool already loan to him then throw a error
                     if(clientService.HasTheSameToolInLoanByClientId(client_id, tool_id)){
                         errors.add("you have a loan with: ".concat(tool.getToolName()));
-                    }else{
+                    }else {
                         amount += tool.getLoanFee();
+                    }
+                }
+                //if we have encountered 0 errors then we continue the process
+                if(errors.isEmpty()){
+                    loansEntity.setAmount(amount);
+
+                    saveLoan(loansEntity);
+
+                    for (Long tool_id : tools_ids) {
+                        ToolsEntity tool = toolsService.getToolsById(tool_id);
 
                         //we substract the stock of the tools
-                        tool.setInitialState("Prestada");
+                        tool.setStock(tool.getStock() - 1);
 
                         //we add the relation in the tool_loan table
                         ToolsLoansEntity toolsLoansEntity = new ToolsLoansEntity();
@@ -113,28 +123,24 @@ public class LoansService {
                         //we update the tool info
                         toolsService.updateTool(tool);
                     }
-                }
-                //if we have encountered 0 errors then we continue the process
-                if(errors.isEmpty()){
-                    loansEntity.setAmount(amount);
-
-                    saveLoan(loansEntity);
 
                     //we have to generate a new move in the kardex
                     RecordsEntity record =  new RecordsEntity();
                     record.setRecordType("Loan");
 
                     //we get teh actual time
-                    record.setRecordDate(Date.valueOf(date.toLocalDate().toString())); // hora actual
+                    record.setRecordDate(Date.valueOf(date.toLocalDate().toString())); // actual date
                     record.setLoanId(loansEntity.getLoanId());
                     record.setClientId(client_id);
                     System.out.println(errors);
                     return errors;
                 }
             }
+        }else{
+            errors.add("Client is not avaliable or has fines");
+            System.out.println(errors);
+            return errors;
         }
-        errors.add("Client is not avaliable or has fines");
-        System.out.println(errors);
         return errors;
     }
 
