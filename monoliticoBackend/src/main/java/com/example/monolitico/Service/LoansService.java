@@ -300,6 +300,10 @@ public class LoansService {
     public boolean deleteLoan(Long id) throws Exception{
         try{
             loansRepository.deleteById(id);
+            List<Long> tools = toolsLoansService.getToolsIDsByLoanId(id);
+            for(Long toolId : tools){
+                toolsLoansRepository.deleteByToolId(toolId);
+            }
             return true;
         }catch (Exception e){
             throw new Exception(e.getMessage());
