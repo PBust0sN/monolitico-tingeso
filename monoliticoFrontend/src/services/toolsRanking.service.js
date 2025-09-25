@@ -13,4 +13,8 @@ const remove = id => {
     );
 }
 
-export default { getAll, get, create, update, remove, getToolsIdByLoanId};
+const getAllByReportId = id => {
+    return httpClient.get(`/api/toolsRanking/${id}`);
+}
+
+export default { getAll, create, remove, getAllByReportId};
