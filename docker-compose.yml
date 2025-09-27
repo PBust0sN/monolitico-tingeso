@@ -10,6 +10,8 @@ services:
       MYSQL_DATABASE: tingeso
     ports:
       - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
     networks:
       - mynet
 
@@ -70,9 +72,12 @@ services:
   nginx-frontend:
     build:
       context: ./monoliticoFrontend
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - ./nginx/nginx-frontend.conf:/etc/nginx/nginx.conf:ro
     container_name: nginx_frontend
     ports:
-      - "8070:80"
+      - "5173:8070"
     depends_on:
       - frontend1
       - frontend2
@@ -84,12 +89,14 @@ services:
   # Nginx para balancear backend
   # ===================
   nginx-backend:
-    image: nginx:latest
+    build:
+      context: ./monoliticoBackend
+      dockerfile: Dockerfile.backend
     container_name: nginx_backend
     ports:
       - "8090:8090"
     volumes:
-      - ./nginx-backend.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx-backend.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - backend1
       - backend2
@@ -102,10 +109,10 @@ services:
   # Keycloak
   # ===================
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0.3
+    image: quay.io/keycloak/keycloak:26.3.4
     container_name: keycloak
     volumes:
-      - keycloak_data:/opt/keycloak/data
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
     environment:
       KC_DB: mysql
       KC_DB_URL_HOST: mysql
@@ -115,18 +122,12 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - "8080:8080"
+      - "9090:8080"
     depends_on:
       - mysql
-    command: start-dev
+    command: start-dev --import-realm
     networks:
       - mynet
-
-# ===================
-# Volumenes
-# ===================
-volumes:
-  keycloak_data:
 
 # ===================
 # Redes
