@@ -1,5 +1,22 @@
+FROM maven:3.9.9-amazoncorretto-17 AS build
+
+WORKDIR /app
+
+COPY ./pom.xml .
+COPY ./src ./src
+
+RUN mvn dependency:go-offline -B
+RUN mvn package -DskipTests
+
 FROM openjdk:24
-ARG JAR_FILE=./target/*.jar
-COPY ${JAR_FILE} tool-rent-backend.jar
+
+WORKDIR /app
+
+ENV SPRING_PROFILES_ACTIVE=prod
+ENV SERVER_PORT=8090
+
+COPY --from=build /app/target/*.jar tool-rent-backend.jar
+
 EXPOSE 8090
+
 ENTRYPOINT ["java", "-jar", "./tool-rent-backend.jar"]

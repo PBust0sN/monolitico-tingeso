@@ -12,6 +12,7 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - mynet
 
@@ -19,7 +20,9 @@ services:
   # BACKEND (3 instancias)
   # ===================
   backend1:
-    image: pbust0sn/toolrent-backend:latest
+    build:
+      context: ./monoliticoBackend
+      dockerfile: Dockerfile.backend
     environment:
       - DB_HOST=mysql
     depends_on:
@@ -29,7 +32,9 @@ services:
       - mynet
 
   backend2:
-    image: pbust0sn/toolrent-backend:latest
+    build:
+      context: ./monoliticoBackend
+      dockerfile: Dockerfile.backend
     environment:
       - DB_HOST=mysql
     depends_on:
@@ -39,7 +44,9 @@ services:
       - mynet
 
   backend3:
-    image: pbust0sn/toolrent-backend:latest
+    build:
+      context: ./monoliticoBackend
+      dockerfile: Dockerfile.backend
     environment:
       - DB_HOST=mysql
     depends_on:
@@ -52,17 +59,23 @@ services:
   # FRONTEND (3 instancias)
   # ===================
   frontend1:
-    image: pbust0sn/toolrent-frontend:latest
+    build:
+      context: ./monoliticoFrontend
+      dockerfile: Dockerfile.frontend
     networks:
       - frontend-network
 
   frontend2:
-    image: pbust0sn/toolrent-frontend:latest
+    build:
+      context: ./monoliticoFrontend
+      dockerfile: Dockerfile.frontend
     networks:
       - frontend-network
 
   frontend3:
-    image: pbust0sn/toolrent-frontend:latest
+    build:
+      context: ./monoliticoFrontend
+      dockerfile: Dockerfile.frontend
     networks:
       - frontend-network
 
@@ -73,11 +86,11 @@ services:
     build:
       context: ./monoliticoFrontend
       dockerfile: Dockerfile.frontend
-    volumes:
-      - ./nginx/nginx-frontend.conf:/etc/nginx/nginx.conf:ro
     container_name: nginx_frontend
     ports:
-      - "5173:8070"
+      - "8070:80"
+    volumes:
+       - ./monoliticoFrontend/nginx/nginx-frontend.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - frontend1
       - frontend2
@@ -89,14 +102,12 @@ services:
   # Nginx para balancear backend
   # ===================
   nginx-backend:
-    build:
-      context: ./monoliticoBackend
-      dockerfile: Dockerfile.backend
+    image: nginx:alpine
     container_name: nginx_backend
     ports:
       - "8090:8090"
     volumes:
-      - ./nginx/nginx-backend.conf:/etc/nginx/nginx.conf:ro
+      - ./monoliticoBackend/nginx/nginx-backend.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - backend1
       - backend2
@@ -114,13 +125,13 @@ services:
     volumes:
       - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
     environment:
-      KC_DB: mysql
-      KC_DB_URL_HOST: mysql
-      KC_DB_URL_DATABASE: tingeso
-      KC_DB_USERNAME: root
-      KC_DB_PASSWORD: admin
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      - KC_DB=mysql
+      - KC_DB_URL_HOST=mysql
+      - KC_DB_URL_DATABASE=keycloakdb
+      - KC_DB_USERNAME=root
+      - KC_DB_PASSWORD=admin
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
     ports:
       - "9090:8080"
     depends_on:

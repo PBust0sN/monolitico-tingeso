@@ -2,3 +2,19 @@
 notas.txt
 MR.drawio
 keycloak-26.3.4/
+
+# Docker volumes y datos persistentes
+mysql_data/
+*.pid
+*.log
+*.sock
+*.db
+*.tar
+*.gz
+*.tmp
+
+# Archivos de inicialización de MySQL
+init.sql
+
+# Archivos y carpetas de Docker
+**/docker-entrypoint-initdb.d/
