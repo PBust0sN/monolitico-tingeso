@@ -13,12 +13,15 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import loansReportsService from "../services/loansReports.service";
-
+import toolsLoansService from "../services/toolsLoans.service";
+import toolsService from "../services/tools.service";
+import TableHead from "@mui/material/TableHead";
 
 function ViewReports() {
 	const { reportId } = useParams();
 	const [report, setReport] = useState(null);
 	const [loansReport, setLoansReport] = useState([]);
+	const [toolsByLoan, setToolsByLoan] = useState({});
 
 	useEffect(() => {
 		if (reportId) {
@@ -26,8 +29,28 @@ function ViewReports() {
 				.then(res => setReport(res.data))
 				.catch(() => setReport(null));
 			loansReportsService.getAllByReportId(reportId)
-				.then(res => setLoansReport(Array.isArray(res.data) ? res.data : [res.data]))
-				.catch(() => setLoansReport([]));
+				.then(async res => {
+					const loans = Array.isArray(res.data) ? res.data : [res.data];
+					setLoansReport(loans);
+					// Obtener herramientas asociadas a cada préstamo
+					const toolsMap = {};
+					for (const loan of loans) {
+						try {
+							const idsResponse = await toolsLoansService.getToolsIdByLoanId(loan.loanId);
+							const toolIds = idsResponse.data;
+							const toolPromises = Array.isArray(toolIds) ? toolIds.map((id) => toolsService.get(id).then(res => res.data)) : [];
+							const toolDetails = await Promise.all(toolPromises);
+							toolsMap[loan.loanId] = toolDetails;
+						} catch (err) {
+							toolsMap[loan.loanId] = [];
+						}
+					}
+					setToolsByLoan(toolsMap);
+				})
+				.catch(() => {
+					setLoansReport([]);
+					setToolsByLoan({});
+				});
 		}
 	}, [reportId]);
 
@@ -59,7 +82,7 @@ function ViewReports() {
 			/>
 			<Box sx={{ position: "relative", zIndex: 1, p: 4, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", minHeight: "80vh" }}>
 				{/* Frame superior */}
-				<Paper sx={{ maxWidth: 1200, width: "100%", mb: 3, background: "rgba(255,255,255,0.85)", p: 3 }}>
+				<Paper sx={{ minWidth: 1200, width: "100%", mb: 3, background: "rgba(255,255,255,0.85)", p: 3 }}>
 					<Typography variant="h5" align="center" sx={{ fontWeight: "bold", mb: 2 }}>Detalle del Reporte</Typography>
 					{report ? (
 						<Stack direction="row" spacing={6} sx={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
@@ -72,31 +95,72 @@ function ViewReports() {
 						<Typography variant="body2" color="text.secondary">No se encontró información del reporte.</Typography>
 					)}
 				</Paper>
-				{/* Frame inferior: atributos de loansReport */}
-				<Paper sx={{ maxWidth: 700, width: "100%", background: "rgba(255,255,255,0.85)", p: 3 }}>
-					<Typography variant="h6" align="center" sx={{ fontWeight: "bold", mb: 2 }}>Atributos de Préstamo Asociados</Typography>
-					<TableContainer>
-						<Table>
-							<TableBody>
-								{loansReport.length === 0 ? (
-									<TableRow>
-										<TableCell colSpan={2} align="center">
-											No hay atributos de préstamo asociados a este reporte.
-										</TableCell>
-									</TableRow>
-								) : (
-									loansReport.map((lr, idx) => (
-										Object.entries(lr).map(([key, value]) => (
-											<TableRow key={key + idx}>
-												<TableCell sx={{ fontWeight: "bold" }}>{key}</TableCell>
-												<TableCell>{String(value)}</TableCell>
+				{/* Frame inferior: lista de préstamos y herramientas asociadas */}
+				<Paper sx={{ maxWidth: 1200, width: "100%", background: "rgba(255,255,255,0.85)", p: 3 }}>
+					<Typography variant="h6" align="center" sx={{ fontWeight: "bold", mb: 2 }}>Préstamos y Herramientas Asociadas</Typography>
+					{loansReport.length === 0 ? (
+						<Typography align="center" color="text.secondary">No hay préstamos asociados a este reporte.</Typography>
+					) : (
+						loansReport.map((lr, idx) => (
+							<Box key={"loan-"+idx} sx={{ mb: 4 }}>
+								{/* Info del préstamo en no más de 2 filas */}
+								<TableContainer>
+									<Table size="small">
+										<TableBody>
+											<TableRow>
+												<TableCell sx={{ fontWeight: "bold" }}>ID Préstamo</TableCell>
+												<TableCell>{lr.loanId}</TableCell>
+												<TableCell sx={{ fontWeight: "bold" }}>Tipo</TableCell>
+												<TableCell>{lr.loanType}</TableCell>
+												<TableCell sx={{ fontWeight: "bold" }}>Cantidad</TableCell>
+												<TableCell>{lr.amount}</TableCell>
 											</TableRow>
-										))
-									))
-								)}
-							</TableBody>
-						</Table>
-					</TableContainer>
+											<TableRow>
+												<TableCell sx={{ fontWeight: "bold" }}>Fecha Entrega</TableCell>
+												<TableCell>{lr.deliveryDate ? new Date(lr.deliveryDate).toLocaleDateString() : "-"}</TableCell>
+												<TableCell sx={{ fontWeight: "bold" }}>Fecha Retorno</TableCell>
+												<TableCell>{lr.returnDate ? new Date(lr.returnDate).toLocaleDateString() : "-"}</TableCell>
+												<TableCell sx={{ fontWeight: "bold" }}>ID Cliente</TableCell>
+												<TableCell>{lr.clientId}</TableCell>
+											</TableRow>
+										</TableBody>
+									</Table>
+								</TableContainer>
+								{/* Herramientas asociadas, identadas */}
+								<Box sx={{ pl: 6, pt: 1 }}>
+									<Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>Herramientas asociadas</Typography>
+									<TableContainer>
+										<Table size="small">
+											<TableHead>
+												<TableRow>
+													<TableCell sx={{ fontWeight: "bold" }}>ID Herramienta</TableCell>
+													<TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
+													<TableCell sx={{ fontWeight: "bold" }}>Categoría</TableCell>
+													<TableCell sx={{ fontWeight: "bold" }}>Disponibilidad</TableCell>
+												</TableRow>
+											</TableHead>
+											<TableBody>
+												{(toolsByLoan[lr.loanId] && toolsByLoan[lr.loanId].length > 0) ? (
+													toolsByLoan[lr.loanId].map((tool, tIdx) => (
+														<TableRow key={tool.toolId + "-" + tIdx}>
+															<TableCell>{tool.toolId}</TableCell>
+															<TableCell>{tool.tool_name}</TableCell>
+															<TableCell>{tool.category}</TableCell>
+															<TableCell>{tool.disponibility}</TableCell>
+														</TableRow>
+													))
+												) : (
+													<TableRow>
+														<TableCell colSpan={4} align="center">No hay herramientas asociadas a este préstamo.</TableCell>
+													</TableRow>
+												)}
+											</TableBody>
+										</Table>
+									</TableContainer>
+								</Box>
+							</Box>
+						))
+					)}
 				</Paper>
 			</Box>
 		</Box>
