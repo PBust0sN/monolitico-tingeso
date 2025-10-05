@@ -20,9 +20,10 @@ public class ReportsEntity {
     private Long reportId;
 
     private Date reportDate;
-    private Long loanIdReport;
-    private Long toolsIdRanking;
-    private Long fineIdReports;
-    private Long clientIdBehind;
+    private Boolean loanIdReport;
+    private Boolean toolsIdRanking;
+    private Boolean fineIdReports;
+    private Boolean clientIdBehind;
+    private Long clientIdReport;
 }
 

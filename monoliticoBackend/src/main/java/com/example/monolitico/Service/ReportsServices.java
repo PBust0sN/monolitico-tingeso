@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class ReportsServices {
 
     public List<LoansEntity> generateLoansReport(){
         List<LoansEntity> loans = new ArrayList<>();
+
 
 
         return loans;
@@ -57,6 +59,8 @@ public class ReportsServices {
     }
 
     public ReportsEntity saveReport(ReportsEntity reportsEntity){
+        LocalDateTime date = LocalDateTime.now();
+        reportsEntity.setReportDate(Date.valueOf(date.toLocalDate().toString()));
         return reportsRepository.save(reportsEntity);
     }
 

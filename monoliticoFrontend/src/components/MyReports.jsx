@@ -23,6 +23,15 @@ const MyReports = () => {
       .catch((error) => console.log("Error al cargar reportes", error));
   }, []);
 
+  const formatDate = (dateStr) => {
+        if (!dateStr) return "";
+        const date = new Date(dateStr.length === 10 ? dateStr + "T00:00:00Z" : dateStr);
+        if (isNaN(date)) return dateStr;
+        const day = String(date.getUTCDate()).padStart(2, "0");
+        const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const year = date.getUTCFullYear();
+        return `${day}/${month}/${year}`;
+    };
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
       {/* Fondo difuminado */}
@@ -49,38 +58,37 @@ const MyReports = () => {
               <TableRow>
                 <TableCell>ID Reporte</TableCell>
                 <TableCell>Fecha</TableCell>
-                <TableCell>Préstamo</TableCell>
-                <TableCell>Herramienta</TableCell>
-                <TableCell>Multa</TableCell>
-                <TableCell>Cliente</TableCell>
+                <TableCell>Tipo</TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {reports.map((report) => (
-                <TableRow key={report.reportId}>
-                  <TableCell>{report.reportId}</TableCell>
-                  <TableCell>{new Date(report.reportDate).toLocaleString()}</TableCell>
-                  <TableCell>{report.loanIdReport || "-"}</TableCell>
-                  <TableCell>{report.toolsIdRanking || "-"}</TableCell>
-                  <TableCell>{report.fineIdReports || "-"}</TableCell>
-                  <TableCell>{report.clientIdBehind || "-"}</TableCell>
-                  <TableCell>
-                    {report.loanIdReport && (
+              {reports.map((report) => {
+                let tipo = "";
+                if (report.loanIdReport) tipo = "Préstamo";
+                else if (report.toolsIdRanking) tipo = "Tool Ranking";
+                else if (report.fineIdReports) tipo = "Multas";
+                else if (report.clientIdBehind) tipo = "Client Behind";
+                return (
+                  <TableRow key={report.reportId}>
+                    <TableCell>{report.reportId}</TableCell>
+                    <TableCell>{formatDate(report.reportDate)}</TableCell>
+                    <TableCell>{tipo}</TableCell>
+                    <TableCell>
                       <Button
                         variant="contained"
                         color="primary"
                         size="small"
-                        onClick={() => navigate(`/loan/info/${report.loanIdReport}`)}
+                        onClick={() => navigate(`/viewreports/${report.reportId}`)}
                         style={{ marginLeft: "0.5rem" }}
                         startIcon={<VisibilityIcon />}
                       >
                         Ver más
                       </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>

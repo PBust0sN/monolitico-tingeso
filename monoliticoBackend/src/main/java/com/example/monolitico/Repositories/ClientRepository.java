@@ -25,4 +25,5 @@ public interface ClientRepository extends JpaRepository<ClientEntity, Long> {
         """, nativeQuery = true)
     public List<LoansEntity> getAllLoansByClientId(@Param("id") Long id);
 
+    public Long findIdByRut(String client_name);
 }

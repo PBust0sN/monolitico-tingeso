@@ -26,6 +26,8 @@ import ReturnLoanFinal from './components/ReturnLoanFinal';
 import AddReport from './components/AddReport';
 
 import MyReports from './components/MyReports';
+import NewLoanReport from './components/NewLoanReport';
+import ViewReports from './components/ViewReports';
 
 
 function App() {
@@ -220,12 +222,16 @@ function App() {
             element={<PrivateRoute element={<AddReport />} rolesAllowed={["STAFF","ADMIN"]} />}
           />
           <Route
-            path="/report/loans-by-client"
-            element={<PrivateRoute element={<AddReport />} rolesAllowed={["STAFF","ADMIN"]} />}
-          />
-          <Route
             path="/myreports"
             element={<PrivateRoute element={<MyReports />} rolesAllowed={["STAFF","ADMIN","CLIENT"]} />}
+          />
+          <Route
+            path="/report/loans-by-client"
+            element={<PrivateRoute element={<NewLoanReport />} rolesAllowed={["STAFF","ADMIN", "CLIENT"]} />}
+          />
+          <Route
+            path="/viewreports/:reportId"
+            element={<PrivateRoute element={<ViewReports />} rolesAllowed={["STAFF","ADMIN", "CLIENT"]} />}
           />
         </Routes>
 

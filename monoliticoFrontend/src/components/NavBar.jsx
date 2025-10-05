@@ -53,7 +53,7 @@ export default function Navbar() {
               {keycloak.authenticated ? (
                 <>
                   <Typography sx={{ mr: 2 }}>
-                    {keycloak.tokenParsed?.preferred_username ||
+                    {keycloak.tokenParsed?.username ||
                       keycloak.tokenParsed?.email}
                   </Typography>
                   <IconButton color="inherit" onClick={() => keycloak.logout()}>
