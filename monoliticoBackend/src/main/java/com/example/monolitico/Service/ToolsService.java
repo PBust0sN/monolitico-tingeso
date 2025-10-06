@@ -5,6 +5,9 @@ import com.example.monolitico.Entities.StaffEntity;
 import com.example.monolitico.Entities.ToolsEntity;
 import com.example.monolitico.Repositories.ToolsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -121,5 +124,9 @@ public class ToolsService {
         tool.setStock(stockAmount + 1);
         updateTool(tool);
         return tool;
+    }
+
+    public List<ToolsEntity> findRankingMax10(){
+        return toolsrepository.findRanking();
     }
 }

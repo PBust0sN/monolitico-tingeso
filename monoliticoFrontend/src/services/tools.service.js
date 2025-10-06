@@ -29,4 +29,8 @@ const updateStock = id => {
     return httpClient.put(`/api/tools/update/stock/${id}`);
 }
 
-export default { getAll, get, create, update, remove, updateState, updateStock};
+const getTenTools = () => {
+    return httpClient.get('/api/tools/topTen');
+}
+
+export default { getAll, get, create, update, remove, updateState, updateStock, getTenTools };
