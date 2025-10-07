@@ -11,14 +11,12 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import loansReportsService from "../services/loansReports.service";
-import toolsLoansService from "../services/toolsLoans.service";
 import toolsLoanReportService from "../services/toolsLoanReport.service";
 import toolsReportService from "../services/toolsReport.service";
-import toolsService from "../services/tools.service";
 import TableHead from "@mui/material/TableHead";
-import ToolList from "./ToolList";
 
-function ViewReports() {
+
+function ViewLoanReports() {
 	const { reportId } = useParams();
 	const [report, setReport] = useState(null);
 	const [loansReport, setLoansReport] = useState([]);
@@ -174,4 +172,4 @@ function ViewReports() {
 	);
 }
 
-export default ViewReports;
+export default ViewLoanReports;
