@@ -16,14 +16,9 @@ const reportOptions = [
     path: "/report/top-tools",
   },
   {
-    label: "Préstamos Pendientes",
+    label: "Préstamos atrasados",
     description: "Revisa los préstamos que aún no han sido devueltos.",
-    path: "/report/pending-loans",
-  },
-  {
-    label: "Multas",
-    description: "Observa las multas generadas por retrasos o daños.",
-    path: "/report/fines",
+    path: "/report/behind-loans",
   },
 ];
 
