@@ -1,19 +1,8 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import toolsService from "../services/tools.service";
-import loansService from "../services/loans.service";
-import { useKeycloak } from "@react-keycloak/web";
 import Typography from "@mui/material/Typography";
-import SaveIcon from "@mui/icons-material/Save";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import TextField from '@mui/material/TextField';
-
-const CARD_WIDTH = 200;
-const CARD_HEIGHT = 270;
-const TITLE_FONT_SIZE = "1.15rem";
 
 const reportOptions = [
   {

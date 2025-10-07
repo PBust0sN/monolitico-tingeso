@@ -22,6 +22,6 @@ public interface ToolsRepository extends JpaRepository<ToolsEntity,Long> {
         """, nativeQuery = true)
     public Long findStockByToolName(String tool_name);
 
-    @Query(value = "SELECT * FROM tools ORDER BY loan_count ASC LIMIT 10", nativeQuery = true)
+    @Query(value = "SELECT * FROM tools ORDER BY loan_count DESC LIMIT 10", nativeQuery = true)
     public List<ToolsEntity> findRanking();
 }

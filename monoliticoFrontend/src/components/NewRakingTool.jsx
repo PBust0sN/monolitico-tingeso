@@ -13,21 +13,24 @@ const NewRakingTool = () => {
 	const handleGenerateRanking = async () => {
 		setLoading(true);
 		// fisrt we obtain the first 10 tools hith the most loan count in the tools table
-		const allToolsRes = await toolsService.getAll();
-		const toolsList = allToolsRes.data;
+		const tenTools = await toolsService.getTenTools();
+		const toolsList = tenTools.data;
 
         // then we create a list to store the ids of the tools created in toolsReport
 		const toolReportIds = [];
 		for (const tool of toolsList) {
 			const toolReportRes = await toolsReportService.create({
-				toolName: tool.toolName,
+				toolName: tool.tool_name,
 				category: tool.category,
-				loanCount: tool.loanCount || 0
+				loanCount: tool.loan_count
 			});
             //the we push gthe values into the list
 			toolReportIds.push({
 				toolId: toolReportRes.data?.toolIdReport,
-				originalToolId: tool.toolId
+				originalToolId: tool.toolId,
+                category: tool.category,
+                loanCount: tool.loan_count,
+                toolName: tool.tool_name
 			});
 		}
 
@@ -39,7 +42,7 @@ const NewRakingTool = () => {
 		for (const tool of toolReportIds) {
 			await toolsRankingService.create({
 				reportId: reportId,
-				toolId: tool.toolId
+				toolId: tool.toolId,
 			});
 		}
 

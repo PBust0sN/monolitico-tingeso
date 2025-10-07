@@ -75,16 +75,51 @@ const MyReports = () => {
                     <TableCell>{formatDate(report.reportDate)}</TableCell>
                     <TableCell>{tipo}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        onClick={() => navigate(`/viewreports/${report.reportId}`)}
-                        style={{ marginLeft: "0.5rem" }}
-                        startIcon={<VisibilityIcon />}
-                      >
-                        Ver más
-                      </Button>
+                      {report.loanIdReport ? (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={() => navigate(`/viewreports/${report.reportId}`)}
+                          style={{ marginLeft: "0.5rem" }}
+                          startIcon={<VisibilityIcon />}
+                        >
+                          Ver más
+                        </Button>
+                      ) : report.toolsIdRanking ? (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={() => navigate(`/viewrankingreport/${report.reportId}`)}
+                          style={{ marginLeft: "0.5rem" }}
+                          startIcon={<VisibilityIcon />}
+                        >
+                          Ver más
+                        </Button>
+                      ) : report.fineIdReports ? (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={() => navigate(`/viewreports/${report.reportId}`)}
+                          style={{ marginLeft: "0.5rem" }}
+                          startIcon={<VisibilityIcon />}
+                        >
+                          Ver más
+                        </Button>
+                      ) : report.clientIdBehind ? (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={() => navigate(`/viewreports/${report.reportId}`)}
+                          style={{ marginLeft: "0.5rem" }}
+                          startIcon={<VisibilityIcon />}
+                        >
+                          Ver más
+                        </Button>
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 );
