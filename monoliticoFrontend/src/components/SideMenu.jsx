@@ -22,13 +22,27 @@ import FeedIcon from '@mui/icons-material/Feed';
 export default function Sidemenu({ open, toggleDrawer }) {
   const navigate = useNavigate();
 
+  // Ref para el contenedor interno del Drawer
+  const drawerRef = React.useRef(null);
+
+  // Listener global para clicks fuera del drawer. Cierra el drawer cuando esté abierto y
+  // el click ocurre fuera del elemento referenciado.
+  React.useEffect(() => {
+    if (!open) return;
+    const handleOutsideClick = (e) => {
+      if (drawerRef.current && !drawerRef.current.contains(e.target)) {
+        const fn = toggleDrawer(false);
+        if (typeof fn === 'function') fn(e);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [open, toggleDrawer]);
+
   const listOptions = () => (
-    <Box
-      role="presentation"
-      onClick={toggleDrawer(false)}
-    >
+    <Box role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        <ListItemButton onClick={() => navigate("/home")}>
+        <ListItemButton onClick={() => navigate("/home") }>
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
@@ -37,34 +51,34 @@ export default function Sidemenu({ open, toggleDrawer }) {
 
         <Divider />
 
-        <ListItemButton onClick={() => navigate("/client/list")}>
+        <ListItemButton onClick={() => navigate("/client/list") }>
           <ListItemIcon>
             <PeopleAltIcon />
           </ListItemIcon>
           <ListItemText primary="Clientes" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => navigate("/tool/list")}>
+        <ListItemButton onClick={() => navigate("/tool/list") }>
           <ListItemIcon>
             <HandymanIcon />
           </ListItemIcon>
           <ListItemText primary="Herramientas" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => navigate("/loan/list")}>
+        <ListItemButton onClick={() => navigate("/loan/list") }>
           <ListItemIcon>
             <InsertDriveFileIcon />
           </ListItemIcon>
           <ListItemText primary="Prestamos" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => navigate("/record/list")}>
+        <ListItemButton onClick={() => navigate("/record/list") }>
           <ListItemIcon>
             <FolderSpecialIcon />
           </ListItemIcon>
           <ListItemText primary="Records" />
         </ListItemButton>
-        <ListItemButton onClick={() => navigate("/fine/list")}>
+        <ListItemButton onClick={() => navigate("/fine/list") }>
           <ListItemIcon>
             <BorderColorIcon />
           </ListItemIcon>
@@ -75,19 +89,19 @@ export default function Sidemenu({ open, toggleDrawer }) {
       <Divider />
 
       <List>
-        <ListItemButton onClick={() => navigate("/reports/create")}>
+        <ListItemButton onClick={() => navigate("/reports/create") }>
           <ListItemIcon>
             <AssessmentIcon />
           </ListItemIcon>
           <ListItemText primary="Reportes" />
         </ListItemButton>
-        <ListItemButton onClick={() => navigate("/myreports")}>
+        <ListItemButton onClick={() => navigate("/myreports") }>
           <ListItemIcon>
             <FeedIcon />
           </ListItemIcon>
           <ListItemText primary="My Reports" />
         </ListItemButton>
-        <ListItemButton onClick={() => navigate("/paycheck/medicalleave")}>
+        <ListItemButton onClick={() => navigate("/paycheck/medicalleave") }>
           <ListItemIcon>
             <MedicationLiquidIcon />
           </ListItemIcon>
@@ -100,19 +114,19 @@ export default function Sidemenu({ open, toggleDrawer }) {
   return (
     <div>
       <Drawer
-  anchor="left"
-  open={open}
-  onClose={toggleDrawer(false)}
-  hideBackdrop={true}
-  PaperProps={{
-    sx: {
-      backgroundColor: "rgba(255, 255, 255, 0.71)", // transparente
-      backdropFilter: "blur(8px)",              // opcional: desenfoque
-      boxShadow: "none",                        // opcional: sin sombra
-    }
-  }}
->
-  {listOptions()}
+        anchor="left"
+        open={open}
+        onClose={toggleDrawer(false)}
+        hideBackdrop={true}
+        PaperProps={{
+          sx: {
+            backgroundColor: "rgba(255, 255, 255, 0.71)", // transparente
+            backdropFilter: "blur(8px)",              // opcional: desenfoque
+            boxShadow: "none",                        // opcional: sin sombra
+          }
+        }}
+      >
+        <div ref={drawerRef}>{listOptions()}</div>
       </Drawer>
     </div>
   );
