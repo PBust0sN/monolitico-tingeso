@@ -20,6 +20,10 @@ public class LoansReportService {
         return loanReportRepository.findByReportId(reportId);
     }
 
+    public LoansReportEntity getLoansReportById(Long reportId){
+        return loanReportRepository.getById(reportId);
+    }
+
     public LoansReportEntity createLoansReport(LoansReportEntity loansReportEntity){
         return loanReportRepository.save(loansReportEntity);
     }

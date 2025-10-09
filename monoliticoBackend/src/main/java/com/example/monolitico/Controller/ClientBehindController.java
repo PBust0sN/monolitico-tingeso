@@ -17,8 +17,8 @@ public class ClientBehindController {
     private ClientBehindService clientBehindService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<ClientBehindEntity>> getClientBehindByReportId(@RequestParam("id") Long reportId){
-        List<ClientBehindEntity> clientsBehind = clientBehindService.getClientBehindByReportId(reportId);
+    public ResponseEntity<ClientBehindEntity> getClientBehindByReportId(@PathVariable("id") Long reportId){
+        ClientBehindEntity clientsBehind = clientBehindService.getClientBehindByReportId(reportId);
         return ResponseEntity.ok(clientsBehind);
     }
 

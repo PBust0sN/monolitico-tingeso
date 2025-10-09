@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface ClientBehindRepository extends JpaRepository<ClientBehindEntity, Long> {
-    public List<ClientBehindEntity> findByReportId(Long  reportId);
+    public ClientBehindEntity findByReportId(Long  reportId);
 }

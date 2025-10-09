@@ -27,6 +27,13 @@ public class LoansReportController {
         return ResponseEntity.ok(loansReportEntities);
     }
 
+    @GetMapping("/getbyid/{id}")
+    public  ResponseEntity<LoansReportEntity> getLoansReportById(@PathVariable("id") Long reportId){
+        LoansReportEntity loan = loansReportService.getLoansReportById(reportId);
+        return ResponseEntity.ok(loan);
+    }
+
+
     @PostMapping("/")
     public ResponseEntity<LoansReportEntity> createLoansReport(@RequestBody LoansReportEntity loansReportEntity){
         LoansReportEntity createLoansReportEntity = loansReportService.createLoansReport(loansReportEntity);

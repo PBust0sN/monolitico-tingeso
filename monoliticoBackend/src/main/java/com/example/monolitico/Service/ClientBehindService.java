@@ -21,7 +21,7 @@ public class ClientBehindService {
         return clientBehindRepository.findAll();
     }
 
-    public List<ClientBehindEntity> getClientBehindByReportId(Long reportId){
+    public ClientBehindEntity getClientBehindByReportId(Long reportId){
         return clientBehindRepository.findByReportId(reportId);
     }
 

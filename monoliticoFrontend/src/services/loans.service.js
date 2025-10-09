@@ -33,4 +33,9 @@ const calculateCost = id => {
     return httpClient.get(`/api/loans/calculate/cost/${id}`);
 }
 
-export default { getAll, get, create, newLoan, returnLoan, update, remove, calculateCost};
+// Send the full loan object in the request body so backend can validate dates
+const chechDates = data => {
+    return httpClient.post('/api/loans/checkdates', data);
+}
+
+export default { getAll, get, create, newLoan, returnLoan, update, remove, calculateCost, chechDates};

@@ -146,15 +146,14 @@ public class LoansService {
 
     // verify date of loan
     public boolean checkDates(LoansEntity loan) {
-        //formating the delivery date
-        //formating the delivery date
-        LocalDate localDate1 = loan.getDeliveryDate().toLocalDate();
+        // Fecha actual
+        LocalDate today = LocalDate.now();
 
         //formating the return date
 
-        LocalDate localDate2 = loan.getReturnDate().toLocalDate();
+        LocalDate localDate = loan.getReturnDate().toLocalDate();
 
-        long dias = ChronoUnit.DAYS.between(localDate1, localDate2);
+        long dias = ChronoUnit.DAYS.between(today, localDate);
         //if the differrence is negative it means the loan is late
         //therefore, the client has at least 1 loan behind
         if (dias < 0) {

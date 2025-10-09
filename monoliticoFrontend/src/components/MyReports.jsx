@@ -113,7 +113,7 @@ const MyReports = () => {
                           variant="contained"
                           color="primary"
                           size="small"
-                          onClick={() => navigate(`/viewreports/${report.reportId}`)}
+                          onClick={() => navigate(`/viewclientbehind/${report.reportId}`)}
                           style={{ marginLeft: "0.5rem" }}
                           startIcon={<VisibilityIcon />}
                         >

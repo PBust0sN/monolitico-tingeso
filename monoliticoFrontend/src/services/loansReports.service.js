@@ -16,4 +16,7 @@ const getAllByReportId = id => {
     return httpClient.get(`/api/loansReport/${id}`);
 }
 
-export default { getAll, create, remove, getAllByReportId};
+const getById = id => {
+    return httpClient.get(`/api/loansReport/getbyid/${id}`);   
+}
+export default { getAll, create, remove, getAllByReportId, getById};

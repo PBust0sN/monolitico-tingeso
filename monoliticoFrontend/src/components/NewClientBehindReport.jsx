@@ -53,13 +53,15 @@ const NewClientBehindReport = () => {
       const clientBehindRes = await clientBehindService.create(clientBehindPayload);
       const clientBehindId = clientBehindRes.data?.clientIdBehind;
 
-      // 5. por cada préstamo, si returnDate < deliveryDate, guardar en loansReport
+      // 5. por cada préstamo, verificar con el endpoint chechDates (devuelve true si está al día, false si está atrasado)
       for (const l of loansList) {
-        const delivery = l.deliveryDate ? new Date(l.deliveryDate) : null;
-        const ret = l.returnDate ? new Date(l.returnDate) : null;
-        const isNegative = delivery && ret && (ret.getTime() - delivery.getTime() < 0);
-        console.log({ delivery, ret, isNegative });
-        if (isNegative) {
+        // llamamos al endpoint enviando el loan completo en el body
+        const checkRes = await loansService.chechDates(l);
+        // el backend nos debe devolver un booleano en res.data
+        const onTime = Boolean(checkRes.data);
+
+        // si onTime === false => está atrasado -> crear loanReport y link
+        if (!onTime) {
           const loanReportRes = await loansReportsService.create({
             reportId: reportId,
             clientIdBehind: clientBehindId,
