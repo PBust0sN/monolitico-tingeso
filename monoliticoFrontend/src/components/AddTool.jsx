@@ -16,10 +16,76 @@ const AddTool = () => {
   const [loanFee, setLoanFee] = useState("");
   const [repositionFee, setRepositionFee] = useState("");
   const [diaryFineFee, setDiaryFineFee] = useState("");
+  const [stock, setStock] = useState("");
   const navigate = useNavigate();
+
+  // Lista y estados de errores
+  const [errorsList, setErrorsList] = useState([]);
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  const validateFields = () => {
+    const errors = [];
+    const fErrors = {};
+
+    if (!toolName || !toolName.trim()) {
+      errors.push("Tool Name es obligatorio.");
+      fErrors.toolName = true;
+    }
+
+    if (!category || !category.trim()) {
+      errors.push("Category es obligatorio.");
+      fErrors.category = true;
+    }
+
+    if (!disponibility || !disponibility.trim()) {
+      errors.push("Disponibility es obligatorio.");
+      fErrors.disponibility = true;
+    }
+
+    if (!initialState || !initialState.trim()) {
+      errors.push("Initial State es obligatorio.");
+      fErrors.initialState = true;
+    }
+
+    const loanFeeNum = Number(loanFee);
+    if (loanFee === "" || Number.isNaN(loanFeeNum) || loanFeeNum < 0) {
+      errors.push("Loan Fee debe ser un número >= 0.");
+      fErrors.loanFee = true;
+    }
+
+    const repositionFeeNum = Number(repositionFee);
+    if (repositionFee === "" || Number.isNaN(repositionFeeNum) || repositionFeeNum < 0) {
+      errors.push("Reposition Fee debe ser un número >= 0.");
+      fErrors.repositionFee = true;
+    }
+
+    const diaryFineFeeNum = Number(diaryFineFee);
+    if (diaryFineFee === "" || Number.isNaN(diaryFineFeeNum) || diaryFineFeeNum < 0) {
+      errors.push("Diary Fine Fee debe ser un número >= 0.");
+      fErrors.diaryFineFee = true;
+    }
+
+    const stockNum = Number(stock);
+    if (stock === "" || Number.isNaN(stockNum) || !Number.isInteger(stockNum) || stockNum < 0) {
+      errors.push("Stock debe ser un entero >= 0.");
+      fErrors.stock = true;
+    }
+
+    return { errors, fErrors };
+  };
 
   const saveTool = (e) => {
     e.preventDefault();
+
+    const { errors, fErrors } = validateFields();
+    setErrorsList(errors);
+    setFieldErrors(fErrors);
+
+    if (errors.length > 0) {
+      window.alert(errors.join("\n"));
+      return;
+    }
+
     const tool = {
       tool_name: toolName,
       category,
@@ -28,7 +94,9 @@ const AddTool = () => {
       reposition_fee: Number(repositionFee),
       initial_state: initialState,
       disponibility: disponibility,
+      stock: Number(stock),
     };
+
     console.log(tool);
     toolsService
       .create(tool)
@@ -78,8 +146,8 @@ const AddTool = () => {
             minWidth: 350,
             maxWidth: 450,
             width: "90%",
-            background: "rgba(255,255,255,0.85)", // Cambia aquí el color/transparencia
-            color: "#222", // Cambia aquí el color del texto
+            background: "rgba(255,255,255,0.85)",
+            color: "#222",
           }}
         >
           <Box
@@ -91,6 +159,26 @@ const AddTool = () => {
           >
             <h3>Nueva Herramienta</h3>
             <hr />
+
+            {/* Lista de errores */}
+            {errorsList.length > 0 && (
+              <Box
+                sx={{
+                  width: "100%",
+                  mb: 2,
+                  p: 1,
+                  borderRadius: 1,
+                  backgroundColor: "rgba(255,200,200,0.9)",
+                }}
+              >
+                <ul style={{ margin: 0, paddingLeft: "1rem", color: "#700" }}>
+                  {errorsList.map((err, idx) => (
+                    <li key={idx}>{err}</li>
+                  ))}
+                </ul>
+              </Box>
+            )}
+
             <FormControl fullWidth sx={{ mb: 2 }}>
               <TextField
                 id="toolName"
@@ -99,6 +187,7 @@ const AddTool = () => {
                 variant="standard"
                 onChange={(e) => setToolName(e.target.value)}
                 helperText="Ej. Martillo"
+                error={!!fieldErrors.toolName}
               />
             </FormControl>
 
@@ -109,6 +198,7 @@ const AddTool = () => {
                 value={category}
                 variant="standard"
                 onChange={(e) => setCategory(e.target.value)}
+                error={!!fieldErrors.category}
               />
             </FormControl>
 
@@ -119,6 +209,7 @@ const AddTool = () => {
                 value={disponibility}
                 variant="standard"
                 onChange={(e) => setDisponibility(e.target.value)}
+                error={!!fieldErrors.disponibility}
               />
             </FormControl>
 
@@ -129,6 +220,7 @@ const AddTool = () => {
                 value={initialState}
                 variant="standard"
                 onChange={(e) => setInitialState(e.target.value)}
+                error={!!fieldErrors.initialState}
               />
             </FormControl>
 
@@ -140,6 +232,7 @@ const AddTool = () => {
                 value={loanFee}
                 variant="standard"
                 onChange={(e) => setLoanFee(e.target.value)}
+                error={!!fieldErrors.loanFee}
               />
             </FormControl>
 
@@ -151,6 +244,7 @@ const AddTool = () => {
                 value={repositionFee}
                 variant="standard"
                 onChange={(e) => setRepositionFee(e.target.value)}
+                error={!!fieldErrors.repositionFee}
               />
             </FormControl>
 
@@ -162,6 +256,19 @@ const AddTool = () => {
                 value={diaryFineFee}
                 variant="standard"
                 onChange={(e) => setDiaryFineFee(e.target.value)}
+                error={!!fieldErrors.diaryFineFee}
+              />
+            </FormControl>
+
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <TextField
+                id="stock"
+                label="Stock"
+                type="number"
+                value={stock}
+                variant="standard"
+                onChange={(e) => setStock(e.target.value)}
+                error={!!fieldErrors.stock}
               />
             </FormControl>
 
