@@ -110,7 +110,7 @@ const ToolList = () => {
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <TableCell colSpan={10} align="center">
+                <TableCell colSpan={11} align="center">
                   <Typography variant="h5" sx={{ color: "black", fontWeight: "bold" }}>
                     Listado de Herramientas
                   </Typography>
@@ -118,7 +118,7 @@ const ToolList = () => {
               </TableRow> 
               {/* Fila de búsqueda y botón */}
               <TableRow>
-                <TableCell colSpan={8} align="left">
+                <TableCell colSpan={9} align="left">
                   <TextField
                     variant="outlined"
                     placeholder="Buscar herramienta Por Nombre..."
@@ -185,6 +185,9 @@ const ToolList = () => {
                   stock
                 </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
+                  low dmg fee
+                </TableCell>
+                <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Acciones
                 </TableCell>
               </TableRow>
@@ -204,6 +207,7 @@ const ToolList = () => {
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.diary_fine_fee}</TableCell>
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.initial_state}</TableCell>
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.stock}</TableCell>
+                  <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.low_dmg_fee}</TableCell>
                   <TableCell>
                     <Button
                       variant="contained"

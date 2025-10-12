@@ -20,8 +20,7 @@ const estadosHerramienta = [
   "Bueno",
   "Regular",
   "Malo",
-  "Reparación",
-  "Extraviada"
+  "Dañada"
 ];
 
 const PreReturnLoan = () => {
@@ -83,15 +82,18 @@ const PreReturnLoan = () => {
 
       const loanObj = await loansService.get(loan_id).then(res => res.data);
 
-      await loansService.returnLoan(loanObj);
+      const res = await loansService.returnLoan(loanObj);
+
+      console.log("ReturnLoanDTO: ", res.data);
 
       console.log(`Préstamo ${loan_id} marcado como devuelto`);
+
+      navigate(`${window.location.pathname}/summary`, { state: { returnLoanData: res.data } });
+      
     } catch (err) {
       console.error("Error al actualizar estado de herramienta:", err);
       window.alert("No se pudo actualizar el estado de la herramienta.");
     }
-    
-    navigate(`${window.location.pathname}/summary`);
 
   };
 

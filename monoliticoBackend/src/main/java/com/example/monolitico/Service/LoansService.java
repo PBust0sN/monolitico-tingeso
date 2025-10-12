@@ -1,13 +1,12 @@
 package com.example.monolitico.Service;
 
-import com.example.monolitico.DTO.CalculateCostDTO;
+import com.example.monolitico.DTO.ReturnLoanDTO;
 import com.example.monolitico.Entities.*;
 import com.example.monolitico.Repositories.LoansRepository;
 import com.example.monolitico.Repositories.ToolsLoansRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.tools.Tool;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -163,22 +162,20 @@ public class LoansService {
         return true;
     }
 
-    public Optional<LoansEntity> returnLoan(LoansEntity loansEntity) {
+    public ReturnLoanDTO returnLoan(LoansEntity loansEntity) {
         // first we calculate the costs
-        CalculateCostDTO loanCost = calculateCosts(loansEntity.getLoanId());
+        ReturnLoanDTO loanCost = calculateCosts(loansEntity.getLoanId());
         System.out.println("1");
-        // we set date and the extra costs
-        LocalDateTime date = LocalDateTime.now();
-        loansEntity.setDate(Date.valueOf(date.toLocalDate()));
 
         //NOTE: the extra chargues only account for the repo ammount other costs
         //are held by fines
-        loansEntity.setExtraCharges(loanCost.getFineAmount() + loanCost.getRepoAmount());
+        loansEntity.setExtraCharges(loanCost.getRepoAmount()+loanCost.getFineAmount());
 
         // then create a record
         RecordsEntity record = new RecordsEntity();
         record.setRecordType("Return");
-        record.setRecordAmount(loanCost.getFineAmount() + loanCost.getRepoAmount());
+        record.setRecordAmount(loanCost.getRepoAmount()+loanCost.getFineAmount());
+        LocalDateTime date = LocalDateTime.now();
         record.setRecordDate(Date.valueOf(date.toLocalDate()));
         record.setLoanId(loansEntity.getLoanId());
         record.setClientId(loansEntity.getClientId());
@@ -190,9 +187,7 @@ public class LoansService {
             ToolsEntity toolsEntity = toolsService.getToolsById(toolId);
 
             if ("Dañada".equals(toolsEntity.getDisponibility())) {
-                toolsEntity.setInitialState("En reparacion");
-            } else {
-                toolsEntity.setInitialState("Disponible");
+                toolsEntity.setInitialState("Bueno");
             }
             toolsService.updateTool(toolsEntity);
         }
@@ -200,48 +195,34 @@ public class LoansService {
         // save loan
         //once is return the loan isnt active no more
         loansEntity.setActive(false);
-        return saveLoan(loansEntity);
+        Optional<LoansEntity> returnLoan = saveLoan(loansEntity);
+        loanCost.setLoan(returnLoan.get());
+        return loanCost;
     }
 
-    public CalculateCostDTO calculateCosts(Long loanId) {
-        CalculateCostDTO dto = new CalculateCostDTO();
-        Long repoAmount = 0L;
-        Long fineAmount = 0L;
-        Long devolution = 0L;
+    public ReturnLoanDTO calculateCosts(Long loanId) {
+        ReturnLoanDTO dto = new ReturnLoanDTO();
+        ReturnLoanDTO dto1 = new ReturnLoanDTO();
+        ReturnLoanDTO dto2 = new ReturnLoanDTO();
 
         Optional<LoansEntity> loan = loansRepository.findById(loanId);
         if (reamaningDaysOnLoan(loanId) > 0) {
-            repoAmount = calculateRepoFine(loanId, loan.get().getClientId());
-            devolution = calculateReturnPayment(loanId);
-        } else if (reamaningDaysOnLoan(loanId) < 0) {
-            fineAmount = calculateFine(loanId);
-            repoAmount = calculateRepoFine(loanId, loan.get().getClientId());
+            dto2 = calculateRepoFine(loanId, loan.get().getClientId());
+        }if (reamaningDaysOnLoan(loanId) < 0) {
+            dto1 = calculateFine(loanId, loan.get().getClientId());
+            dto2 = calculateRepoFine(loanId, loan.get().getClientId());
+            dto.setFineAmount(dto1.getFineAmount());
+            dto.setFine(dto1.getFine());
         }
-        if(devolution - repoAmount >0){
-            dto.setReturnPayment(devolution - repoAmount);
-        }else{
-            dto.setReturnPayment(0L);
-        }
-        dto.setRepoAmount(repoAmount);
-        dto.setFineAmount(fineAmount);
+        dto.setRepoAmount(dto2.getRepoAmount());
+        dto.setRepoFine(dto2.getRepoFine());
+        dto.setFineAmount(0L);
         return dto;
     }
 
-    public Long calculateReturnPayment(Long id){
-        if(reamaningDaysOnLoan(id)>0){
-            //we need to get all the tools in the loan
-            List<Long> tools = toolsLoansRepository.findByLoanId(id);
-            Long amount = 0L;
 
-            for(Long toolId : tools){
-                amount += reamaningDaysOnLoan(id) * toolsService.getToolsById(toolId).getDiaryFineFee();
-            }
-            return amount;
-        }
-        return 0L;
-    }
-
-    public Long calculateRepoFine(Long id, Long clientId){
+    public ReturnLoanDTO calculateRepoFine(Long id, Long clientId){
+        ReturnLoanDTO dto = new ReturnLoanDTO();
         List<Long> tools = toolsLoansRepository.findByLoanId(id);
         Long repofine = 0L;
         for(Long toolId : tools){
@@ -260,8 +241,12 @@ public class LoansService {
             newFine.setDate(Date.valueOf(date.toLocalDate()));
             newFine.setLoanId(id);
             fineService.saveFine(newFine);
+
+            dto.setRepoAmount(repofine);
+            dto.setRepoFine(newFine);
         }
-        return repofine;
+        dto.setRepoAmount(0L);
+        return dto;
     }
 
     //verify that the loan ins't returned before its return date
@@ -286,7 +271,8 @@ public class LoansService {
 
 
     //calculateFine
-    public Long calculateFine(Long id){
+    public ReturnLoanDTO calculateFine(Long id, Long clientId){
+        ReturnLoanDTO dto = new ReturnLoanDTO();
         if(reamaningDaysOnLoan(id)<0){
             //if its return after, them we calculate the fine
             //we need to get all the tools in the loan
@@ -299,9 +285,24 @@ public class LoansService {
                 //multiply by -1 because if the loan is behind in days, those are going to be negative
                 fine += -1 * reamaningDaysOnLoan(id) * toolsService.getToolsById(toolId).getDiaryFineFee();
             }
-            return fine;
+
+            if(fine > 0) {
+                FineEntity newFine = new FineEntity();
+                newFine.setState("pendiente");
+                newFine.setAmount(fine);
+                newFine.setType("behind fine");
+                newFine.setClientId(clientId);
+                LocalDateTime date = LocalDateTime.now();
+                newFine.setDate(Date.valueOf(date.toLocalDate()));
+                newFine.setLoanId(id);
+                fineService.saveFine(newFine);
+
+                dto.setFineAmount(fine);
+                dto.setFine(newFine);
+            }
         }
-        return 0L;
+        dto.setFineAmount(0L);
+        return dto;
     }
 
     //get a loan by its id field

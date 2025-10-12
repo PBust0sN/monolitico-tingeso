@@ -18,6 +18,7 @@ const AddTool = () => {
   const [repositionFee, setRepositionFee] = useState("");
   const [diaryFineFee, setDiaryFineFee] = useState("");
   const [stock, setStock] = useState("");
+  const [lowDmgFee, setLowDmgFee] = useState("");
   const navigate = useNavigate();
 
   // Lista y estados de errores
@@ -60,6 +61,17 @@ const AddTool = () => {
       fErrors.repositionFee = true;
     }
 
+    const lowDmgFeeNum = Number(lowDmgFee);
+    if (
+      lowDmgFee === "" ||
+      Number.isNaN(lowDmgFeeNum) ||
+      lowDmgFeeNum <= 0 ||
+      (repositionFee !== "" && !Number.isNaN(repositionFeeNum) && lowDmgFeeNum >= repositionFeeNum)
+    ) {
+      errors.push("Low Dmg Fee debe ser un número > 0 y menor que Reposition Fee.");
+      fErrors.lowDmgFee = true;
+    }
+
     const diaryFineFeeNum = Number(diaryFineFee);
     if (diaryFineFee === "" || Number.isNaN(diaryFineFeeNum) || diaryFineFeeNum < 0) {
       errors.push("Diary Fine Fee debe ser un número >= 0.");
@@ -96,6 +108,7 @@ const AddTool = () => {
       initial_state: initialState,
       disponibility: disponibility,
       stock: Number(stock),
+      low_dmg_fee: Number(lowDmgFee),
     };
 
     try {
@@ -256,6 +269,19 @@ const AddTool = () => {
                 variant="standard"
                 onChange={(e) => setRepositionFee(e.target.value)}
                 error={!!fieldErrors.repositionFee}
+              />
+            </FormControl>
+
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <TextField
+                id="lowDmgFee"
+                label="Low Dmg Fee"
+                type="number"
+                value={lowDmgFee}
+                variant="standard"
+                onChange={(e) => setLowDmgFee(e.target.value)}
+                error={!!fieldErrors.lowDmgFee}
+                helperText="Debe ser > 0 y menor que Reposition Fee"
               />
             </FormControl>
 

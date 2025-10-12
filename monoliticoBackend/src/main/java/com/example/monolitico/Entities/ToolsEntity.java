@@ -35,4 +35,6 @@ public class ToolsEntity {
     private Long stock;
     @JsonProperty("loan_count")
     private Long loanCount;
+    @JsonProperty("low_dmg_fee")
+    private Long lowDmgFee;
 }

@@ -1,9 +1,8 @@
 package com.example.monolitico.Controller;
 
-import com.example.monolitico.DTO.CalculateCostDTO;
+import com.example.monolitico.DTO.ReturnLoanDTO;
 import com.example.monolitico.DTO.NewLoanDTO;
 import com.example.monolitico.Entities.LoansEntity;
-import com.example.monolitico.Entities.LoansReportEntity;
 import com.example.monolitico.Service.LoansService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -61,14 +60,14 @@ public class LoansController {
     }
 
     @PostMapping("/return")
-    public ResponseEntity<Optional<LoansEntity>> returnLoan(@RequestBody LoansEntity loan){
-        Optional<LoansEntity> returN = loansService.returnLoan(loan);
+    public ResponseEntity<ReturnLoanDTO> returnLoan(@RequestBody LoansEntity loan){
+        ReturnLoanDTO returN = loansService.returnLoan(loan);
         return ResponseEntity.ok(returN);
     }
 
     @GetMapping("/calculate/cost/{id}")
-    public ResponseEntity<CalculateCostDTO> calculateLoanCost(@PathVariable Long id){
-        CalculateCostDTO cost = loansService.calculateCosts(id);
+    public ResponseEntity<ReturnLoanDTO> calculateLoanCost(@PathVariable Long id){
+        ReturnLoanDTO cost = loansService.calculateCosts(id);
         return ResponseEntity.ok(cost);
     }
     @PostMapping("/checkdates")
