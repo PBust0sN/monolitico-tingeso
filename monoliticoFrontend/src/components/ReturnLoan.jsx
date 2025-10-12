@@ -19,7 +19,7 @@ import TextField from "@mui/material/TextField";
 const ReturnLoan = () => {
     const location = useLocation();
     const returnLoanData = location.state?.returnLoanData;
-
+    const navigate = useNavigate();
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
@@ -152,6 +152,40 @@ const ReturnLoan = () => {
             </Paper>
           </Box>
         </Paper>
+
+        {/* Frame de costos por desgaste */}
+        <Paper sx={{ p: 3, mb: 2, minWidth: 1000, maxWidth: 2000, width: "90%", textAlign: "justify" }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>
+            Se agregaron costos por desgaste a las siguientes herramientas:
+          </Typography>
+          {Array.isArray(returnLoanData?.tools) && returnLoanData.tools.length > 0 ? (
+            <Box>
+              <ul>
+                {returnLoanData.tools.map((toolName, idx) => (
+                  <li key={idx} style={{ textAlign: "justify" }}>{toolName}</li>
+                ))}
+              </ul>
+              <Typography sx={{ mt: 2, textAlign: "justify" }}>
+                <b>Total por desgaste:</b> {returnLoanData.lowDmgAmount}
+              </Typography>
+            </Box>
+          ) : (
+            <Typography sx={{ textAlign: "justify" }}>
+              No se agregaron costos por desgaste.
+            </Typography>
+          )}
+        </Paper>
+
+        {/* Botón para volver a Home */}
+        <Box sx={{ mt: 4, mb: 4 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/home")}
+          >
+            Ir a Home
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

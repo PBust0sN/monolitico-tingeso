@@ -44,9 +44,10 @@ const ListLoanId = () => {
       });
   }, []);
 
-  // Filtrar por client_id y por búsqueda
+  // Filtrar por client_id, búsqueda y solo préstamos activos
   const filteredLoans = loans
     .filter(loan => String(loan.clientId) === String(client_id))
+    .filter(loan => loan.active === true)
     .filter(loan =>
       (loan.loanType || "").toLowerCase().includes(search.toLowerCase())
     );

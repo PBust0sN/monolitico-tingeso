@@ -166,31 +166,39 @@ public class LoansService {
         // first we calculate the costs
         ReturnLoanDTO loanCost = calculateCosts(loansEntity.getLoanId());
         System.out.println("1");
-
-        //NOTE: the extra chargues only account for the repo ammount other costs
-        //are held by fines
-        loansEntity.setExtraCharges(loanCost.getRepoAmount()+loanCost.getFineAmount());
-
-        // then create a record
-        RecordsEntity record = new RecordsEntity();
-        record.setRecordType("Return");
-        record.setRecordAmount(loanCost.getRepoAmount()+loanCost.getFineAmount());
-        LocalDateTime date = LocalDateTime.now();
-        record.setRecordDate(Date.valueOf(date.toLocalDate()));
-        record.setLoanId(loansEntity.getLoanId());
-        record.setClientId(loansEntity.getClientId());
-        recordsServices.saveRecord(record);
-
+        List<String> toolslist = new ArrayList<>();
+        loanCost.setLowDmgAmount(0L);
+        loanCost.setTools(toolslist);
         // we have to update the tools state
         List<Long> toolsId = toolsLoansRepository.findByLoanId(loansEntity.getLoanId());
         for (Long toolId : toolsId) {
             ToolsEntity toolsEntity = toolsService.getToolsById(toolId);
 
-            if ("Dañada".equals(toolsEntity.getDisponibility())) {
+            if ("Dañada".equals(toolsEntity.getInitialState())) {
                 toolsEntity.setInitialState("Bueno");
+            }else if("Malo".equals(toolsEntity.getInitialState())){
+                toolsEntity.setInitialState("Bueno");
+                List<String> tools = loanCost.getTools();
+                tools.add(toolsEntity.getToolName());
+                loanCost.setTools(tools);
+                Long lowDmgAmount = loanCost.getLowDmgAmount();
+                loanCost.setLowDmgAmount(lowDmgAmount+toolsEntity.getLowDmgFee());
             }
             toolsService.updateTool(toolsEntity);
         }
+        //NOTE: the extra chargues only account for the repo ammount other costs
+        //are held by fines
+        loansEntity.setExtraCharges(loanCost.getRepoAmount()+loanCost.getFineAmount()+loanCost.getLowDmgAmount());
+
+        // then create a record
+        RecordsEntity record = new RecordsEntity();
+        record.setRecordType("Return");
+        record.setRecordAmount(loanCost.getRepoAmount()+loanCost.getFineAmount()+loanCost.getLowDmgAmount());
+        LocalDateTime date = LocalDateTime.now();
+        record.setRecordDate(Date.valueOf(date.toLocalDate()));
+        record.setLoanId(loansEntity.getLoanId());
+        record.setClientId(loansEntity.getClientId());
+        recordsServices.saveRecord(record);
 
         // save loan
         //once is return the loan isnt active no more

@@ -24,9 +24,12 @@ const LoanList = () => {
   const [loans, setLoans] = useState([]);
   const [search, setSearch] = useState("");
 
-  const filteredLoans = loans.filter(loan =>
-  (loan.loanType || "").toLowerCase().includes(search.toLowerCase())
-);
+  // Solo préstamos activos y filtro por tipo
+  const filteredLoans = loans
+    .filter(loan => loan.active === true)
+    .filter(loan =>
+      (loan.loanType || "").toLowerCase().includes(search.toLowerCase())
+    );
 
   const navigate = useNavigate();
 
