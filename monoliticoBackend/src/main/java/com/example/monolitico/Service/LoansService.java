@@ -211,12 +211,13 @@ public class LoansService {
         }if (reamaningDaysOnLoan(loanId) < 0) {
             dto1 = calculateFine(loanId, loan.get().getClientId());
             dto2 = calculateRepoFine(loanId, loan.get().getClientId());
-            dto.setFineAmount(dto1.getFineAmount());
-            dto.setFine(dto1.getFine());
+        }else{
+
         }
         dto.setRepoAmount(dto2.getRepoAmount());
         dto.setRepoFine(dto2.getRepoFine());
-        dto.setFineAmount(0L);
+        dto.setFineAmount(dto1.getFineAmount());
+        dto.setFine(dto1.getFine());
         return dto;
     }
 
@@ -244,25 +245,24 @@ public class LoansService {
 
             dto.setRepoAmount(repofine);
             dto.setRepoFine(newFine);
+        }else {
+            dto.setRepoAmount(0L);
         }
-        dto.setRepoAmount(0L);
         return dto;
     }
 
     //verify that the loan ins't returned before its return date
     public Long reamaningDaysOnLoan(Long id){
         LoansEntity loan = loansRepository.findById(id).get();
-        //formating the delivery date
-        String deliveryDate = loan.getDeliveryDate().toString();
-        Date sqlDate1 = Date.valueOf(deliveryDate);
-        LocalDate localDate1 = sqlDate1.toLocalDate();
+
+        LocalDate date = LocalDate.now();
 
         //formating the return date
         String returnDate = loan.getReturnDate().toString();
         Date sqlDate2 = Date.valueOf(returnDate);
         LocalDate localDate2 = sqlDate2.toLocalDate();
 
-        long dias = ChronoUnit.DAYS.between(localDate1, localDate2);
+        long dias = ChronoUnit.DAYS.between(date, localDate2);
         //if the differrence is negative it means the loan is late
         //therefore, the client has at least 1 day behind
         return dias;
@@ -299,9 +299,11 @@ public class LoansService {
 
                 dto.setFineAmount(fine);
                 dto.setFine(newFine);
+            }else{
+                dto.setFineAmount(0L);
             }
         }
-        dto.setFineAmount(0L);
+
         return dto;
     }
 
