@@ -7,6 +7,7 @@ import FormControl from "@mui/material/FormControl";
 import SaveIcon from "@mui/icons-material/Save";
 import toolsService from "../services/tools.service";
 import Paper from "@mui/material/Paper";
+import MenuItem from "@mui/material/MenuItem";
 
 const AddTool = () => {
   const [category, setCategory] = useState("");
@@ -74,7 +75,7 @@ const AddTool = () => {
     return { errors, fErrors };
   };
 
-  const saveTool = (e) => {
+  const saveTool = async (e) => {
     e.preventDefault();
 
     const { errors, fErrors } = validateFields();
@@ -88,7 +89,7 @@ const AddTool = () => {
 
     const tool = {
       tool_name: toolName,
-      category,
+      category: category,
       diary_fine_fee: Number(diaryFineFee),
       loan_fee: Number(loanFee),
       reposition_fee: Number(repositionFee),
@@ -97,16 +98,20 @@ const AddTool = () => {
       stock: Number(stock),
     };
 
-    console.log(tool);
-    toolsService
-      .create(tool)
-      .then((response) => {
-        console.log("Herramienta añadida.", response.data);
+    try {
+      const res = await toolsService.create(tool);
+      console.log("Create response:", res);
+      // inspecciona res.status / res.data
+      if (res && (res.status === 200 || res.status === 201)) {
         navigate("/tool/list");
-      })
-      .catch((error) => {
-        console.log("Ha ocurrido un error al intentar crear nueva herramienta.", error);
-      });
+      } else {
+        window.alert("La creación respondió con código: " + (res?.status ?? "unknown"));
+      }
+    } catch (err) {
+      console.error("Error al crear herramienta:", err);
+      // muestra mensaje claro al usuario
+      window.alert("Error al crear herramienta: " + (err?.response?.data || err.message || err));
+    }
   };
 
   return (
@@ -207,10 +212,16 @@ const AddTool = () => {
                 id="disponibility"
                 label="Disponibility"
                 value={disponibility}
+                select
                 variant="standard"
                 onChange={(e) => setDisponibility(e.target.value)}
                 error={!!fieldErrors.disponibility}
-              />
+              >
+                <MenuItem value="disponible">Disponible</MenuItem>
+                <MenuItem value="prestada">Prestada</MenuItem>
+                <MenuItem value="en reparacion">En reparaci&oacute;n</MenuItem>
+                <MenuItem value="dada de baja">Dada de baja</MenuItem>
+              </TextField>
             </FormControl>
 
             <FormControl fullWidth sx={{ mb: 2 }}>

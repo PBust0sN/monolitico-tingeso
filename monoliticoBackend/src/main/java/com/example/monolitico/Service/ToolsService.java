@@ -37,28 +37,27 @@ public class ToolsService {
     public Optional<ToolsEntity> saveTool(ToolsEntity toolsEntity){
         //has to have a name
         if(toolsEntity.getToolName()!=null) {
+            System.out.println("1");
             //has to have category
             if (toolsEntity.getCategory() != null) {
+                System.out.println("2");
                 //has to have a reposition fee
                 if (toolsEntity.getRepositionFee() != null) {
-                    //has to be a valid state
-                    if(Objects.equals(toolsEntity.getInitialState(), "disponible")
-                    || Objects.equals(toolsEntity.getInitialState(), "prestada")
-                    || Objects.equals(toolsEntity.getInitialState(), "en reparacion")
-                    || Objects.equals(toolsEntity.getInitialState(), "dada de baja")){
-                        //generate a new record (records)
-                        RecordsEntity record = new RecordsEntity();
-                        LocalDate diaActual = LocalDate.now();
-                        Date sqlDate = Date.valueOf(diaActual);
-                        record.setRecordDate(sqlDate);
-                        //record_types (registro nuevas herramientas, préstamo, devolución, baja, reparación)
-                        record.setRecordType("registro nuevas herramientas");
-                        record.setToolId(toolsEntity.getToolId());
-                        //save the record
-                        recordservice.saveRecord(record);
-                        //save the tool
-                        return Optional.of(toolsrepository.save(toolsEntity));
-                    }
+                    System.out.println("3");
+                    //has to be a valid state condition is satisfied in the frontend part
+                    System.out.println("4");
+                    //generate a new record (records)
+                    RecordsEntity record = new RecordsEntity();
+                    LocalDate diaActual = LocalDate.now();
+                    Date sqlDate = Date.valueOf(diaActual);
+                    record.setRecordDate(sqlDate);
+                    //record_types (registro nuevas herramientas, préstamo, devolución, baja, reparación)
+                    record.setRecordType("registro nuevas herramientas");
+                    record.setToolId(toolsEntity.getToolId());
+                    //save the record
+                    recordservice.saveRecord(record);
+                    //save the tool
+                    return Optional.of(toolsrepository.save(toolsEntity));
                 }
             }
         }
