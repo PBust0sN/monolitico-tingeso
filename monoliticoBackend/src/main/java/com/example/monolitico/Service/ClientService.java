@@ -108,5 +108,7 @@ public class ClientService {
         return false;
     }
 
-
+    public ClientEntity findByRut (String rut){
+        return clientRepository.findByRut(rut);
+    }
 }

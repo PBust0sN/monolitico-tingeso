@@ -50,4 +50,11 @@ public class ClientController {
         var isDeleted = clientService.deleteClient(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @GetMapping("/getbyrut/{rut}")
+    public ResponseEntity<ClientEntity> getClientByRut(@PathVariable String rut){
+        ClientEntity client = clientService.findByRut(rut);
+        return ResponseEntity.ok(client);
+    }
 }

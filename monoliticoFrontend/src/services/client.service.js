@@ -21,4 +21,9 @@ const remove = id => {
     );
 }
 
-export default { getAll, get, create, update, remove};
+const getByRut = rut => {
+    return httpClient.get(`/api/clients/getbyrut/${rut}`);
+};
+
+
+export default { getAll, get, create, update, remove, getByRut};
