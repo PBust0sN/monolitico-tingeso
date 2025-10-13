@@ -14,6 +14,7 @@ public interface ToolsLoansRepository extends JpaRepository<ToolsLoansEntity, Lo
 
     @Query(value = "SELECT tool_id FROM tools_loans WHERE loan_id = :loanId", nativeQuery = true)
     public List<Long> findByLoanId(@Param("loanId") Long loanId);
+    @Query(value = "SELECT loan_id FROM tools_loans WHERE tool_id = :toolId", nativeQuery = true)
     public List<Long> findByToolId(Long toolId);
 
     @Transactional

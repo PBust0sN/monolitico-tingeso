@@ -4,6 +4,7 @@ import com.example.monolitico.DTO.ReturnLoanDTO;
 import com.example.monolitico.Entities.*;
 import com.example.monolitico.Repositories.LoansRepository;
 import com.example.monolitico.Repositories.ToolsLoansRepository;
+import com.sun.jdi.LongValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -123,9 +124,12 @@ public class LoansService {
             ToolsEntity tool = toolsService.getToolsById(tool_id);
 
             //is the tool loaned to much?
-
-
-            
+            //the criteria: if a tool is present in more than the actual stock, then
+            //the tool cant be loan
+            Long loanNumber = Long.valueOf(toolsLoansService.getLoansIDsByToolId(tool_id).size());
+            if(loanNumber>=tool.getStock()){
+                errors.add("Too many " + tool.getToolName() + " are loan, cant loan more.");
+            }
 
             if(tool.getStock()<=0){
                 errors.add("Tool " + tool.getToolName() + " isnt in stock.");
@@ -268,6 +272,15 @@ public class LoansService {
         for(Long toolId : tools){
             if(toolsService.getToolsById(toolId).getInitialState().equals("Dañada")) {
                 repofine += toolsService.getToolsById(toolId).getRepositionFee();
+
+                //record to the cardex of a damaged tool
+                RecordsEntity record = new RecordsEntity();
+                record.setRecordType("DownTool");
+                record.setRecordAmount(toolsService.getToolsById(toolId).getRepositionFee());
+                record.setClientId(clientId);
+                record.setLoanId(id);
+                record.setRecordDate(Date.valueOf(LocalDate.now()));
+                recordsServices.saveRecord(record);
             }
         }
 

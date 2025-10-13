@@ -10,29 +10,35 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Box from "@mui/material/Box"; // <-- Agrega esto si no lo tienes
+import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
 import recordsService from "../services/records.service";
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import MenuItem from "@mui/material/MenuItem";
+import toolsService from "../services/tools.service";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const RecordList = () => {
   const [records, setRecords] = useState([]);
-  const [search, setSearch] = useState("");
-
-  const filteredRecord = records.filter(record =>
-  (record.recordType || "").toLowerCase().includes(search.toLowerCase())
-);
+  const [tools, setTools] = useState([]);
+  const [selectedTool, setSelectedTool] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [filteredRecord, setFilteredRecord] = useState([]);
 
   const navigate = useNavigate();
 
-  const init = () => {
+  useEffect(() => {
     recordsService
       .getAll()
       .then((response) => {
         setRecords(response.data);
+        setFilteredRecord(response.data);
       })
       .catch((error) => {
         console.log(
@@ -40,21 +46,48 @@ const RecordList = () => {
           error
         );
       });
-  };
 
-  useEffect(() => {
-    init();
+    toolsService
+      .getAll()
+      .then((response) => {
+        setTools(response.data);
+      })
+      .catch((error) => {
+        console.log("Error al obtener herramientas", error);
+      });
   }, []);
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return "";
-  const date = new Date(dateStr.length === 10 ? dateStr + "T00:00:00Z" : dateStr);
-  if (isNaN(date)) return dateStr;
-  const day = String(date.getUTCDate()).padStart(2, "0");
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const year = date.getUTCFullYear();
-  return `${day}/${month}/${year}`;
-};
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr.length === 10 ? dateStr + "T00:00:00Z" : dateStr);
+    if (isNaN(date)) return dateStr;
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  // Handler de búsqueda avanzada
+  const handleSearch = () => {
+    let filtered = [...records];
+    if (selectedTool) {
+      filtered = filtered.filter(r => String(r.toolName) === String(selectedTool));
+    }
+    if (startDate) {
+      filtered = filtered.filter(r => {
+        const recordDate = new Date(r.recordDate);
+        return recordDate >= startDate;
+      });
+    }
+    if (endDate) {
+      filtered = filtered.filter(r => {
+        const recordDate = new Date(r.recordDate);
+        return recordDate <= endDate;
+      });
+    }
+    setFilteredRecord(filtered);
+  };
+
 
 
   return (
@@ -100,39 +133,92 @@ const formatDate = (dateStr) => {
                   </Typography>
                 </TableCell>
               </TableRow> 
-              {/* Fila de búsqueda y botón */}
-              <TableRow>
-                <TableCell colSpan={6} align="left">
-                  <TextField
-                    variant="outlined"
-                    placeholder="Buscar Record Por Tipo..."
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    sx={{ width: 350, background: "white", borderRadius: 1 }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                      sx: { height: 43 }
-                    }}
-                    inputProps={{
-                      style: { height: 43, boxSizing: "border-box" }
-                    }}
-                  />
-                </TableCell>
-                <TableCell colSpan={2} align="right">
+              {/* Fila de búsqueda avanzada */}
+              <TableRow sx={{ '& .MuiTableCell-root': { paddingTop: 1, paddingBottom: 1 } }}>
+                <TableCell colSpan={6} sx={{ py: 0 }}>
+                  <Box sx={{ height: 43, display: "flex", gap: 2, alignItems: "center" }}>
+                    {/* Desplegable de herramientas */}
+                    <TextField
+                      select
+                      label="Herramienta"
+                      value={selectedTool}
+                      onChange={e => setSelectedTool(e.target.value)}
+                      sx={{
+                        width: 200,
+                        background: "white",
+                        borderRadius: 1,
+                      }}
+                    >
+                      <MenuItem value="" sx={{ textAlign: 'center' }}>Todas</MenuItem>
+                      {tools.map(tool => (
+                        <MenuItem key={tool.toolId} value={tool.tool_name} sx={{ textAlign: 'center' }}>
+                          {tool.tool_name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                    {/* Calendario de fechas */}
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        label="Fecha inicio"
+                        value={startDate}
+                        onChange={newValue => setStartDate(newValue)}
+                        enableAccessibleFieldDOMStructure={false}
+                        slots={{ textField: TextField }}
+                        slotProps={{
+                          textField: { sx: { width: 160, background: "white", borderRadius: 1} }
+                        }}
+                      />
+                      <DatePicker
+                        sx={{ minWidth: 160 }}
+                        label="Fecha fin"
+                        value={endDate}
+                        onChange={newValue => setEndDate(newValue)}
+                        enableAccessibleFieldDOMStructure={false}
+                        slots={{ textField: TextField }}
+                        slotProps={{
+                          textField: { sx: { width: 160, background: "white", borderRadius: 1 } }
+                        }}
+                      />
+                    </LocalizationProvider>
+                    {/* Botón de búsqueda */}
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => navigate('/record/add')}
-                      startIcon={<CreateNewFolderIcon  />}
-                      size="large"
-                      sx={{ height: 43, minWidth: 180 }}
+                      onClick={handleSearch}
+                      startIcon={<SearchIcon />}
+                      sx={{
+                        height: 56,            // aumentar alto del botón
+                        minWidth: 140,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.95rem',
+                        px: 2
+                      }}
                     >
-                      Nuevo Record
+                      Buscar
                     </Button>
+                  </Box>
+                </TableCell>
+                <TableCell colSpan={2} sx={{ py: 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate('/record/add')}
+                    startIcon={<CreateNewFolderIcon />}
+                    size="large"
+                    sx={{
+                      height: 56,           // aumentar alto del botón
+                      minWidth: 200,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.95rem',
+                      px: 2
+                    }}
+                  >
+                    Nuevo Record
+                  </Button>
                 </TableCell>
               </TableRow>
               {/* Fila de encabezados */}

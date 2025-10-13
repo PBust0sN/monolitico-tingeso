@@ -45,4 +45,8 @@ public class ToolsLoansService {
     public List<Long> getToolsIDsByLoanId(Long id){
         return  toolsLoansRepository.findByLoanId(id);
     }
+
+    public List<Long> getLoansIDsByToolId(Long id){
+        return  toolsLoansRepository.findByToolId(id);
+    }
 }
