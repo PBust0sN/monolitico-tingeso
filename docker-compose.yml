@@ -24,7 +24,7 @@ services:
   backend1:
     build:
       context: ./monoliticoBackend
-      dockerfile: Dockerfile.backend
+      dockerfile: Dockerfile
     environment:
       DB_HOST: mysql
       KEYCLOAK_ISSUER_URI: http://localhost:8080/realms/toolRent
@@ -39,7 +39,7 @@ services:
   backend2:
     build:
       context: ./monoliticoBackend
-      dockerfile: Dockerfile.backend
+      dockerfile: Dockerfile
     environment:
       DB_HOST: mysql
       KEYCLOAK_ISSUER_URI: http://localhost:8080/realms/toolRent
@@ -54,7 +54,7 @@ services:
   backend3:
     build:
       context: ./monoliticoBackend
-      dockerfile: Dockerfile.backend
+      dockerfile: Dockerfile
     environment:
       DB_HOST: mysql
       KEYCLOAK_ISSUER_URI: http://localhost:8080/realms/toolRent
@@ -72,7 +72,7 @@ services:
   frontend:
     build:
       context: ./monoliticoFrontend
-      dockerfile: Dockerfile.frontend
+      dockerfile: Dockerfile
     networks:
       - mynet
 
