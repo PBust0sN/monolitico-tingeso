@@ -4,6 +4,7 @@ import com.example.monolitico.Entities.ToolsReportEntity;
 import com.example.monolitico.Service.ToolsReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,12 +15,14 @@ public class ToolsReportController {
     @Autowired
     private ToolsReportService   toolsReportService;
 
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<ToolsReportEntity> getToolsReportById(@PathVariable Long id){
         ToolsReportEntity tool = toolsReportService.getByToolId(id);
         return ResponseEntity.ok(tool);
     }
 
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
     @PostMapping("/")
     public ResponseEntity<ToolsReportEntity> saveToolsReport(@RequestBody ToolsReportEntity tool){
         ToolsReportEntity newToolReport = toolsReportService.createToolReport(tool);
