@@ -251,16 +251,21 @@ public class LoansService {
         Optional<LoansEntity> loan = loansRepository.findById(loanId);
         if (reamaningDaysOnLoan(loanId) > 0) {
             dto2 = calculateRepoFine(loanId, loan.get().getClientId());
-        }if (reamaningDaysOnLoan(loanId) < 0) {
+        }
+        if (reamaningDaysOnLoan(loanId) < 0) {
             dto1 = calculateFine(loanId, loan.get().getClientId());
             dto2 = calculateRepoFine(loanId, loan.get().getClientId());
-        }else{
-
         }
         dto.setRepoAmount(dto2.getRepoAmount());
         dto.setRepoFine(dto2.getRepoFine());
         dto.setFineAmount(dto1.getFineAmount());
         dto.setFine(dto1.getFine());
+        if(dto2.getRepoAmount()==null){
+            dto.setRepoAmount(0L);
+        }
+        if(dto1.getFineAmount()==null){
+            dto.setFineAmount(0L);
+        }
         return dto;
     }
 
@@ -355,7 +360,9 @@ public class LoansService {
                 dto.setFineAmount(0L);
             }
         }
-
+        if(dto.getFineAmount()==null){
+            dto.setFineAmount(0L);
+        }
         return dto;
     }
 
