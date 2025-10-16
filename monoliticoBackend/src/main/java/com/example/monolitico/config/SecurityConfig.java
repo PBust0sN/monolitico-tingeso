@@ -39,7 +39,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private JwtAuthenticationConverter jwtAuthConverter() {
+    public JwtAuthenticationConverter jwtAuthConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();

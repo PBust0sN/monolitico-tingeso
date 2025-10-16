@@ -112,4 +112,22 @@ class ToolsLoansServiceTest {
         assertEquals(List.of(200L, 201L), result);
         verify(toolsLoansRepository, times(1)).findByToolId(100L);
     }
+
+    @Test
+    void testDeleteToolsLoansThrowsException() {
+        doThrow(new RuntimeException("DB error")).when(toolsLoansRepository).deleteById(1L);
+
+        Exception exception = assertThrows(Exception.class, () -> toolsLoansService.deleteToolsLoans(1L));
+
+        assertEquals("DB error", exception.getMessage());
+        verify(toolsLoansRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testGetToolsLoansByIdNotFound() {
+        when(toolsLoansRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(java.util.NoSuchElementException.class, () -> toolsLoansService.getToolsLoansById(999L));
+        verify(toolsLoansRepository, times(1)).findById(999L);
+    }
 }
