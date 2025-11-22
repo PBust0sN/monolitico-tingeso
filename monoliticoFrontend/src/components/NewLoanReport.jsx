@@ -27,7 +27,7 @@ const  NewLoanReport = () =>{
 		const allLoansRes = await loansService.getAll();
 		const loansList = allLoansRes.data.filter(l => l.clientId === clientId);
 		console.log(loansList);
-		if (loansList.length > 0) {
+		if (loansList.length >= 0) {
 			const reportRes = await reportsService.create({ loanIdReport: true ,
 				clientIdReport: clientId });
 			const reportId = reportRes.data?.reportId ;

@@ -29,6 +29,7 @@ import NewRakingTool from './components/NewRakingTool';
 import ViewRankingReport from './components/ViewRankingReport';
 import NewClientBehindReport from './components/NewClientBehindReport';
 import ViewClientBehindReport from './components/ViewClientBehindReport';
+import ViewReportsById from './components/ViewReportsById';
 
 
 function App() {
@@ -241,6 +242,10 @@ function App() {
           <Route
             path="/viewclientbehind/:reportId"
             element={<PrivateRoute element={<ViewClientBehindReport />} rolesAllowed={["STAFF","ADMIN", "CLIENT"]} />}
+          />
+          <Route
+            path="/reports/:client_id"
+            element={<PrivateRoute element={<ViewReportsById />} rolesAllowed={["STAFF","ADMIN", "CLIENT"]} />}
           />
         </Routes>
 

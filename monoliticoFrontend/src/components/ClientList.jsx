@@ -91,6 +91,7 @@ const ClientList = () => {
     navigate(`/loan/new/${id}`);
   };
 
+
   const handleExpandClick = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
@@ -245,7 +246,7 @@ const ClientList = () => {
                               variant="contained"
                               color="success"
                               size="small"
-                              onClick={() => handleNewLoan(client.client_id)}
+                              onClick={() => navigate(`/reports/${client.client_id}`)}
                               startIcon={<AddCircleIcon />}
                             >
                               Ver Reportes
