@@ -23,7 +23,7 @@ const NewLoan = () => {
   const [selectedTools, setSelectedTools] = useState([]);
   const navigate = useNavigate();
   const { keycloak } = useKeycloak();
-  const staff_id = Number(keycloak.tokenParsed?.acr);
+  const staff_id = Number(keycloak.tokenParsed?.id_real);
   const clientNumber = Number(client_id);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const NewLoan = () => {
   const saveLoan = (e) => {
     e.preventDefault();
     const loan = {
-      staff_id,
+      staff_id: staff_id,
       client_id: clientNumber,
       days: Number(days),
       tools_id: selectedTools,
@@ -184,7 +184,7 @@ const NewLoan = () => {
                   }}
                 >
                   <img
-                    src={tool.imageUrl || "/vite.svg"}
+                    src={`/${tool.toolId}.png`}
                     alt={tool.tool_name}
                     style={{
                       width: "100%",

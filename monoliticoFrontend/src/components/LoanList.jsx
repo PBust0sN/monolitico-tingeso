@@ -24,9 +24,8 @@ const LoanList = () => {
   const [loans, setLoans] = useState([]);
   const [search, setSearch] = useState("");
 
-  // Solo préstamos activos y filtro por tipo
+  // Mostrar todos los préstamos; solo filtrar por tipo de préstamo (search)
   const filteredLoans = loans
-    .filter(loan => loan.active === true)
     .filter(loan =>
       (loan.loanType || "").toLowerCase().includes(search.toLowerCase())
     );
@@ -228,6 +227,7 @@ const formatDate = (dateStr) => {
                         onClick={() => navigate(`/loan/return/id/${loan.clientId}/${loan.loanId}`)}
                         style={{ marginLeft: "0.5rem" }}
                         startIcon={<RotateRightIcon />}
+                        disabled={!loan.active} // <-- deshabilita si active es false
                       >
                         Devolver
                       </Button>

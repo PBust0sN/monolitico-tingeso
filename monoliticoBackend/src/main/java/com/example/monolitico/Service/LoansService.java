@@ -134,7 +134,7 @@ public class LoansService {
             if(tool.getStock()<=0){
                 errors.add("Tool " + tool.getToolName() + " isnt in stock.");
             }
-            if(!Objects.equals(tool.getDisponibility(), "disponible")){
+            if(!Objects.equals(tool.getDisponibility(), "Disponible")){
                 errors.add("Tool " + tool.getToolName() + " hans't disponibility.");
             }
 
