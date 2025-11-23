@@ -179,9 +179,6 @@ const ToolList = () => {
                   diary fine fee
                 </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  state
-                </TableCell>
-                <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   stock
                 </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
@@ -205,7 +202,6 @@ const ToolList = () => {
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.reposition_fee}</TableCell>
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.disponibility}</TableCell>
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.diary_fine_fee}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.initial_state}</TableCell>
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.stock}</TableCell>
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{tool.low_dmg_fee}</TableCell>
                   <TableCell>
