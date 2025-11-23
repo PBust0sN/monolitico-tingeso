@@ -19,7 +19,7 @@ public class LoansController {
     @Autowired
     LoansService loansService;
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @GetMapping("/")
     public ResponseEntity<List<LoansEntity>> getAllLoans(){
         List<LoansEntity> loans = loansService.getAllLoans();

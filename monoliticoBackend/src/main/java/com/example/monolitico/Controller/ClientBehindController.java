@@ -31,7 +31,7 @@ public class ClientBehindController {
         return ResponseEntity.ok(clientsBehind);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @PostMapping("/")
     public ResponseEntity<ClientBehindEntity> createClientBehind(@RequestBody ClientBehindEntity clientBehindEntity){
         ClientBehindEntity newClientBehindEntity = clientBehindService.createClientBehind(clientBehindEntity);

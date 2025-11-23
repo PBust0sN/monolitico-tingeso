@@ -24,7 +24,7 @@ public class ClientBehindLoansController {
         return ResponseEntity.ok(clientids);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @PostMapping("/")
     public ResponseEntity<ClientBehindLoansEntity> createCBL(@RequestBody ClientBehindLoansEntity  clientBehindLoansEntity){
         ClientBehindLoansEntity newClientBehindLoansEntity = clientBehindLoansService.createCBL(clientBehindLoansEntity);

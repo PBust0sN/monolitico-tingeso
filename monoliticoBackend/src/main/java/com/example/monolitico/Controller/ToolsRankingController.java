@@ -16,21 +16,21 @@ public class ToolsRankingController {
     @Autowired
     private ToolsRankingService toolsRankingService;
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @GetMapping("/{id}")
     public ResponseEntity<List<ToolsRankingEntity>> getToolsRankingById(@PathVariable("id") Long id) {
         List<ToolsRankingEntity> toolsRankingEntities = toolsRankingService.getToolsRankingByReportId(id);
         return ResponseEntity.ok(toolsRankingEntities);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @GetMapping("/")
     public ResponseEntity<List<ToolsRankingEntity>> getAllToolsRanking(){
         List<ToolsRankingEntity>  toolsRankingEntities = toolsRankingService.getAllToolsRanking();
         return ResponseEntity.ok(toolsRankingEntities);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @PostMapping("/")
     public ResponseEntity<ToolsRankingEntity> createToolsRanking(@RequestBody ToolsRankingEntity toolsRankingEntity){
         ToolsRankingEntity newToolsRanking =  toolsRankingService.createToolsRanking(toolsRankingEntity);

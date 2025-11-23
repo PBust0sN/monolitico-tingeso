@@ -15,14 +15,14 @@ public class ToolsReportController {
     @Autowired
     private ToolsReportService   toolsReportService;
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @GetMapping("/{id}")
     public ResponseEntity<ToolsReportEntity> getToolsReportById(@PathVariable Long id){
         ToolsReportEntity tool = toolsReportService.getByToolId(id);
         return ResponseEntity.ok(tool);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @PostMapping("/")
     public ResponseEntity<ToolsReportEntity> saveToolsReport(@RequestBody ToolsReportEntity tool){
         ToolsReportEntity newToolReport = toolsReportService.createToolReport(tool);

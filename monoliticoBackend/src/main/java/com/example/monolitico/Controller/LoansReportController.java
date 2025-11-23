@@ -37,7 +37,7 @@ public class LoansReportController {
         return ResponseEntity.ok(loan);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @PostMapping("/")
     public ResponseEntity<LoansReportEntity> createLoansReport(@RequestBody LoansReportEntity loansReportEntity){
         LoansReportEntity createLoansReportEntity = loansReportService.createLoansReport(loansReportEntity);

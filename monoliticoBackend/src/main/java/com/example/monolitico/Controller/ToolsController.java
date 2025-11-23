@@ -73,7 +73,7 @@ public class ToolsController {
         return ResponseEntity.ok(updateTool);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN','CLIENT')")
     @GetMapping("/topTen")
     public ResponseEntity<List<ToolsEntity>> getTopTenToolsLoanCount() {
         List<ToolsEntity> tenTools = toolsService.findRankingMax10();

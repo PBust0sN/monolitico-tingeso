@@ -23,7 +23,7 @@ public class ClientController {
         return ResponseEntity.ok(clients);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @GetMapping("/{id}")
     public ResponseEntity<ClientEntity> getClientById(@PathVariable Long id) {
         ClientEntity clientEntity = clientService.getClientById(id);
