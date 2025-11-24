@@ -15,10 +15,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -158,4 +155,56 @@ class ClientServiceTest {
         assertEquals(1, result.size());
         assertEquals(loan.getLoanId(), result.get(0).getLoanId());
     }
+
+    @Test
+    void testGetClientById_NotFound() {
+        when(clientRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> clientService.getClientById(99L));
+
+        verify(clientRepository, times(1)).findById(99L);
+    }
+
+    @Test
+    void testDeleteClient_Exception() {
+        doThrow(new RuntimeException("DB error"))
+                .when(clientRepository).deleteById(1L);
+
+        assertThrows(Exception.class, () -> clientService.deleteClient(1L));
+
+        verify(clientRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testHasExpiredLoansById_WithExpiredLoan() {
+        LoansEntity expiredLoan = new LoansEntity();
+        expiredLoan.setDeliveryDate(Date.valueOf(LocalDate.now()));
+        expiredLoan.setReturnDate(Date.valueOf(LocalDate.now().minusDays(3))); // vencido
+
+        when(clientRepository.getAllLoansByClientId(1L))
+                .thenReturn(Arrays.asList(expiredLoan));
+
+        boolean result = clientService.hasExpiredLoansById(1L);
+
+        assertTrue(result);
+    }
+    @Test
+    void testHasTheSameToolInLoanByClientId_NotFound() {
+        when(clientLoansRepository.findLoansIdsByClientId(1L)).thenReturn(Arrays.asList(1L));
+        when(toolsLoansRepository.findByLoanId(1L)).thenReturn(Arrays.asList(200L)); // distinta
+
+        boolean result = clientService.HasTheSameToolInLoanByClientId(1L, 100L);
+
+        assertFalse(result);
+    }
+    @Test
+    void testSaveClient_KeycloakThrowsException() {
+        when(clientRepository.save(any())).thenReturn(client);
+        doThrow(new RuntimeException("Keycloak error"))
+                .when(keycloakService)
+                .createUserInKeycloak(anyString(), anyString(), anyString(), anyLong());
+
+        assertThrows(RuntimeException.class, () -> clientService.saveClient(client));
+    }
+
 }

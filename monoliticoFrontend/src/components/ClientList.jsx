@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useKeycloak } from "@react-keycloak/web";
 import clientService from "../services/client.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -27,9 +28,18 @@ import IconButton from "@mui/material/IconButton";
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 
 const ClientList = () => {
+  const { keycloak } = useKeycloak(); // <-- agregado
   const [client, setclients] = useState([]);
   const [search, setSearch] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
+
+  const isAdmin = Boolean(
+    keycloak &&
+      (
+        keycloak.tokenParsed?.realm_access?.roles?.includes("ADMIN") ||
+        (typeof keycloak.hasRealmRole === "function" && keycloak.hasRealmRole("ADMIN"))
+      )
+  );
 
   const filteredClient = client.filter(client =>
     client.rut.includes(search)
@@ -160,20 +170,31 @@ const ClientList = () => {
                   />
                 </TableCell>
                 <TableCell colSpan={2} align="right">
-                  <Link
-                    to="/client/add"
-                    style={{ textDecoration: "none" }}
-                  >
+                  <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+                    <Link to="/client/add" style={{ textDecoration: "none" }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<PersonAddIcon />}
+                        size="large"
+                        sx={{ height: 43, minWidth: 180 }}
+                      >
+                        Añadir Cliente
+                      </Button>
+                    </Link>
                     <Button
                       variant="contained"
-                      color="primary"
-                      startIcon={<PersonAddIcon />}
+                      color="secondary"
+                      startIcon={<AddCircleIcon />}
                       size="large"
                       sx={{ height: 43, minWidth: 180 }}
+                      onClick={() => navigate("/employee/add")}
+                      disabled={!isAdmin}
+                      title={!isAdmin ? "Requiere rol ADMIN" : undefined}
                     >
-                      Añadir Cliente
+                      Crear Empleado
                     </Button>
-                  </Link>
+                  </Box>
                 </TableCell>
               </TableRow>
               <TableRow>

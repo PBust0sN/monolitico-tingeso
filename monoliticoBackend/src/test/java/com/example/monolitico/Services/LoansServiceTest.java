@@ -66,8 +66,9 @@ class LoansServiceTest {
         tool.setToolName("Martillo");
         tool.setStock(5L);
         tool.setLoanFee(100L);
-        tool.setDisponibility("disponible");
+        tool.setDisponibility("Disponible");
         tool.setInitialState("Bueno");
+        tool.setLoanCount(2L);
     }
 
     @Test
@@ -103,6 +104,7 @@ class LoansServiceTest {
         when(toolsLoansService.getLoansIDsByToolId(1L)).thenReturn(Collections.emptyList());
         when(clientService.HasTheSameToolInLoanByClientId(1L, 1L)).thenReturn(false);
         when(loansRepository.save(any())).thenReturn(loan);
+
 
         List<String> errors = loansService.addLoan(10L, 1L, List.of(1L), 5L);
         assertTrue(errors.isEmpty());
@@ -240,7 +242,9 @@ class LoansServiceTest {
         damagedTool.setInitialState("Dañada");
         damagedTool.setLowDmgFee(20L);
         damagedTool.setRepositionFee(400L);
+        damagedTool.setLoanCount(2L);
 
+        when(clientService.getClientById(1L)).thenReturn(client);
         when(toolsLoansRepository.findByLoanId(1L)).thenReturn(List.of(1L));
         when(toolsService.getToolsById(1L)).thenReturn(damagedTool);
         when(loansRepository.findById(1L)).thenReturn(Optional.of(loan));
@@ -357,6 +361,7 @@ class LoansServiceTest {
         damagedTool.setInitialState("Dañada");
         damagedTool.setRepositionFee(100L);
 
+        when(clientService.getClientById(1L)).thenReturn(client);
         when(toolsLoansRepository.findByLoanId(1L)).thenReturn(List.of(5L));
         when(toolsService.getToolsById(5L)).thenReturn(damagedTool);
         when(fineService.saveFine(any())).thenReturn(new FineEntity());

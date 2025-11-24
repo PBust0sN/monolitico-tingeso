@@ -96,4 +96,27 @@ class FineControllerTest {
         assertEquals(204, response.getStatusCodeValue()); // No Content
         verify(fineService, times(1)).deleteFineById(1L);
     }
+
+    @Test
+    void testGetAllClientsById() {
+        when(fineService.getAllFinesByClientId(2L)).thenReturn(List.of(fineExample));
+
+        ResponseEntity<List<FineEntity>> response = fineController.getAllClientsById(2L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(1, response.getBody().size());
+        assertEquals("Late Payment", response.getBody().get(0).getType());
+        verify(fineService, times(1)).getAllFinesByClientId(2L);
+    }
+
+    @Test
+    void testPayFine() {
+        doNothing().when(fineService).payFine(2L, 1L);
+
+        ResponseEntity<Void> response = fineController.payFine(2L, 1L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        verify(fineService, times(1)).payFine(2L, 1L);
+    }
+
 }
