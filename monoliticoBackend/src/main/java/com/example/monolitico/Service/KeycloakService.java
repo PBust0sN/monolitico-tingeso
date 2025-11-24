@@ -67,8 +67,44 @@ public class KeycloakService {
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(user, headers);
 
-        restTemplate.postForEntity(
+        ResponseEntity<String> response = restTemplate.postForEntity(
                 KEYCLOAK_URL + "/admin/realms/" + REALM + "/users",
+                request,
+                String.class
+        );
+
+        // Obtener userId desde el header Location
+        String location = response.getHeaders().getLocation().toString();
+        String userId = location.substring(location.lastIndexOf('/') + 1);
+        // Asignar el rol "CLIENT"
+        assignRealmRoleToUser(userId, "CLIENT");
+    }
+
+    public void assignRealmRoleToUser(String userId, String roleName) {
+        String token = getAdminToken();
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Obtener información del rol del realm
+        ResponseEntity<Map> roleResponse = restTemplate.exchange(
+                KEYCLOAK_URL + "/admin/realms/" + REALM + "/roles/" + roleName,
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                Map.class
+        );
+
+        Map<String, Object> roleInfo = roleResponse.getBody();
+
+        // Debe enviarse en una LISTA
+        List<Map<String, Object>> roles = List.of(roleInfo);
+
+        HttpEntity<List<Map<String, Object>>> request = new HttpEntity<>(roles, headers);
+
+        restTemplate.postForEntity(
+                KEYCLOAK_URL + "/admin/realms/" + REALM + "/users/" + userId + "/role-mappings/realm",
                 request,
                 String.class
         );
