@@ -33,6 +33,8 @@ import ViewReportsById from './components/ViewReportsById';
 import FineListId from './components/FineListId';
 import EmployeeList from './components/EmployeeList';
 import AdminList from './components/AdminList';
+import AddAdmin from './components/AddAdmin';
+import AddEmployee from './components/AddEmployee';
 
 
 function App() {
@@ -188,7 +190,15 @@ function App() {
           />
           <Route
             path="/client/add/"
-            element={<PrivateRoute element={<AddClient />} rolesAllowed={["ADMIN"]} />}
+            element={<PrivateRoute element={<AddClient />} rolesAllowed={["STAFF","ADMIN"]} />}
+          />
+          <Route
+            path="/admin/add"
+            element={<PrivateRoute element={<AddAdmin />} rolesAllowed={["ADMIN"]} />}
+          />
+          <Route
+            path="/employee/add"
+            element={<PrivateRoute element={<AddEmployee />} rolesAllowed={["STAFF","ADMIN"]} />}
           />
           <Route
             path="/loan/list/"

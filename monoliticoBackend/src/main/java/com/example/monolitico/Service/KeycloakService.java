@@ -41,7 +41,7 @@ public class KeycloakService {
         return (String) response.getBody().get("access_token");
     }
 
-    public void createUserInKeycloak(String username, String email, String password, Long id_real) {
+    public void createUserInKeycloak(String username, String email, String password, Long id_real,String role) {
         String token = getAdminToken();
         RestTemplate restTemplate = new RestTemplate();
 
@@ -77,7 +77,7 @@ public class KeycloakService {
         String location = response.getHeaders().getLocation().toString();
         String userId = location.substring(location.lastIndexOf('/') + 1);
         // Asignar el rol "CLIENT"
-        assignRealmRoleToUser(userId, "CLIENT");
+        assignRealmRoleToUser(userId, role);
     }
 
     public void assignRealmRoleToUser(String userId, String roleName) {

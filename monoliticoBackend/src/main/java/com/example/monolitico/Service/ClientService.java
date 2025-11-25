@@ -39,7 +39,8 @@ public class ClientService {
                 client.getName(),
                 client.getMail(),
                 client.getPassword(),
-                client.getClient_id()
+                client.getClient_id(),
+                client.getRole()
         );
         return client;
     }

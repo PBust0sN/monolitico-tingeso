@@ -155,7 +155,7 @@ const AdminList = () => {
               <TableRow>
                 <TableCell colSpan={10} align="center">
                   <Typography variant="h5" sx={{ color: "black", fontWeight: "bold" }}>
-                    Listado de empleados
+                    Listado de Admins
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -182,7 +182,7 @@ const AdminList = () => {
                 </TableCell>
                 <TableCell colSpan={2} align="right">
                   <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
-                    <Link to="/client/add" style={{ textDecoration: "none" }}>
+                    <Link to="/admin/add" style={{ textDecoration: "none" }}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -190,7 +190,7 @@ const AdminList = () => {
                         size="large"
                         sx={{ height: 43, minWidth: 170 }}
                       >
-                        Añadir Cliente
+                        Añadir Admin
                       </Button>
                     </Link>
                   </Box>

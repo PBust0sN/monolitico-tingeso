@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import clientService from "../services/client.service";
 import MenuItem from "@mui/material/MenuItem";
 
-const AddClient = () => {
+const AddEmployee = () => {
   const [avaliable, setAvaliable] = useState("true");
   const [last_name, setLastName] = useState("");
   const [mail, setMail] = useState("");
@@ -100,6 +100,7 @@ const AddClient = () => {
       state,
       phone_number,
       password,
+      role: "STAFF"
     };
 
     console.log(client);
@@ -107,7 +108,7 @@ const AddClient = () => {
       .create(client)
       .then((response) => {
         console.log("Cliente añadido.", response.data);
-        navigate("/client/list");
+        navigate("/employee/list");
       })
       .catch((error) => {
         console.log("Ha ocurrido un error al intentar crear nuevo cliente.", error);
@@ -162,7 +163,7 @@ const AddClient = () => {
             justifyContent="center"
             component="form"
           >
-            <h3>Nuevo Cliente</h3>
+            <h3>Nuevo Empleado</h3>
             <hr />
 
             {/* Lista de errores */}
@@ -305,4 +306,4 @@ const AddClient = () => {
   );
 };
 
-export default AddClient;
+export default AddEmployee;

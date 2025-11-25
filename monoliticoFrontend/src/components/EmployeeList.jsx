@@ -182,7 +182,7 @@ const EmployeeList = () => {
                 </TableCell>
                 <TableCell colSpan={2} align="right">
                   <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
-                    <Link to="/client/add" style={{ textDecoration: "none" }}>
+                    <Link to="/employee/add" style={{ textDecoration: "none" }}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -190,7 +190,7 @@ const EmployeeList = () => {
                         size="large"
                         sx={{ height: 43, minWidth: 170 }}
                       >
-                        Añadir Cliente
+                        Añadir Empleado
                       </Button>
                     </Link>
                   </Box>
