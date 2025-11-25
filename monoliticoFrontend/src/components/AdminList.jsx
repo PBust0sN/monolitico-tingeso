@@ -224,8 +224,8 @@ const AdminList = () => {
                 <TableCell align="center" sx={{ maxWidth: 150, fontWeight: "bold", color: "black" }}>
                   state
                 </TableCell>
-                <TableCell align="center" sx={{ maxWidth: 80, fontWeight: "bold", color: "black" }}>
-                  Más
+                <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
+                
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -244,7 +244,8 @@ const AdminList = () => {
                     <TableCell align="center" sx={{ maxWidth: 180 }}>{client.role}</TableCell>
                     <TableCell align="center" sx={{ maxWidth: 180 }}>{client.avaliable ? "Si" : "No"}</TableCell>
                     <TableCell align="center" sx={{ maxWidth: 150 }}>{client.state}</TableCell>
-                    <TableCell align="center" sx={{ maxWidth: 80 }}>
+                    <TableCell align="center" sx={{ maxWidth: 180 }}>
+                      <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
                       <Button
                             variant="contained"
                             color="info"
@@ -254,6 +255,16 @@ const AdminList = () => {
                           >
                             Editar
                       </Button>
+                      <Button
+                            variant="contained"
+                            color="error"
+                            size="small"
+                            onClick={() => handleDelete(client.client_id)}
+                            startIcon={<DeleteIcon />}
+                          >
+                            Eliminar
+                          </Button>
+                      </Box>
                     </TableCell>
                   </TableRow>
                 </React.Fragment>

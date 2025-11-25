@@ -31,8 +31,8 @@ const EmployeeList = () => {
   const { keycloak } = useKeycloak(); // <-- agregado
   const [client, setclients] = useState([]);
   const [search, setSearch] = useState("");
-  const [expandedRow, setExpandedRow] = useState(null);
 
+  // Determinar si el usuario actual tiene rol ADMIN
   const isAdmin = Boolean(
     keycloak &&
       (
@@ -106,15 +106,6 @@ const EmployeeList = () => {
 
   const handleEdit = (id) => {
     navigate(`/employee/edit/${id}`);
-  };
-
-  const handleNewLoan = (id) => {
-    navigate(`/loan/new/${id}`);
-  };
-
-
-  const handleExpandClick = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
   };
 
   return (
@@ -225,7 +216,7 @@ const EmployeeList = () => {
                   state
                 </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 80, fontWeight: "bold", color: "black" }}>
-                  Más
+                  
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -244,80 +235,31 @@ const EmployeeList = () => {
                     <TableCell align="center" sx={{ maxWidth: 180 }}>{client.role}</TableCell>
                     <TableCell align="center" sx={{ maxWidth: 180 }}>{client.avaliable ? "Si" : "No"}</TableCell>
                     <TableCell align="center" sx={{ maxWidth: 150 }}>{client.state}</TableCell>
-                    <TableCell align="center" sx={{ maxWidth: 80 }}>
-                      <IconButton onClick={() => handleExpandClick(client.client_id)}>
-                        <ExpandCircleDownIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell colSpan={9} sx={{ p: 0, background: "rgba(240,240,240,0.5)" }}>
-                      <Collapse in={expandedRow === client.client_id} timeout="auto" unmountOnExit>
-                        <Box sx={{ display: "flex", gap: 2, p: 2, justifyContent: "center" }}>
-                          <ThemeProvider theme={theme}>
-                            <Button
-                              variant="contained"
-                              color="error"
-                              size="small"
-                              onClick={() => navigate(`/fines/${client.client_id}`)}
-                              startIcon={<VisibilityIcon />}
-                            >
-                              Ver Multas
-                            </Button>
-                          </ThemeProvider>
-                          <ThemeProvider theme={theme}>
-                            <Button
-                              variant="contained"
-                              color="success"
-                              size="small"
-                              onClick={() => navigate(`/reports/${client.client_id}`)}
-                              startIcon={<VisibilityIcon />}
-                            >
-                              Ver Reportes
-                            </Button>
-                          </ThemeProvider>
-                          <ThemeProvider theme={theme}>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              size="small"
-                              onClick={() => handleNewLoan(client.client_id)}
-                              startIcon={<AddCircleIcon />}
-                            >
-                              New Loan
-                            </Button>
-                          </ThemeProvider>
-                          <ThemeProvider theme={theme}>
-                            <Button
-                              variant="contained"
-                              color="secondary"
-                              size="small"
-                              onClick={() => navigate(`/loan/list/${client.client_id}`)}
-                              startIcon={<VisibilityIcon />}
-                            >
-                              See Loans
-                            </Button>
-                          </ThemeProvider>
-                          <Button
+                    <TableCell align="center" sx={{ maxWidth: 180 }}>
+                      <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
+                      <Button
                             variant="contained"
                             color="info"
                             size="small"
                             onClick={() => handleEdit(client.client_id)}
                             startIcon={<EditIcon />}
+                            disabled={!isAdmin}
+                            title={!isAdmin ? "Requiere rol ADMIN" : undefined}
                           >
                             Editar
-                          </Button>
-                          <Button
+                      </Button>
+                      <Button
                             variant="contained"
                             color="error"
                             size="small"
                             onClick={() => handleDelete(client.client_id)}
                             startIcon={<DeleteIcon />}
+                            disabled={!isAdmin}
+                            title={!isAdmin ? "Requiere rol ADMIN" : undefined}
                           >
                             Eliminar
                           </Button>
-                        </Box>
-                      </Collapse>
+                      </Box>
                     </TableCell>
                   </TableRow>
                 </React.Fragment>
