@@ -65,7 +65,7 @@ export default function Sidemenu({ open, toggleDrawer }) {
           <ListItemText primary="Empleados" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => navigate("/client/list") }>
+        <ListItemButton onClick={() => navigate("/admin/list") }>
           <ListItemIcon>
             <PeopleAltIcon />
           </ListItemIcon>
