@@ -101,9 +101,9 @@ public class LoansService {
         LoansEntity loansEntity = new LoansEntity();
         LocalDateTime date = LocalDateTime.now();
 
-        loansEntity.setDate(Date.valueOf(date.toLocalDate()));
-        loansEntity.setDeliveryDate(Date.valueOf(date.toLocalDate()));
-        loansEntity.setReturnDate(Date.valueOf(date.plusDays(days).toLocalDate()));
+        loansEntity.setDate(date.toLocalDate());
+        loansEntity.setDeliveryDate(date.toLocalDate());
+        loansEntity.setReturnDate(date.plusDays(days).toLocalDate());
         loansEntity.setActive(true);
 
         // validate dates
@@ -189,7 +189,7 @@ public class LoansService {
 
         //formating the return date
 
-        LocalDate localDate = loan.getReturnDate().toLocalDate();
+        LocalDate localDate = loan.getReturnDate();
 
         long dias = ChronoUnit.DAYS.between(today, localDate);
         //if the differrence is negative it means the loan is late

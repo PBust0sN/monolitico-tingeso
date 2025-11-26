@@ -78,11 +78,11 @@ public class ClientService {
         //then we substract the return date minus delivery date
         for(LoansEntity loan : loans){
             //formating the delivery date
-            LocalDate localDate1 = loan.getDeliveryDate().toLocalDate();
+            LocalDate localDate1 = loan.getDeliveryDate();
 
             //formating the return date
 
-            LocalDate localDate2 = loan.getReturnDate().toLocalDate();
+            LocalDate localDate2 = loan.getReturnDate();
 
             long dias = ChronoUnit.DAYS.between(localDate1, localDate2);
             //if the differrence is negative it means the loan is late

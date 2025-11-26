@@ -217,8 +217,16 @@ const NewLoan = () => {
                       <Typography variant="body2" color="text.secondary">
                         {tool.category}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {tool.disponibility}
+                      
+                      <Typography variant="h6" 
+                      sx={{
+                      fontWeight: "bold",
+                      mb: 1,
+                      textAlign: "left",
+                      fontSize: TITLE_FONT_SIZE,
+                      width: "100%",
+                    }}>
+                        
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Stock: {tool.stock}
