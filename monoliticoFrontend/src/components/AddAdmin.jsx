@@ -65,17 +65,6 @@ const AddAdmin = () => {
       fErrors.phone_number = true;
     }
 
-    if (avaliable !== "true" && avaliable !== "false") {
-      errors.push("Avaliable debe ser TRUE o FALSE.");
-      fErrors.avaliable = true;
-    }
-
-    // state is optional, but if provided, ensure not empty
-    if (state && !state.trim()) {
-      errors.push("State inválido.");
-      fErrors.state = true;
-    }
-
     return { errors, fErrors };
   };
 
@@ -96,8 +85,7 @@ const AddAdmin = () => {
       name,
       last_name,
       mail,
-      avaliable: avaliable === "true",
-      state,
+      state: "activo",
       phone_number,
       password,
       role: "ADMIN",
@@ -240,41 +228,6 @@ const AddAdmin = () => {
                 error={!!fieldErrors.password}
               />
             </FormControl>
-
-            {/* Avaliable y State en la misma fila */}
-            <Box sx={{ display: "flex", gap: 2, width: "100%", mb: 2 }}>
-              <FormControl sx={{ flex: 1 }}>
-                <TextField
-                  id="avaliable"
-                  label="Avaliable"
-                  value={avaliable}
-                  select
-                  variant="standard"
-                  onChange={(e) => setAvaliable(e.target.value)}
-                  error={!!fieldErrors.avaliable}
-                  fullWidth
-                >
-                  <MenuItem value={"true"}>TRUE</MenuItem>
-                  <MenuItem value={"false"}>FALSE</MenuItem>
-                </TextField>
-              </FormControl>
-
-              <FormControl sx={{ flex: 1 }}>
-                <TextField
-                  id="state"
-                  label="State"
-                  value={state}
-                  select
-                  variant="standard"
-                  onChange={(e) => setState(e.target.value)}
-                  error={!!fieldErrors.state}
-                  fullWidth
-                >
-                  <MenuItem value="activo">Activo</MenuItem>
-                  <MenuItem value="restringido">Restringido</MenuItem>
-                </TextField>
-              </FormControl>
-            </Box>
 
             <FormControl fullWidth sx={{ mb: 2 }}>
               <TextField

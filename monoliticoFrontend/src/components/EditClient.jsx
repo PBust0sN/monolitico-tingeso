@@ -10,29 +10,35 @@ import clientService from "../services/client.service";
 import MenuItem from "@mui/material/MenuItem";
 
 const EditClient = () => {
-  const [avaliable, setAvaliable] = useState("");
   const [last_name, setLastName] = useState("");
   const [mail, setMail] = useState("");
   const [name, setName] = useState("");
   const [phone_number, setPhoneNumber] = useState("");
   const [rut, setRut] = useState("");
   const [state, setState] = useState("");
+  const [role, setRole] = useState("");
+  const [password, setPassword] = useState("");
   const { client_id } = useParams();
   const navigate = useNavigate();
+
+  // control de errores (igual que en AddClient)
+  const [errorsList, setErrorsList] = useState([]);
+  const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
     if (client_id) {
       clientService
         .get(client_id)
         .then((client) => {
-          {/*AQUI VAN LOS SET */}
-          setRut(client.data.rut);
+          // quitar puntos si vienen desde backend
+          setRut((client.data.rut || "").replace(/\./g, ""));
           setName(client.data.name);
           setLastName(client.data.last_name);
           setMail(client.data.mail);
-          setAvaliable(client.data.avaliable);
           setState(client.data.state);
           setPhoneNumber(client.data.phone_number);
+          setPassword(client.data.password);
+          setRole(client.data.role);
         })
         .catch((error) => {
           console.log("Se ha producido un error.", error);
@@ -40,9 +46,62 @@ const EditClient = () => {
     }
   }, [client_id]);
 
+  const validateFields = () => {
+    const errors = [];
+    const fErrors = {};
+
+    if (!rut || !rut.trim()) {
+      errors.push("Rut es obligatorio.");
+      fErrors.rut = true;
+    }
+    // prohibir puntos en el RUT
+    if ((rut || "").includes(".")) {
+      errors.push("Rut no debe contener puntos.");
+      fErrors.rut = true;
+    }
+
+    if (!name || !name.trim()) {
+      errors.push("Name es obligatorio.");
+      fErrors.name = true;
+    }
+
+    if (!last_name || !last_name.trim()) {
+      errors.push("Last Name es obligatorio.");
+      fErrors.last_name = true;
+    }
+
+    if (!mail || !mail.trim()) {
+      errors.push("E-Mail es obligatorio.");
+      fErrors.mail = true;
+    } else {
+      const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRe.test(mail)) {
+        errors.push("E-Mail no tiene un formato válido.");
+        fErrors.mail = true;
+      }
+    }
+
+    if (!phone_number || !/^\+?\d+$/.test(phone_number)) {
+      errors.push("Phone Number obligatorio y sólo debe contener dígitos (puede incluir +).");
+      fErrors.phone_number = true;
+    }
+
+    return { errors, fErrors };
+  };
+
   const saveTool = (e) => {
     e.preventDefault();
-    const client = { client_id, rut, name, last_name, mail, avaliable, state, phone_number};
+
+    const { errors, fErrors } = validateFields();
+    setErrorsList(errors);
+    setFieldErrors(fErrors);
+
+    if (errors.length > 0) {
+      window.alert(errors.join("\n"));
+      return;
+    }
+
+    const client = { client_id, rut, name, last_name, mail, state, phone_number, password, role };
     clientService
       .update(client)
       .then((response) => {
@@ -91,8 +150,8 @@ const EditClient = () => {
             minWidth: 350,
             maxWidth: 450,
             width: "90%",
-            background: "rgba(255,255,255,0.85)", // Cambia el color y la transparencia aquí
-            color: "#222", // Cambia el color del texto aquí
+            background: "rgba(255,255,255,0.85)",
+            color: "#222",
           }}
         >
           <Box
@@ -104,14 +163,35 @@ const EditClient = () => {
           >
             <h3>Editar Cliente</h3>
             <hr />
+
+            {/* Lista de errores */}
+            {errorsList.length > 0 && (
+              <Box
+                sx={{
+                  width: "100%",
+                  mb: 2,
+                  p: 1,
+                  borderRadius: 1,
+                  backgroundColor: "rgba(255,200,200,0.9)",
+                }}
+              >
+                <ul style={{ margin: 0, paddingLeft: "1rem", color: "#700" }}>
+                  {errorsList.map((err, idx) => (
+                    <li key={idx}>{err}</li>
+                  ))}
+                </ul>
+              </Box>
+            )}
+
             <FormControl fullWidth sx={{ mb: 2 }}>
               <TextField
                 id="rut"
                 label="Rut"
                 value={rut}
                 variant="standard"
-                onChange={(e) => setrut(e.target.value)}
-                helperText="99999999-9"
+                onChange={(e) => setRut(e.target.value.replace(/\./g, ""))}
+                helperText="99999999-9 (sin puntos)"
+                error={!!fieldErrors.rut}
               />
             </FormControl>
 
@@ -122,6 +202,7 @@ const EditClient = () => {
                 value={name}
                 variant="standard"
                 onChange={(e) => setName(e.target.value)}
+                error={!!fieldErrors.name}
               />
             </FormControl>
 
@@ -132,6 +213,7 @@ const EditClient = () => {
                 value={last_name}
                 variant="standard"
                 onChange={(e) => setLastName(e.target.value)}
+                error={!!fieldErrors.last_name}
               />
             </FormControl>
 
@@ -142,23 +224,8 @@ const EditClient = () => {
                 value={mail}
                 variant="standard"
                 onChange={(e) => setMail(e.target.value)}
+                error={!!fieldErrors.mail}
               />
-            </FormControl>
-
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <TextField
-                    id="avaliable"
-                    label="Avaliable"
-                    value={avaliable}
-                    select
-                    variant="standard"
-                    defaultValue="true"
-                    onChange={(e) => setAvaliable(e.target.value)}
-                    style={{ width: "25%" }}
-                >
-                    <MenuItem value={"true"}>TRUE</MenuItem>
-                    <MenuItem value={"false"}>FALSE</MenuItem>
-              </TextField>
             </FormControl>
 
             <FormControl fullWidth sx={{ mb: 2 }}>
@@ -179,6 +246,7 @@ const EditClient = () => {
                 variant="standard"
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 helperText="Ej. +56911112222"
+                error={!!fieldErrors.phone_number}
               />
             </FormControl>
 

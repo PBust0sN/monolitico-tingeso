@@ -65,9 +65,9 @@ public class LoansService {
         ClientEntity client = clientService.getClientById(client_id);
 
         // Verification 1: avaliable client
-        if (!client.getAvaliable()) {
-            errors.add("Client is not available for new loans.");
-        }
+        //if (!client.getAvaliable()) {
+        //    errors.add("Client is not available for new loans.");
+        //}
 
         // Verification 2: fines, aready taking cared in the state section
         //if (fineService.hasFinesByClientId(client_id)) {

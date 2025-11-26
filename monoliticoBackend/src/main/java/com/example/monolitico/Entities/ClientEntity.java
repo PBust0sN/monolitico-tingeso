@@ -23,7 +23,6 @@ public class ClientEntity {
     private String mail;
     private String phone_number;
     private String state;
-    private Boolean avaliable;
     private String password;
     private String role;
 }

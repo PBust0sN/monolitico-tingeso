@@ -218,9 +218,6 @@ const AdminList = () => {
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Role
                 </TableCell>
-                <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  Avaliable
-                </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 150, fontWeight: "bold", color: "black" }}>
                   state
                 </TableCell>
@@ -242,7 +239,6 @@ const AdminList = () => {
                     <TableCell align="center" sx={{ maxWidth: 180 }}>{client.mail}</TableCell>
                     <TableCell align="center" sx={{ maxWidth: 180 }}>{client.phone_number}</TableCell>
                     <TableCell align="center" sx={{ maxWidth: 180 }}>{client.role}</TableCell>
-                    <TableCell align="center" sx={{ maxWidth: 180 }}>{client.avaliable ? "Si" : "No"}</TableCell>
                     <TableCell align="center" sx={{ maxWidth: 150 }}>{client.state}</TableCell>
                     <TableCell align="center" sx={{ maxWidth: 180 }}>
                       <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
