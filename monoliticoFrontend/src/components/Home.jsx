@@ -5,17 +5,17 @@ const Home = () => {
       <Box sx = {{position: "relative"}}>
         <Box 
       sx={{
-        position: "fixed",                // ocupa toda la ventana
+        position: "fixed",                // occupies all the screen
           top: 0,
           left: 0,
-          width: "100%",
-          height: "100%",               // altura total de la ventana                     // ancho total de la ventana
+          width: "100%",                // total width of the window
+          height: "100%",               // total height of the window                    
         backgroundImage: `url("/fondo.jpg")`,
-        backgroundSize: "cover",            // cubre toda la pantalla
-        backgroundPosition: "center",       // centrada
+        backgroundSize: "cover",            // cover the entire area
+        backgroundPosition: "center",       // centered
         backgroundRepeat: "no-repeat",  
-        overflow: "hidden",     // no se repite
-        display: "flex",                    // para centrar contenido
+        overflow: "hidden",     // does not repeat
+        display: "flex",                    // for centering
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
@@ -44,13 +44,13 @@ const Home = () => {
         sx={{
           fontWeight: 700,
           color: "#fff",
-          WebkitTextStroke: "1px rgba(0,0,0,0.85)", // contorno en navegadores WebKit
+          WebkitTextStroke: "1px rgba(0,0,0,0.85)", // webkit outline
           textShadow: [
             "1px 1px 0 rgba(0,0,0,0.85)",
             "-1px 1px 0 rgba(0,0,0,0.85)",
             "1px -1px 0 rgba(0,0,0,0.85)",
             "-1px -1px 0 rgba(0,0,0,0.85)"
-          ].join(", "), // fallback para simular contorno en otros navegadores
+          ].join(", "), // fallback for outline in other browsers
         }}
       >
         Bienvenido Al Sistema de Renta de Herramientas Tool Rent
@@ -61,13 +61,13 @@ const Home = () => {
         sx={{
           fontWeight: 700,
           color: "#fff",
-          WebkitTextStroke: "1px rgba(0,0,0,0.85)", // contorno en navegadores WebKit
+          WebkitTextStroke: "1px rgba(0,0,0,0.85)", // Wedbkit outline
           textShadow: [
             "1px 1px 0 rgba(0,0,0,0.85)",
             "-1px 1px 0 rgba(0,0,0,0.85)",
             "1px -1px 0 rgba(0,0,0,0.85)",
             "-1px -1px 0 rgba(0,0,0,0.85)"
-          ].join(", "), // fallback para simular contorno en otros navegadores
+          ].join(", "), // fallback for outline in other browsers
         }}
         >
         Hace click en el menu lateral para alguna acción

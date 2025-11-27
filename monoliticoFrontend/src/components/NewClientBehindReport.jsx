@@ -17,7 +17,7 @@ const NewClientBehindReport = () => {
   const handleGenerateBehind = async () => {
     setLoading(true);
 
-    // obtener id del token
+    // get the real id from the token
     const idFromToken = keycloak?.tokenParsed?.id_real;
     
     if (!keycloak?.authenticated || !idFromToken) {
@@ -26,7 +26,7 @@ const NewClientBehindReport = () => {
     }
 
     try {
-      // 1. obtener prestamos del cliente
+      // 1. get all loans for this client
       const allLoansRes = await loansService.getAll();
       // first filter by client, then exclude loans of type 'return'
       const loansList = (allLoansRes.data || [])
@@ -34,15 +34,15 @@ const NewClientBehindReport = () => {
         .filter((l) => String(l.loanType).toLowerCase() !== "return")
         .filter((l) => l.status !== false);
 
-      // 2. crear report
+      // 2. create a new report entry
       const reportRes = await reportsService.create({ clientIdBehind: true, clientIdReport: idFromToken });
       const reportId = reportRes.data?.reportId;
 
-      // 3. obtener datos del cliente (si existe)
+      // 3. get client data  
       const clientRes = await clientService.get(idFromToken);
       const clientData = clientRes.data;
 
-      // 4. crear entrada en clientsBehind
+      // 4. create new entry in clientsBehind
       const clientBehindPayload = {
         reportId: reportId,
         rut: clientData?.rut || "",
@@ -57,14 +57,14 @@ const NewClientBehindReport = () => {
       const clientBehindRes = await clientBehindService.create(clientBehindPayload);
       const clientBehindId = clientBehindRes.data?.clientIdBehind;
 
-      // 5. por cada préstamo, verificar con el endpoint chechDates (devuelve true si está al día, false si está atrasado)
+      // 5.for each loan, verify with the endpoint checkdates (true if up to date, false otherwise)
       for (const l of loansList) {
-        // llamamos al endpoint enviando el loan completo en el body
+        // we call the checkdates endpoint with the loan object
         const checkRes = await loansService.chechDates(l);
-        // el backend nos debe devolver un booleano en res.data
+        // the response data is boolean: true if on time, false if late
         const onTime = Boolean(checkRes.data);
 
-        // si onTime === false => está atrasado -> crear loanReport y link
+        // if onTime === false => is behind -> create loanReport and link
         if (!onTime) {
           const loanReportRes = await loansReportsService.create({
             reportId: reportId,
@@ -80,7 +80,7 @@ const NewClientBehindReport = () => {
             loanId: l.loanId,
           });
           const loanReportId = loanReportRes.data?.loanReportId;
-          // crear entry en clientBehindLoans linkeando loanReportId con clientBehindId
+          //create entry in clientBehindLoans linking  loanReportId with clientBehindId
           if (loanReportId && clientBehindId) {
             await clientBehindLoansService.create({
               loanReportId: loanReportId,
@@ -90,7 +90,7 @@ const NewClientBehindReport = () => {
         }
       }
 
-      // simular carga similar a NewRakingTool/NewLoanReport
+      // simulate delay for better UX 
       await new Promise((res) => setTimeout(res, 1000));
       setLoading(false);
       navigate("/myreports");

@@ -23,19 +23,19 @@ const LoanInfo = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Obtener la información del préstamo
+    // get loan info
     loansService
       .get(loan_id)
       .then((response) => {
         setLoan(response.data);
 
-        // Obtener los ids de herramientas asociadas a este préstamo
+        // get associated tools IDs and then their details 
         toolsLoansService
           .getToolsIdByLoanId(loan_id)
           .then(async (idsResponse) => {
-            const toolIds = idsResponse.data; // debe ser un array de ids
+            const toolIds = idsResponse.data; // must be an array of IDs
 
-            // Obtener la información de cada herramienta por id
+            // get details for each tool by its ID
             const toolPromises = toolIds.map((id) =>
               toolsService.get(id).then((res) => res.data)
             );
@@ -102,7 +102,7 @@ const formatDate = (dateStr) => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -192,7 +192,7 @@ const formatDate = (dateStr) => {
           </TableContainer>
         </Paper>
 
-        {/* Lista de herramientas asociadas */}
+        {/* list of associated tools */}
         <Paper
           sx={{
             maxWidth: 700,

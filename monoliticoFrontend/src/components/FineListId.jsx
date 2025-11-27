@@ -9,7 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import Box from "@mui/material/Box"; // <-- Agrega esto si no lo tienes
+import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
@@ -20,17 +20,17 @@ import { lime, purple } from '@mui/material/colors';
 
 const FineListId = () => {
   const { client_id } = useParams();
-  const navigate = useNavigate(); // agregado
+  const navigate = useNavigate(); 
   const [fines, setFines] = useState([]);
   const [search, setSearch] = useState("");
  
 
-  // Filtrar por clientId ingresado en el buscador
+  // filter by client ID
   const filteredFines = fines.filter(fine => {
     if (search.trim()) {
       return String(fine.clientId).toLowerCase().includes(search.toLowerCase());
     }
-    return true; // Si no hay búsqueda, muestra todas
+    return true; // if no search term, include all
   });
 
   const init = () => {
@@ -64,7 +64,7 @@ const FineListId = () => {
       if (confirmPay) {
         fineService.pay(client_id, fine_id)
           .then(() => {
-            init(); // Refrescar la lista después de pagar
+            init(); // refresh list after payment
           })
           .catch((error) => {
             console.log(
@@ -130,7 +130,7 @@ const FineListId = () => {
                   </Typography>
                 </TableCell>
               </TableRow> 
-              {/* Fila de búsqueda y botón */}
+              {/* row of search and button */}
               <TableRow>
                 <TableCell colSpan={10} align="left">
                   <Box sx={{ display: "flex", gap: 2 }}>
@@ -155,7 +155,7 @@ const FineListId = () => {
                   </Box>
                 </TableCell>
               </TableRow>
-              {/* Fila de encabezados */}
+              {/* row of labels */}
               <TableRow>
                 <TableCell align="left" sx={{  maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Id
@@ -221,7 +221,6 @@ const FineListId = () => {
           </Table>
         </TableContainer>
 
-        {/* Botón 'Volver' colocado al final del listado de multas (en flujo, no fijo) */}
         <Box sx={{ mt: 2, width: "100%", display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"

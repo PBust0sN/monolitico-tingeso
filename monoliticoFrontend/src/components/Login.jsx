@@ -20,7 +20,7 @@ const Login = () => {
 
   if (!initialized) return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -36,7 +36,7 @@ const Login = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del login */}
+      {/* Frame of the login */}
       <Box
         sx={{
           position: "relative",
@@ -71,7 +71,7 @@ const Login = () => {
     keycloak.login();
     return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/*background */}
       <Box
         sx={{
           position: "fixed",
@@ -87,7 +87,7 @@ const Login = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del login */}
+      {/* frame off the login */}
       <Box
         sx={{
           position: "relative",
@@ -121,7 +121,7 @@ const Login = () => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -137,7 +137,7 @@ const Login = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del login */}
+      {/* frame of the login */}
       <Box
         sx={{
           position: "relative",

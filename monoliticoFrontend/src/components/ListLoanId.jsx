@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import loansService from "../services/loans.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -44,7 +44,7 @@ const ListLoanId = () => {
       });
   }, []);
 
-  // Filtrar por client_id, búsqueda y solo préstamos activos
+  // filter loans by client ID and active loans
   const filteredLoans = loans
     .filter(loan => String(loan.clientId) === String(client_id))
     .filter(loan => loan.active === true)

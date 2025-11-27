@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import fineService from "../services/fine.service";
-import clientService from "../services/client.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,27 +8,24 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Box from "@mui/material/Box"; // <-- Agrega esto si no lo tienes
+import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
 import PaymentIcon from '@mui/icons-material/Payment';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { lime, purple } from '@mui/material/colors';
 
 const FineList = () => {
   const [fines, setFines] = useState([]);
   const [search, setSearch] = useState("");
  
 
-  // Filtrar por clientId ingresado en el buscador
+  // filter by client ID
   const filteredFines = fines.filter(fine => {
     if (search.trim()) {
       return String(fine.clientId).toLowerCase().includes(search.toLowerCase());
     }
-    return true; // Si no hay búsqueda, muestra todas
+    return true; // if no search term, include all
   });
 
   const init = () => {
@@ -46,12 +41,6 @@ const FineList = () => {
         );
       });
   };
-  const theme = createTheme({
-      palette: {
-        primary: lime,
-        secondary: purple,
-      },
-    });
 
   useEffect(() => {
     init();
@@ -64,7 +53,7 @@ const FineList = () => {
       if (confirmPay) {
         fineService.pay(client_id, fine_id)
           .then(() => {
-            init(); // Refrescar la lista después de pagar
+            init(); // refresh list after payment
           })
           .catch((error) => {
             console.log(
@@ -130,7 +119,7 @@ const FineList = () => {
                   </Typography>
                 </TableCell>
               </TableRow> 
-              {/* Fila de búsqueda y botón */}
+              {/* row of search and button */}
               <TableRow>
                 <TableCell colSpan={10} align="left">
                   <Box sx={{ display: "flex", gap: 2 }}>
@@ -155,7 +144,7 @@ const FineList = () => {
                   </Box>
                 </TableCell>
               </TableRow>
-              {/* Fila de encabezados */}
+              {/* row of labels */}
               <TableRow>
                 <TableCell align="left" sx={{  maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Id

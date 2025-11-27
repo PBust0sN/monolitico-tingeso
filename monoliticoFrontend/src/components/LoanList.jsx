@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import loansService from "../services/loans.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -10,25 +10,48 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Box from "@mui/material/Box"; // <-- Agrega esto si no lo tienes
-import InputAdornment from "@mui/material/InputAdornment";
+import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { lime, purple } from '@mui/material/colors';
 import RotateRightIcon from '@mui/icons-material/RotateRight';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const LoanList = () => {
   const [loans, setLoans] = useState([]);
-  const [search, setSearch] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-  // Mostrar todos los préstamos; solo filtrar por tipo de préstamo (search)
-  const filteredLoans = loans
-    .filter(loan =>
-      (loan.loanType || "").toLowerCase().includes(search.toLowerCase())
-    );
+  // filter loans by date range (loan date or delivery date)
+  const filteredLoans = loans.filter((loan) => {
+    // IF no date range selected, include all loans
+    if (!startDate && !endDate) return true;
+
+    const dateStr = loan.date || loan.deliveryDate || "";
+    if (!dateStr) return false;
+
+    // parse date string to Date object
+    const loanDate = new Date(dateStr.length === 10 ? dateStr + "T00:00:00Z" : dateStr);
+    if (isNaN(loanDate)) return false;
+
+    if (startDate) {
+      // compare with start date (inclusive) local
+      const s = new Date(startDate);
+      s.setHours(0,0,0,0);
+      if (loanDate < s) return false;
+    }
+    if (endDate) {
+      // include loans up to the end date (inclusive) local
+      const e = new Date(endDate);
+      e.setHours(23,59,59,999);
+      if (loanDate > e) return false;
+    }
+    return true;
+  });
 
   const navigate = useNavigate();
 
@@ -123,10 +146,10 @@ const formatDate = (dateStr) => {
         }}
       >
       
-        <TableContainer component={Paper} sx={{ maxWidth: 1400, background: "rgba(198, 198, 198, 0.85)" }}>
+        <TableContainer component={Paper} sx={{ width: "100%", background: "rgba(198, 198, 198, 0.85)" }}>
 
 
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+          <Table sx={{ width: "100%" }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
                 <TableCell colSpan={10} align="center">
@@ -135,37 +158,57 @@ const formatDate = (dateStr) => {
                   </Typography>
                 </TableCell>
               </TableRow> 
-              {/* Fila de búsqueda y botón */}
+              {/* Fila de búsqueda por rango de fechas */}
               <TableRow>
                 <TableCell colSpan={10} align="left">
-                  <TextField
-                    variant="outlined"
-                    placeholder="Buscar prestamo Por tipo..."
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    sx={{ width: 350, background: "white", borderRadius: 1 }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                      sx: { height: 43 }
-                    }}
-                    inputProps={{
-                      style: { height: 43, boxSizing: "border-box" }
-                    }}
-                  />
+                  <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        label="Desde"
+                        value={startDate}
+                        onChange={(newValue) => setStartDate(newValue)}
+                        enableAccessibleFieldDOMStructure={false}
+                        slots={{ textField: TextField }}
+                        slotProps={{
+                          textField: {
+                            sx: { width: 180, background: "white", borderRadius: 1, '& .MuiInputBase-root': { height: 43 } },
+                            InputLabelProps: { shrink: true }
+                          }
+                        }}
+                      />
+                      <DatePicker
+                        label="Hasta"
+                        value={endDate}
+                        onChange={(newValue) => setEndDate(newValue)}
+                        enableAccessibleFieldDOMStructure={false}
+                        slots={{ textField: TextField }}
+                        slotProps={{
+                          textField: {
+                            sx: { width: 180, background: "white", borderRadius: 1, '& .MuiInputBase-root': { height: 43 } },
+                            InputLabelProps: { shrink: true }
+                          }
+                        }}
+                      />
+                    </LocalizationProvider>
+
+                    <Button
+                      variant="contained"
+                      onClick={() => { setStartDate(null); setEndDate(null); }}
+                      sx={{ height: 43 }}
+                    >
+                      Limpiar
+                    </Button>
+                  </Box>
                 </TableCell>
                 
               </TableRow>
-              {/* Fila de encabezados */}
+              {/* row of labels */}
               <TableRow>
                 <TableCell align="left" sx={{  maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Id
                 </TableCell>
-                <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
-                  Tipo
+                <TableCell align="left" sx={{ maxWidth: 100, fontWeight: "bold", color: "black" }}>
+                  Estado
                 </TableCell>
                 <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Cantidad
@@ -179,10 +222,10 @@ const formatDate = (dateStr) => {
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Fecha
                 </TableCell>
-                <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
+                <TableCell align="center" sx={{ maxWidth: 50, fontWeight: "bold", color: "black" }}>
                   ID Staff
                 </TableCell>
-                <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
+                <TableCell align="center" sx={{ maxWidth: 50, fontWeight: "bold", color: "black" }}>
                   ID Cliente
                 </TableCell>
                 <TableCell align="center" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
@@ -200,20 +243,21 @@ const formatDate = (dateStr) => {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell align="left" sx={{ maxWidth: 180 }}>{loan.loanId}</TableCell>
-                  <TableCell align="left" sx={{ maxWidth: 180 }}>{loan.loanType}</TableCell>
+                  <TableCell align="left" sx={{ maxWidth: 100 }}>{loan.active? "Finalizado":"Activo"}</TableCell>
                   <TableCell align="left" sx={{ maxWidth: 180 }}>{loan.amount}</TableCell>
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{formatDate(loan.deliveryDate)}</TableCell>
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{formatDate(loan.returnDate)}</TableCell>
                   <TableCell align="center" sx={{ maxWidth: 180 }}>{formatDate(loan.date)}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{loan.staffId}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{loan.clientId}</TableCell>
-                  <TableCell align="center" sx={{ maxWidth: 180 }}>{loan.extraCharges}</TableCell>
-                  <TableCell>
-                    <ThemeProvider theme={theme}>
+                  <TableCell align="center" sx={{ maxWidth: 50 }}>{loan.staffId}</TableCell>
+                  <TableCell align="center" sx={{ maxWidth: 50 }}>{loan.clientId}</TableCell>
+                  <TableCell align="center" sx={{ width: 180 }}>{loan.extraCharges}</TableCell>
+                  <TableCell align= "center" sx={{width:"100%"}}>
+                    <ThemeProvider theme={theme} width="100%">
                       <Button
                         variant="contained"
                         color="primary"
                         size="small"
+                        width="100%"
                         onClick={() => handleViewLoan(loan.loanId)}
                         style={{ marginLeft: "0.5rem"}}
                         startIcon={<VisibilityIcon />}
@@ -224,10 +268,11 @@ const formatDate = (dateStr) => {
                         variant="contained"
                         color="secondary"
                         size="small"
+                        width="100%"
                         onClick={() => navigate(`/loan/return/id/${loan.clientId}/${loan.loanId}`)}
                         style={{ marginLeft: "0.5rem" }}
                         startIcon={<RotateRightIcon />}
-                        disabled={!loan.active} // <-- deshabilita si active es false
+                        disabled={!loan.active}
                       >
                         Devolver
                       </Button>
@@ -237,6 +282,7 @@ const formatDate = (dateStr) => {
                       variant="contained"
                       color="error"
                       size="small"
+                      width="100%"
                       onClick={() => handleDelete(loan.loanId)}
                       style={{ marginLeft: "0.5rem" }}
                       startIcon={<DeleteIcon />}

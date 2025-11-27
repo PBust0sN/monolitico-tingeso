@@ -16,15 +16,14 @@ const EditEmployee = () => {
   const [phone_number, setPhoneNumber] = useState("");
   const [rut, setRut] = useState("");
   const [state, setState] = useState("");
-  const [password, setPassword] = useState(""); // opcional en edición
   const { client_id } = useParams();
   const navigate = useNavigate();
 
-  // control de errores y campos con errores
+  // error control
   const [errorsList, setErrorsList] = useState([]);
   const [fieldErrors, setFieldErrors] = useState({});
 
-  // lista de todos los clientes para validar unicidad de RUT
+  // list of clients for RUT checking
   const [clients, setClients] = useState([]);
   useEffect(() => {
     clientService
@@ -61,13 +60,13 @@ const EditEmployee = () => {
       errors.push("Rut es obligatorio.");
       fErrors.rut = true;
     }
-    // prohibir puntos en el RUT
+    // no points allowed in RUT
     if ((rut || "").includes(".")) {
       errors.push("Rut no debe contener puntos.");
       fErrors.rut = true;
     }
 
-    // verificar unicidad de RUT contra los clientes cargados (excluir el cliente actual)
+    // verify RUT uniqueness
     const newRutNorm = normalizeRut(rut);
     if (newRutNorm) {
       const exists = clients.some(
@@ -102,22 +101,11 @@ const EditEmployee = () => {
       }
     }
 
-    // password en edición es opcional; si se entrega debe tener mínimo 6 caracteres
-    if (password && password.length > 0 && password.length < 6) {
-      errors.push("Password debe tener mínimo 6 caracteres si se proporciona.");
-      fErrors.password = true;
-    }
-
     if (!phone_number || !/^\+?\d+$/.test(phone_number)) {
       errors.push("Phone Number obligatorio y sólo debe contener dígitos (puede incluir +).");
       fErrors.phone_number = true;
     }
 
-    // state debe ser 'activo' o 'restringido' si se especifica
-    if (state && !["activo", "restringido"].includes(String(state))) {
-      errors.push("State inválido. Debe ser 'activo' o 'restringido'.");
-      fErrors.state = true;
-    }
 
     return { errors, fErrors };
   };
@@ -144,8 +132,6 @@ const EditEmployee = () => {
       phone_number,
       role: "STAFF"
     };
-    // incluir password sólo si se especifica
-    if (password && password.trim().length > 0) client.password = password;
 
     clientService
       .update(client)
@@ -160,7 +146,7 @@ const EditEmployee = () => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -176,7 +162,7 @@ const EditEmployee = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del formulario */}
+      {/* frame of the formulary */}
       <Box
         sx={{
           position: "relative",
@@ -195,8 +181,8 @@ const EditEmployee = () => {
             minWidth: 350,
             maxWidth: 450,
             width: "90%",
-            background: "rgba(255,255,255,0.85)", // Cambia el color y la transparencia aquí
-            color: "#222", // Cambia el color del texto aquí
+            background: "rgba(255,255,255,0.85)", 
+            color: "#222", 
           }}
         >
           <Box
@@ -209,7 +195,7 @@ const EditEmployee = () => {
             <h3>Editar Empleado</h3>
             <hr />
 
-            {/* Lista de errores */}
+            {/* error list */}
             {errorsList.length > 0 && (
               <Box
                 sx={{

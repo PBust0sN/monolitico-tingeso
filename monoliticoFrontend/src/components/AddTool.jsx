@@ -21,7 +21,7 @@ const AddTool = () => {
   const [lowDmgFee, setLowDmgFee] = useState("");
   const navigate = useNavigate();
 
-  // Lista y estados de errores
+  // error list and error states
   const [errorsList, setErrorsList] = useState([]);
   const [fieldErrors, setFieldErrors] = useState({});
 
@@ -115,7 +115,7 @@ const AddTool = () => {
     try {
       const res = await toolsService.create(tool);
       console.log("Create response:", res);
-      // inspecciona res.status / res.data
+      // if success, navigate to tool list
       if (res && (res.status === 200 || res.status === 201)) {
         navigate("/tool/list");
       } else {
@@ -123,14 +123,14 @@ const AddTool = () => {
       }
     } catch (err) {
       console.error("Error al crear herramienta:", err);
-      // muestra mensaje claro al usuario
+      // show message to user
       window.alert("Error al crear herramienta: " + (err?.response?.data || err.message || err));
     }
   };
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -146,7 +146,7 @@ const AddTool = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del formulario */}
+      {/* Frame of the formulary */}
       <Box
         sx={{
           position: "relative",

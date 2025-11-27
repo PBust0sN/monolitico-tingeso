@@ -47,7 +47,7 @@ const AddEmployee = () => {
       errors.push("E-Mail es obligatorio.");
       fErrors.mail = true;
     } else {
-      // simple email regex
+
       const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRe.test(mail)) {
         errors.push("E-Mail no tiene un formato válido.");
@@ -65,7 +65,6 @@ const AddEmployee = () => {
       fErrors.phone_number = true;
     }
     
-    // verificar unicidad de RUT contra los clientes cargados
     const newRutNorm = normalizeRut(rut);
     if (newRutNorm) {
       const exists = clients.some((c) => normalizeRut(c.rut) === newRutNorm);
@@ -115,7 +114,7 @@ const AddEmployee = () => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -131,7 +130,7 @@ const AddEmployee = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del formulario */}
+      {/* Frame of the formulary */}
       <Box
         sx={{
           position: "relative",
@@ -164,7 +163,7 @@ const AddEmployee = () => {
             <h3>Nuevo Empleado</h3>
             <hr />
 
-            {/* Lista de errores */}
+            {/* error list */}
             {errorsList.length > 0 && (
               <Box
                 sx={{
@@ -225,7 +224,6 @@ const AddEmployee = () => {
               />
             </FormControl>
 
-            {/* Password field */}
             <FormControl fullWidth sx={{ mb: 2 }}>
               <TextField
                 id="password"

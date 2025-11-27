@@ -64,7 +64,7 @@ const EditAdmin = () => {
       fErrors.phone_number = true;
     }
 
-    // verificar unicidad de RUT contra los clientes cargados
+    // check RUT uniqueness
     const newRutNorm = normalizeRut(rut);
     if (newRutNorm) {
       const exists = clients.some((c) => normalizeRut(c.rut) === newRutNorm);
@@ -114,7 +114,7 @@ const EditAdmin = () => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -130,7 +130,7 @@ const EditAdmin = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del formulario */}
+      {/* Frame of the formulary */}
       <Box
         sx={{
           position: "relative",
@@ -163,7 +163,7 @@ const EditAdmin = () => {
             <h3>Nuevo Admin</h3>
             <hr />
 
-            {/* Lista de errores */}
+            {/* error list */}
             {errorsList.length > 0 && (
               <Box
                 sx={{
@@ -224,7 +224,6 @@ const EditAdmin = () => {
               />
             </FormControl>
 
-            {/* Password field */}
             <FormControl fullWidth sx={{ mb: 2 }}>
               <TextField
                 id="password"

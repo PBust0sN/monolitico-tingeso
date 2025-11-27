@@ -19,33 +19,15 @@ import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { lime, purple, lightGreen, lightBlue } from '@mui/material/colors';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 
 const AdminList = () => {
-  const { keycloak } = useKeycloak(); // <-- agregado
   const [client, setclients] = useState([]);
   const [search, setSearch] = useState("");
-  const [expandedRow, setExpandedRow] = useState(null);
 
-  const isAdmin = Boolean(
-    keycloak &&
-      (
-        keycloak.tokenParsed?.realm_access?.roles?.includes("ADMIN") ||
-        (typeof keycloak.hasRealmRole === "function" && keycloak.hasRealmRole("ADMIN"))
-      )
-  );
-
-  // Mostrar solo clientes cuyo rol incluye "CLIENT"
+  // show only users with role "CLIENT"
   const filteredClient = client
     .filter(c => {
-      // soportar distintos formatos que el backend pueda retornar
-      const rolesField = c.roles ?? c.keycloakRoles ?? c.realm_roles ?? c.role;
+      const rolesField =  c.role;
       if (Array.isArray(rolesField)) {
         return rolesField.map(r => String(r).toUpperCase()).includes("ADMIN");
       }
@@ -57,15 +39,6 @@ const AdminList = () => {
     .filter(c => (c.rut || "").includes(search));
  
   const navigate = useNavigate();
-
-  const theme = createTheme({
-    palette: {
-      primary: lime,
-      secondary: purple,
-      success: lightGreen,
-      error: lightBlue,
-    },
-  });
 
   const init = () => {
     clientService
@@ -106,15 +79,6 @@ const AdminList = () => {
 
   const handleEdit = (id) => {
     navigate(`/client/edit/${id}`);
-  };
-
-  const handleNewLoan = (id) => {
-    navigate(`/loan/new/${id}`);
-  };
-
-
-  const handleExpandClick = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
   };
 
   return (
@@ -200,7 +164,7 @@ const AdminList = () => {
                 <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Id
                 </TableCell>
-                <TableCell align="left" sx={{ maxWidth: 100, fontWeight: "bold", color: "black" }}>
+                <TableCell align="center" sx={{ maxWidth: 100, fontWeight: "bold", color: "black" }}>
                   Foto
                 </TableCell>
                 <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>

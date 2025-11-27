@@ -10,7 +10,6 @@ import clientService from "../services/client.service";
 import MenuItem from "@mui/material/MenuItem";
 
 const AddAdmin = () => {
-  const [avaliable, setAvaliable] = useState("true");
   const [last_name, setLastName] = useState("");
   const [mail, setMail] = useState("");
   const [name, setName] = useState("");
@@ -65,7 +64,6 @@ const AddAdmin = () => {
       fErrors.phone_number = true;
     }
 
-    // verificar unicidad de RUT contra los clientes cargados
     const newRutNorm = normalizeRut(rut);
     if (newRutNorm) {
       const exists = clients.some((c) => normalizeRut(c.rut) === newRutNorm);
@@ -78,7 +76,7 @@ const AddAdmin = () => {
     return { errors, fErrors };
   };
 
-  const saveClient = (e) => {
+  const saveAdmin = (e) => {
     e.preventDefault();
 
     const { errors, fErrors } = validateFields();
@@ -115,7 +113,7 @@ const AddAdmin = () => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -131,7 +129,7 @@ const AddAdmin = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del formulario */}
+      {/* Frame of formulary */}
       <Box
         sx={{
           position: "relative",
@@ -164,7 +162,7 @@ const AddAdmin = () => {
             <h3>Nuevo Admin</h3>
             <hr />
 
-            {/* Lista de errores */}
+            {/* error list */}
             {errorsList.length > 0 && (
               <Box
                 sx={{
@@ -225,7 +223,6 @@ const AddAdmin = () => {
               />
             </FormControl>
 
-            {/* Password field */}
             <FormControl fullWidth sx={{ mb: 2 }}>
               <TextField
                 id="password"
@@ -267,7 +264,7 @@ const AddAdmin = () => {
               <Button
                 variant="contained"
                 color="info"
-                onClick={saveClient}
+                onClick={saveAdmin}
                 startIcon={<SaveIcon />}
               >
                 Grabar

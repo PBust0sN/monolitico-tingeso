@@ -25,7 +25,7 @@ const reportOptions = [
 const AddReport = () => {
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",

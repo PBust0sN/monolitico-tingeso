@@ -17,15 +17,14 @@ const EditClient = () => {
   const [rut, setRut] = useState("");
   const [state, setState] = useState("activo");
   const [role, setRole] = useState("");
-  const [password, setPassword] = useState("");
   const { client_id } = useParams();
   const navigate = useNavigate();
 
-  // control de errores (igual que en Add)
+  // error control
   const [errorsList, setErrorsList] = useState([]);
   const [fieldErrors, setFieldErrors] = useState({});
 
-  // lista de todos los clientes para validar unicidad de RUT
+  // client list for checking ruts
   const [clients, setClients] = useState([]);
   useEffect(() => {
     clientService
@@ -39,24 +38,13 @@ const EditClient = () => {
       clientService
         .get(client_id)
         .then((client) => {
-          // quitar puntos si vienen desde backend
+          // take points out if it come from the backend like that
           setRut((client.data.rut || "").replace(/\./g, ""));
           setName(client.data.name || "");
           setLastName(client.data.last_name || "");
           setMail(client.data.mail || "");
           setState(client.data.state || "activo");
           setPhoneNumber(client.data.phone_number || "");
-          setPassword(""); // no cargar password por seguridad
-          // cargar rol si viene (soporta role string o roles array)
-          if (Array.isArray(client.data.roles) && client.data.roles.length > 0) {
-            setRole(client.data.roles[0]);
-          } else if (client.data.role) {
-            setRole(client.data.role);
-          } else if (client.data.keycloakRoles && Array.isArray(client.data.keycloakRoles)) {
-            setRole(client.data.keycloakRoles[0] ?? "");
-          } else {
-            setRole("");
-          }
         })
         .catch((error) => {
           console.log("Se ha producido un error.", error);
@@ -74,13 +62,13 @@ const EditClient = () => {
       errors.push("Rut es obligatorio.");
       fErrors.rut = true;
     }
-    // prohibir puntos en el RUT
+    // no points in rut
     if ((rut || "").includes(".")) {
       errors.push("Rut no debe contener puntos.");
       fErrors.rut = true;
     }
 
-    // verificar unicidad de RUT contra los clientes cargados (excluir el cliente actual)
+    // check rut in data base
     const newRutNorm = normalizeRut(rut);
     if (newRutNorm) {
       const exists = clients.some(
@@ -138,8 +126,6 @@ const EditClient = () => {
     }
 
     const client = { client_id, rut: normalizeRut(rut), name, last_name, mail, state, phone_number, role };
-    // incluir password sólo si se especifica para mantener la actual si queda vacío
-    if (password && password.trim().length > 0) client.password = password;
 
     clientService
       .update(client)
@@ -154,7 +140,7 @@ const EditClient = () => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -170,7 +156,7 @@ const EditClient = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del formulario */}
+      {/* Frame of formulary */}
       <Box
         sx={{
           position: "relative",
@@ -203,7 +189,7 @@ const EditClient = () => {
             <h3>Editar Cliente</h3>
             <hr />
 
-            {/* Lista de errores */}
+            {/* error list */}
             {errorsList.length > 0 && (
               <Box
                 sx={{

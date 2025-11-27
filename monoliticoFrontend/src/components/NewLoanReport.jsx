@@ -23,7 +23,7 @@ const  NewLoanReport = () =>{
 			console.log(clientId);
 			return;
 		}
-		// Obtener todos los préstamos y filtrar por clientId
+		// get all the loans and the filtered by client id
 		const allLoansRes = await loansService.getAll();
 		const loansList = allLoansRes.data.filter(l => l.clientId === clientId);
 		console.log(loansList);
@@ -32,7 +32,7 @@ const  NewLoanReport = () =>{
 				clientIdReport: clientId });
 			const reportId = reportRes.data?.reportId ;
 			for (const l of loansList) {
-				// Crear loanReport
+				// create loanReport
 				const reponseLoanReport =  await loansReportsService.create({
 					reportId: reportId,
 					clientId: l.clientId,
@@ -46,7 +46,7 @@ const  NewLoanReport = () =>{
 				});
 
 				const res = reponseLoanReport.data?.loanReportId;
-				// Obtener herramientas asociadas al préstamo
+				// get tools by loan id 
 				const toollist = await toolsLoansService.getToolsIdByLoanId(l.loanId);
 				const toolIds = toollist.data; 
 				console.log(toolIds);
@@ -54,11 +54,11 @@ const  NewLoanReport = () =>{
 					const toolRes = await toolsService.get(toolId);
 					const tool = toolRes.data;
 					console.log(tool);
-					// Crear toolsReport
+					// create toolsReport
 					const toolReportRes = await toolsReportService.create({
 						toolName: tool.tool_name,
 						category: tool.category,
-						loanCount: 1 // o el valor que corresponda
+						loanCount: 1
 					});
 					const toolIdReport = toolReportRes.data?.toolIdReport;
 					// Vincular con toolsLoanReport

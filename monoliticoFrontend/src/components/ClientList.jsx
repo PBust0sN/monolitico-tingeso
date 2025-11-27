@@ -28,24 +28,15 @@ import IconButton from "@mui/material/IconButton";
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 
 const ClientList = () => {
-  const { keycloak } = useKeycloak(); // <-- agregado
   const [client, setclients] = useState([]);
   const [search, setSearch] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
 
-  const isAdmin = Boolean(
-    keycloak &&
-      (
-        keycloak.tokenParsed?.realm_access?.roles?.includes("ADMIN") ||
-        (typeof keycloak.hasRealmRole === "function" && keycloak.hasRealmRole("ADMIN"))
-      )
-  );
 
-  // Mostrar solo clientes cuyo rol incluye "CLIENT"
+  // show only users with role "CLIENT"
   const filteredClient = client
     .filter(c => {
-      // soportar distintos formatos que el backend pueda retornar
-      const rolesField = c.roles ?? c.keycloakRoles ?? c.realm_roles ?? c.role;
+      const rolesField = c.role;
       if (Array.isArray(rolesField)) {
         return rolesField.map(r => String(r).toUpperCase()).includes("CLIENT");
       }
@@ -201,8 +192,7 @@ const ClientList = () => {
                   Id
                 </TableCell>
 
-                {/* Nuevo campo: Foto */}
-                <TableCell align="left" sx={{ maxWidth: 100, fontWeight: "bold", color: "black" }}>
+                <TableCell align="center" sx={{ maxWidth: 100, fontWeight: "bold", color: "black" }}>
                   Foto
                 </TableCell>
 
@@ -239,13 +229,11 @@ const ClientList = () => {
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell align="left" sx={{ maxWidth: 180 }}>{client.client_id}</TableCell>
-
-                    {/* Celda de imagen (muestra client.imageUrl si existe, sino intenta una ruta por id, con placeholder onError) */}
                     <TableCell align="left" sx={{ maxWidth: 100 }}>
                       <img
                         src={`/icon${client.client_id}.png`}
                         style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 6 }}
-                        onError={(e) => { e.currentTarget.src = "/default-avatar.png"; }}
+                        onError={(e) => { e.currentTarget.src = "/vite.svg"; }}
                       />
                     </TableCell>
 
@@ -263,7 +251,6 @@ const ClientList = () => {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    {/* ajustar colspan por la nueva columna (ahora 10) */}
                     <TableCell colSpan={10} sx={{ p: 0, background: "rgba(240,240,240,0.5)" }}>
                       <Collapse in={expandedRow === client.client_id} timeout="auto" unmountOnExit>
                         <Box sx={{ display: "flex", gap: 2, p: 2, justifyContent: "center" }}>

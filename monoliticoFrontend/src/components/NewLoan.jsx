@@ -37,11 +37,11 @@ const NewLoan = () => {
       });
   }, []);
 
-  // Selecciona/des-selecciona una herramienta
+  // select/deselect tool on click
   const handleToolClick = (toolId) => {
     const tool = toolOptions.find(t => t.toolId === toolId);
     if (!tool) return;
-    // evitar seleccionar si no hay stock
+    // evitate selecting if out of stock
     if (!(tool.stock > 0)) return;
 
     setSelectedTools((prev) =>
@@ -62,16 +62,16 @@ const NewLoan = () => {
     loansService
       .newLoan(loan)
       .then((response) => {
-        // Suponiendo que response.data es la lista de errores
+        // suposing that if response.data is an empty array, no errors occurred
         if (Array.isArray(response.data) && response.data.length === 0) {
           window.alert("Préstamo añadido exitosamente");
           navigate("/client/list");
         } else if (Array.isArray(response.data)) {
-          // Muestra los errores en una ventana
+          // show the list of errors 
           window.alert("Errores:\n" + response.data.join("\n"));
           navigate(-1);
         } else {
-          // Si la respuesta no es una lista, muestra un mensaje genérico
+          // if the response is not as expected 
           window.alert("Respuesta inesperada del servidor.");
         }
       })
@@ -83,7 +83,7 @@ const NewLoan = () => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -99,7 +99,7 @@ const NewLoan = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame principal de herramientas */}
+      {/* main frame of tools */}
       <Box
         sx={{
           position: "relative",
@@ -135,7 +135,7 @@ const NewLoan = () => {
               variant="filled"
               value={days}
               onChange={e => setDays(e.target.value)}
-              sx={{ width: 260 }} // más ancho
+              sx={{ width: 260 }}
               inputProps={{ min: 1 }}
               required
             />

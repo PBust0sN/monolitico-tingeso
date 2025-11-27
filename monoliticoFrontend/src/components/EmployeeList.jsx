@@ -19,20 +19,13 @@ import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { lime, purple, lightGreen, lightBlue } from '@mui/material/colors';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 
 const EmployeeList = () => {
-  const { keycloak } = useKeycloak(); // <-- agregado
+  const { keycloak } = useKeycloak(); 
   const [client, setclients] = useState([]);
   const [search, setSearch] = useState("");
 
-  // Determinar si el usuario actual tiene rol ADMIN
+  // find if the autenticated user has role ADMIN
   const isAdmin = Boolean(
     keycloak &&
       (
@@ -41,11 +34,10 @@ const EmployeeList = () => {
       )
   );
 
-  // Mostrar solo clientes cuyo rol incluye "CLIENT"
+  // show only users with role "CLIENT"
   const filteredClient = client
     .filter(c => {
-      // soportar distintos formatos que el backend pueda retornar
-      const rolesField = c.roles ?? c.keycloakRoles ?? c.realm_roles ?? c.role;
+      const rolesField = c.role;
       if (Array.isArray(rolesField)) {
         return rolesField.map(r => String(r).toUpperCase()).includes("STAFF");
       }
@@ -58,14 +50,6 @@ const EmployeeList = () => {
  
   const navigate = useNavigate();
 
-  const theme = createTheme({
-    palette: {
-      primary: lime,
-      secondary: purple,
-      success: lightGreen,
-      error: lightBlue,
-    },
-  });
 
   const init = () => {
     clientService

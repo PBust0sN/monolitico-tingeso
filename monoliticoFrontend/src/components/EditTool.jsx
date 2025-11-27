@@ -19,6 +19,10 @@ const EditTool = () => {
   const { toolId } = useParams();
   const navigate = useNavigate();
 
+  // error validation
+  const [errorsList, setErrorsList] = useState([]);
+  const [fieldErrors, setFieldErrors] = useState({});
+
   useEffect(() => {
     if (toolId) {
       toolsService
@@ -38,9 +42,74 @@ const EditTool = () => {
     }
   }, [toolId]);
 
+  const validateFields = () => {
+    const errors = [];
+    const fErrors = {};
+
+    if (!toolName || !toolName.trim()) {
+      errors.push("Tool Name es obligatorio.");
+      fErrors.toolName = true;
+    }
+
+    if (!category || !category.trim()) {
+      errors.push("Category es obligatorio.");
+      fErrors.category = true;
+    }
+
+    if (!disponibility || !disponibility.trim()) {
+      errors.push("Disponibility es obligatorio.");
+      fErrors.disponibility = true;
+    }
+
+    if (!initialState || !initialState.trim()) {
+      errors.push("Initial State es obligatorio.");
+      fErrors.initialState = true;
+    }
+
+    const lf = parseFloat(loanFee);
+    if (isNaN(lf) || lf < 0) {
+      errors.push("Loan Fee debe ser un número mayor o igual a 0.");
+      fErrors.loanFee = true;
+    }
+
+    const rf = parseFloat(repositionFee);
+    if (isNaN(rf) || rf < 0) {
+      errors.push("Reposition Fee debe ser un número mayor o igual a 0.");
+      fErrors.repositionFee = true;
+    }
+
+    const df = parseFloat(diaryFineFee);
+    if (isNaN(df) || df < 0) {
+      errors.push("Diary Fine Fee debe ser un número mayor o igual a 0.");
+      fErrors.diaryFineFee = true;
+    }
+
+    return { errors, fErrors };
+  };
+
   const saveTool = (e) => {
     e.preventDefault();
-    const tool = { toolId, toolName, category, diaryFineFee, loanFee, repositionFee, initialState, disponibility };
+
+    const { errors, fErrors } = validateFields();
+    setErrorsList(errors);
+    setFieldErrors(fErrors);
+
+    if (errors.length > 0) {
+      window.alert(errors.join("\n"));
+      return;
+    }
+
+    const tool = {
+      toolId,
+      toolName: toolName.trim(),
+      category: category.trim(),
+      diaryFineFee: Number(diaryFineFee),
+      loanFee: Number(loanFee),
+      repositionFee: Number(repositionFee),
+      initialState: initialState.trim(),
+      disponibility: disponibility.trim(),
+    };
+
     toolsService
       .update(tool)
       .then((response) => {
@@ -54,7 +123,7 @@ const EditTool = () => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -70,7 +139,7 @@ const EditTool = () => {
           zIndex: 0,
         }}
       />
-      {/* Frame del formulario */}
+      {/* Frame of the formulary */}
       <Box
         sx={{
           position: "relative",
@@ -89,8 +158,8 @@ const EditTool = () => {
             minWidth: 350,
             maxWidth: 450,
             width: "90%",
-            background: "rgba(255,255,255,0.85)", // Cambia el color y la transparencia aquí
-            color: "#222", // Cambia el color del texto aquí
+            background: "rgba(255,255,255,0.85)",
+            color: "#222", 
           }}
         >
           <Box
@@ -102,6 +171,15 @@ const EditTool = () => {
           >
             <h3>Editar Herramienta</h3>
             <hr />
+
+            {errorsList.length > 0 && (
+              <Box sx={{ width: "100%", mb: 2, p: 1, borderRadius: 1, backgroundColor: "rgba(255,200,200,0.9)" }}>
+                <ul style={{ margin: 0, paddingLeft: "1rem", color: "#700" }}>
+                  {errorsList.map((err, idx) => <li key={idx}>{err}</li>)}
+                </ul>
+              </Box>
+            )}
+
             <FormControl fullWidth sx={{ mb: 2 }}>
               <TextField
                 id="toolName"
@@ -110,6 +188,7 @@ const EditTool = () => {
                 variant="standard"
                 onChange={(e) => setToolName(e.target.value)}
                 helperText="Ej. Martillo"
+                error={!!fieldErrors.toolName}
               />
             </FormControl>
 
@@ -120,6 +199,7 @@ const EditTool = () => {
                 value={category}
                 variant="standard"
                 onChange={(e) => setCategory(e.target.value)}
+                error={!!fieldErrors.category}
               />
             </FormControl>
 
@@ -130,6 +210,7 @@ const EditTool = () => {
                 value={disponibility}
                 variant="standard"
                 onChange={(e) => setDisponibility(e.target.value)}
+                error={!!fieldErrors.disponibility}
               />
             </FormControl>
 
@@ -140,6 +221,7 @@ const EditTool = () => {
                 value={initialState}
                 variant="standard"
                 onChange={(e) => setInitialState(e.target.value)}
+                error={!!fieldErrors.initialState}
               />
             </FormControl>
 
@@ -151,6 +233,7 @@ const EditTool = () => {
                 value={loanFee}
                 variant="standard"
                 onChange={(e) => setLoanFee(e.target.value)}
+                error={!!fieldErrors.loanFee}
               />
             </FormControl>
 
@@ -162,6 +245,7 @@ const EditTool = () => {
                 value={repositionFee}
                 variant="standard"
                 onChange={(e) => setRepositionFee(e.target.value)}
+                error={!!fieldErrors.repositionFee}
               />
             </FormControl>
 
@@ -173,6 +257,7 @@ const EditTool = () => {
                 value={diaryFineFee}
                 variant="standard"
                 onChange={(e) => setDiaryFineFee(e.target.value)}
+                error={!!fieldErrors.diaryFineFee}
               />
             </FormControl>
 

@@ -16,21 +16,21 @@ public class LoansReportController {
     @Autowired
     private LoansReportService loansReportService;
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @GetMapping("/{id}")
     public ResponseEntity<List<LoansReportEntity>> getLoansReportByReportId(@PathVariable("id") Long reportId){
         List<LoansReportEntity>  loansReportEntities = loansReportService.getLoansReportByReportId(reportId);
         return ResponseEntity.ok(loansReportEntities);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @GetMapping("/")
     public ResponseEntity<List<LoansReportEntity>> getAllLoansReport(){
         List<LoansReportEntity> loansReportEntities = loansReportService.getAllLoansReport();
         return ResponseEntity.ok(loansReportEntities);
     }
 
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN','CLIENT')")
     @GetMapping("/getbyid/{id}")
     public  ResponseEntity<LoansReportEntity> getLoansReportById(@PathVariable("id") Long reportId){
         LoansReportEntity loan = loansReportService.getLoansReportById(reportId);

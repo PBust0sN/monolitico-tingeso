@@ -47,7 +47,7 @@ const MyReports = () => {
     };
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -68,7 +68,7 @@ const MyReports = () => {
         <TableContainer component={Paper} sx={{ maxWidth: 1200, background: "rgba(255,255,255,0.95)" }}>
           <Table size="small">
             <TableHead>
-              {/* Fila de filtros dentro de la tabla */}
+              {/* row of filters */}
               <TableRow>
                 <TableCell colSpan={4}>
                   <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>

@@ -183,9 +183,9 @@ const AddClient = () => {
             component="form"
           >
             <h3>Nuevo Cliente</h3>
-            <hr />
+            <hr /> {/* draws a line */}
 
-            {/* Lista de errores */}
+            {/* error list showed on top of the formulary if there is 1 or more erorrs */}
             {errorsList.length > 0 && (
               <Box
                 sx={{
@@ -246,7 +246,6 @@ const AddClient = () => {
               />
             </FormControl>
 
-            {/* Password field */}
             <FormControl fullWidth sx={{ mb: 2 }}>
               <TextField
                 id="password"
