@@ -5,7 +5,10 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import SaveIcon from "@mui/icons-material/Save";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import Typography from "@mui/material/Typography";
 import toolsService from "../services/tools.service";
+import imagesService from "../services/images.service";
 import Paper from "@mui/material/Paper";
 import MenuItem from "@mui/material/MenuItem";
 
@@ -19,6 +22,9 @@ const AddTool = () => {
   const [diaryFineFee, setDiaryFineFee] = useState("");
   const [stock, setStock] = useState("");
   const [lowDmgFee, setLowDmgFee] = useState("");
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
   const navigate = useNavigate();
 
   // error list and error states
@@ -87,6 +93,65 @@ const AddTool = () => {
     return { errors, fErrors };
   };
 
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      const file = files[0];
+      // validar que sea imagen
+      if (file.type.startsWith("image/")) {
+        setImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert("Por favor, selecciona un archivo de imagen.");
+      }
+    }
+  };
+
+  const handleFileInput = (e) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const file = files[0];
+      if (file.type.startsWith("image/")) {
+        setImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert("Por favor, selecciona un archivo de imagen.");
+      }
+    }
+  };
+
+  const uploadImage = (file, toolId) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    // Nombre personalizado: ${toolId}.png
+    const customFilename = `${toolId}.png`;
+    
+    return imagesService.uploadImage(formData, customFilename);
+  };
+
   const saveTool = async (e) => {
     e.preventDefault();
 
@@ -117,6 +182,16 @@ const AddTool = () => {
       console.log("Create response:", res);
       // if success, navigate to tool list
       if (res && (res.status === 200 || res.status === 201)) {
+        const newToolId = res.data?.toolId || res.data?.id;
+        // Si hay imagen, subirla después de crear la herramienta
+        if (image && newToolId) {
+          try {
+            await uploadImage(image, newToolId);
+            console.log("Imagen subida exitosamente");
+          } catch (imgErr) {
+            console.log("Error al subir imagen, pero herramienta fue creada:", imgErr);
+          }
+        }
         navigate("/tool/list");
       } else {
         window.alert("La creación respondió con código: " + (res?.status ?? "unknown"));
@@ -309,6 +384,70 @@ const AddTool = () => {
                 error={!!fieldErrors.stock}
               />
             </FormControl>
+
+            <hr />
+
+            {/* Drag and Drop zone */}
+            <Typography variant="h6" sx={{ mb: 2, mt: 2, fontWeight: "bold" }}>
+              Imagen de la herramienta
+            </Typography>
+
+            <Box
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              sx={{
+                width: "100%",
+                border: "2px dashed",
+                borderColor: dragActive ? "primary.main" : "gray",
+                borderRadius: 2,
+                p: 3,
+                textAlign: "center",
+                backgroundColor: dragActive ? "rgba(25, 118, 210, 0.1)" : "rgba(0,0,0,0.02)",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                mb: 2,
+              }}
+            >
+              <input
+                type="file"
+                id="fileInput"
+                accept="image/*"
+                onChange={handleFileInput}
+                style={{ display: "none" }}
+              />
+              <label htmlFor="fileInput" style={{ cursor: "pointer", width: "100%" }}>
+                <CloudUploadIcon sx={{ fontSize: 40, color: "primary.main", mb: 1 }} />
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Arrastra una imagen aquí o haz clic para seleccionar
+                </Typography>
+                <Typography variant="caption" sx={{ color: "gray" }}>
+                  Formatos soportados: JPG, PNG, GIF, WebP
+                </Typography>
+              </label>
+            </Box>
+
+            {/* Preview de imagen */}
+            {preview && (
+              <Box sx={{ mb: 2, width: "100%" }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Vista previa:
+                </Typography>
+                <Box
+                  component="img"
+                  src={preview}
+                  alt="Preview"
+                  sx={{
+                    width: "100%",
+                    maxHeight: 200,
+                    objectFit: "contain",
+                    borderRadius: 1,
+                    border: "1px solid #ccc",
+                  }}
+                />
+              </Box>
+            )}
 
             <FormControl sx={{ mb: 2 }}>
               <Button
