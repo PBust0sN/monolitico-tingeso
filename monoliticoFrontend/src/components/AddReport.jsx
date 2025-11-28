@@ -1,28 +1,31 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
-const reportOptions = [
-  {
-    label: "Préstamos por Cliente",
-    description: "Visualiza todos los préstamos realizados por cada cliente.",
-    path: "/report/loans-by-client",
-  },
-  {
-    label: "Herramientas Más Usadas",
-    description: "Consulta cuáles son las herramientas más solicitadas.",
-    path: "/report/top-tools",
-  },
-  {
-    label: "Préstamos atrasados",
-    description: "Revisa los préstamos que aún no han sido devueltos.",
-    path: "/report/behind-loans",
-  },
-];
-
 const AddReport = () => {
+  const { clientId } = useParams();
+  console.log("AddReport - clientId from URL:", clientId);
+  
+  // Modificar las rutas para incluir clientId si está disponible
+  const reportOptions = [
+    {
+      label: "Préstamos por Cliente",
+      description: "Visualiza todos los préstamos realizados por cada cliente.",
+      path: clientId ? `/report/loans-by-client?clientId=${clientId}` : "/report/loans-by-client",
+    },
+    {
+      label: "Herramientas Más Usadas",
+      description: "Consulta cuáles son las herramientas más solicitadas.",
+      path: clientId ? `/report/top-tools?clientId=${clientId}` : "/report/top-tools",
+    },
+    {
+      label: "Préstamos atrasados",
+      description: "Revisa los préstamos que aún no han sido devueltos.",
+      path: clientId ? `/report/behind-loans?clientId=${clientId}` : "/report/behind-loans",
+    },
+  ];
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
       {/* background */}

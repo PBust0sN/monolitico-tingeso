@@ -4,19 +4,20 @@ import toolsService from "../services/tools.service";
 import toolsReportService from "../services/toolsReport.service";
 import reportsService from "../services/reports.service";
 import toolsRankingService from "../services/toolsRanking.service";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
 
 const NewRakingTool = () => {
 	const { keycloak } = useKeycloak();
+	const [searchParams] = useSearchParams();
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
 	const handleGenerateRanking = async () => {
 		setLoading(true);
-		// fisrt we obtain the first 10 tools hith the most loan count in the tools table
-		const tenTools = await toolsService.getTenTools();
-		const toolsList = tenTools.data;
+		// Obtener clientId de la URL si existe, si no usar el de Keycloak
+		const urlClientId = searchParams.get("clientId");
+		const clientId = urlClientId ? parseInt(urlClientId) : parseInt(keycloak?.tokenParsed?.id_real);
 
         // then we create a list to store the ids of the tools created in toolsReport
 		const toolReportIds = [];
@@ -37,10 +38,10 @@ const NewRakingTool = () => {
 		}
 
 		//then we create a new report, with the toolsIdRanking set to true
-		console.log(keycloak?.tokenParsed?.id_real)
+		console.log(clientId)
 		const reportRes = await reportsService.create({ 
 			toolsIdRanking: true,
-			clientIdReport: keycloak?.tokenParsed?.id_real });
+			clientIdReport: clientId });
 		const reportId = reportRes.data?.reportId;
 
 		// then we create the ranking entries in toolsRanking

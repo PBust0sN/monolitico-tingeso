@@ -302,6 +302,18 @@ const ClientList = () => {
                           <ThemeProvider theme={theme}>
                             <Button
                               variant="contained"
+                              color="info"
+                              size="small"
+                              onClick={() => navigate(`/reports/create/${client.client_id}`)}
+                              startIcon={<AddCircleIcon />}
+                            >
+                              Create Report
+                            </Button>
+                          </ThemeProvider>
+                        
+                          <ThemeProvider theme={theme}>
+                            <Button
+                              variant="contained"
                               color="primary"
                               size="small"
                               onClick={() => handleNewLoan(client.client_id)}

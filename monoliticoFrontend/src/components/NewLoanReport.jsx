@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, Paper, CircularProgress, Button } from "@mui/material";
+import { useKeycloak } from "@react-keycloak/web";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import loansService from "../services/loans.service";
 import loansReportsService from "../services/loansReports.service";
 import reportsService from "../services/reports.service";
@@ -7,23 +9,27 @@ import toolsService from "../services/tools.service";
 import toolsReportService from "../services/toolsReport.service";
 import toolsLoanReportService from "../services/toolsLoanReport.service";
 import toolsLoansService from "../services/toolsLoans.service";
-import { useKeycloak } from "@react-keycloak/web";
-import { useNavigate } from "react-router-dom";
 
 const  NewLoanReport = () =>{
 	const { keycloak } = useKeycloak();
+	const [searchParams] = useSearchParams();
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
 	const handleSaveReport = async () => {
 		setLoading(true);
-		const clientId = parseInt(keycloak?.tokenParsed?.id_real); // Convertir a número
+		// Obtener clientId de la URL si existe, si no usar el de Keycloak
+		const urlClientId = searchParams.get("clientId");
+		console.log("URL clientId (raw):", urlClientId, "Type:", typeof urlClientId);
+		console.log("Keycloak clientId (raw):", keycloak?.tokenParsed?.id_real, "Type:", typeof keycloak?.tokenParsed?.id_real);
+		const clientId = urlClientId ? parseInt(urlClientId) : parseInt(keycloak?.tokenParsed?.id_real);
+		console.log("Final clientId after parseInt:", clientId, "Type:", typeof clientId);
 		if (!clientId) {
 			setLoading(false);
 			console.log("No clientId found:", clientId);
 			return;
 		}
-		console.log("ClientId:", clientId);
+		console.log("Using clientId:", clientId);
 		// get all the loans and the filtered by client id
 		const allLoansRes = await loansService.getAll();
 		console.log("All loans:", allLoansRes.data);
@@ -34,8 +40,10 @@ const  NewLoanReport = () =>{
 		});
 		console.log("Filtered loans:", loansList);
 		if (loansList.length > 0) {
+			console.log("Creating report with clientIdReport:", clientId);
 			const reportRes = await reportsService.create({ loanIdReport: true ,
 				clientIdReport: clientId });
+			console.log("Report created with response:", reportRes.data);
 			const reportId = reportRes.data?.reportId ;
 			for (const l of loansList) {
 				// create loanReport

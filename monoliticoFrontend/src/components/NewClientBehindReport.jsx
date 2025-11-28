@@ -6,21 +6,23 @@ import clientService from "../services/client.service";
 import clientBehindService from "../services/clientBehind.service";
 import clientBehindLoansService from "../services/clientBehindLoans.service";
 import loansReportsService from "../services/loansReports.service";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
 
 const NewClientBehindReport = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { keycloak } = useKeycloak();
+  const [searchParams] = useSearchParams();
 
   const handleGenerateBehind = async () => {
     setLoading(true);
 
-    // get the real id from the token
-    const idFromToken = parseInt(keycloak?.tokenParsed?.id_real);
+    // Obtener clientId de la URL si existe, si no usar el de Keycloak
+    const urlClientId = searchParams.get("clientId");
+    const idFromToken = urlClientId ? parseInt(urlClientId) : parseInt(keycloak?.tokenParsed?.id_real);
     
-    if (!keycloak?.authenticated || !idFromToken) {
+    if (!idFromToken) {
       setLoading(false);
       return;
     }
