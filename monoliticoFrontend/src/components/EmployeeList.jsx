@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
 import clientService from "../services/client.service";
+import imagesService from "../services/images.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -24,6 +25,7 @@ const EmployeeList = () => {
   const { keycloak } = useKeycloak(); 
   const [client, setclients] = useState([]);
   const [search, setSearch] = useState("");
+  const [imageMap, setImageMap] = useState({});
 
   // find if the autenticated user has role ADMIN
   const isAdmin = Boolean(
@@ -56,12 +58,33 @@ const EmployeeList = () => {
       .getAll()
       .then((response) => {
         setclients(response.data);
+        // Cargar imágenes para cada cliente
+        response.data.forEach(c => {
+          loadImage(c.client_id);
+        });
       })
       .catch((error) => {
         console.log(
           "Se ha producido un error al intentar mostrar listado de herramientas.",
           error
         );
+      });
+  };
+
+  const loadImage = (clientId) => {
+    const filename = `icon${clientId}.png`;
+    imagesService
+      .getImage(filename)
+      .then((response) => {
+        // Convertir blob a URL
+        const url = URL.createObjectURL(response.data);
+        setImageMap(prev => ({
+          ...prev,
+          [clientId]: url
+        }));
+      })
+      .catch((error) => {
+        console.log(`Error al cargar imagen para cliente ${clientId}:`, error);
       });
   };
 
@@ -175,7 +198,7 @@ const EmployeeList = () => {
                 <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Id
                 </TableCell>
-                <TableCell align="left" sx={{ maxWidth: 100, fontWeight: "bold", color: "black" }}>
+                <TableCell align="center" sx={{ maxWidth: 100, fontWeight: "bold", color: "black" }}>
                   Foto
                 </TableCell>
                 <TableCell align="left" sx={{ maxWidth: 180, fontWeight: "bold", color: "black" }}>
@@ -211,11 +234,11 @@ const EmployeeList = () => {
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell align="left" sx={{ maxWidth: 180 }}>{client.client_id}</TableCell>
-                    <TableCell align="left" sx={{ maxWidth: 100 }}>
+                    <TableCell align="center" sx={{ maxWidth: 100 }}>
                       <img
-                        src={`/icon${client.client_id}.png`}
+                        src={imageMap[client.client_id] || "/default-avatar.png"}
                         style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 6 }}
-                        onError={(e) => { e.currentTarget.src = "/default-avatar.png"; }}
+                        alt={`Avatar ${client.client_id}`}
                       />
                     </TableCell>
                     <TableCell align="left" sx={{ maxWidth: 180 }}>{client.rut}</TableCell>

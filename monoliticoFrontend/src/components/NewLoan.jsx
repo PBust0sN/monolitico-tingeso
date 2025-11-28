@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import toolsService from "../services/tools.service";
 import loansService from "../services/loans.service";
+import imagesService from "../services/images.service";
 import { useKeycloak } from "@react-keycloak/web";
 import Typography from "@mui/material/Typography";
 import SaveIcon from "@mui/icons-material/Save";
@@ -21,6 +22,7 @@ const NewLoan = () => {
   const [days, setDays] = useState("");
   const [toolOptions, setToolOptions] = useState([]);
   const [selectedTools, setSelectedTools] = useState([]);
+  const [imageMap, setImageMap] = useState({});
   const navigate = useNavigate();
   const { keycloak } = useKeycloak();
   const staff_id = Number(keycloak.tokenParsed?.id_real);
@@ -31,11 +33,32 @@ const NewLoan = () => {
       .getAll()
       .then((response) => {
         setToolOptions(response.data);
+        // Cargar imágenes para cada herramienta
+        response.data.forEach(tool => {
+          loadImage(tool.toolId);
+        });
       })
       .catch((error) => {
         console.log("Error al obtener herramientas:", error);
       });
   }, []);
+
+  const loadImage = (toolId) => {
+    const filename = `${toolId}.png`;
+    imagesService
+      .getImage(filename)
+      .then((response) => {
+        // Convertir blob a URL
+        const url = URL.createObjectURL(response.data);
+        setImageMap(prev => ({
+          ...prev,
+          [toolId]: url
+        }));
+      })
+      .catch((error) => {
+        console.log(`Error al cargar imagen para herramienta ${toolId}:`, error);
+      });
+  };
 
   // select/deselect tool on click
   const handleToolClick = (toolId) => {
@@ -191,7 +214,7 @@ const NewLoan = () => {
                     }}
                   >
                     <img
-                      src={`/${tool.toolId}.png`}
+                      src={imageMap[tool.toolId] || "/default-avatar.png"}
                       alt={tool.tool_name}
                       style={{
                         width: "100%",

@@ -29,9 +29,12 @@ services:
       DB_HOST: mysql
       KEYCLOAK_ISSUER_URI: http://localhost:8080/realms/toolRent
       REDIRECT_URI: http://localhost:5173*
+      IMAGE_UPLOAD_DIR: /uploads
     depends_on:
       - mysql
       - keycloak
+    volumes:
+      - ./uploads:/uploads
     networks:
       - mynet
     restart: unless-stopped
@@ -44,9 +47,12 @@ services:
       DB_HOST: mysql
       KEYCLOAK_ISSUER_URI: http://localhost:8080/realms/toolRent
       REDIRECT_URI: http://localhost:5173*
+      IMAGE_UPLOAD_DIR: /uploads
     depends_on:
       - mysql
       - keycloak
+    volumes:
+      - ./uploads:/uploads
     networks:
       - mynet
     restart: unless-stopped
@@ -59,9 +65,12 @@ services:
       DB_HOST: mysql
       KEYCLOAK_ISSUER_URI: http://localhost:8080/realms/toolRent
       REDIRECT_URI: http://localhost:5173*
+      IMAGE_UPLOAD_DIR: /uploads
     depends_on:
       - mysql
       - keycloak
+    volumes:
+      - ./uploads:/uploads
     networks:
       - mynet
     restart: unless-stopped

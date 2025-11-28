@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("GET", "/api/images/**").permitAll() // Permitir GET de imágenes sin autenticación
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )

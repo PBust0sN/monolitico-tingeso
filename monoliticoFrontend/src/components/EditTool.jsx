@@ -6,7 +6,10 @@ import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import SaveIcon from "@mui/icons-material/Save";
 import toolsService from "../services/tools.service";
+import imagesService from "../services/images.service";
 import Paper from "@mui/material/Paper";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import Typography from "@mui/material/Typography";
 
 const EditTool = () => {
   const [category, setCategory] = useState("");
@@ -16,6 +19,11 @@ const EditTool = () => {
   const [loanFee, setLoanFee] = useState("");
   const [repositionFee, setRepositionFee] = useState("");
   const [diaryFineFee, setDiaryFineFee] = useState("");
+  const [stock, setStock] = useState("");
+  const [lowDmgFee, setLowDmgFee] = useState("");
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
   const { toolId } = useParams();
   const navigate = useNavigate();
 
@@ -28,19 +36,38 @@ const EditTool = () => {
       toolsService
         .get(toolId)
         .then((tool) => {
+          console.log("Datos de la herramienta cargados:", tool.data);
           setCategory(tool.data.category);
           setDisponibility(tool.data.disponibility);
-          setInitialState(tool.data.initialState);
-          setToolName(tool.data.toolName);
-          setLoanFee(tool.data.loanFee);
-          setRepositionFee(tool.data.repositionFee);
-          setDiaryFineFee(tool.data.diaryFineFee);
+          setInitialState(tool.data.initial_state);
+          setToolName(tool.data.tool_name);
+          setLoanFee(String(tool.data.loan_fee));
+          setRepositionFee(String(tool.data.reposition_fee));
+          setDiaryFineFee(String(tool.data.diary_fine_fee));
+          setStock(String(tool.data.stock || ""));
+          setLowDmgFee(String(tool.data.low_dmg_fee || ""));
+          // Cargar imagen existente
+          loadExistingImage(toolId);
         })
         .catch((error) => {
           console.log("Se ha producido un error.", error);
         });
     }
   }, [toolId]);
+
+  const loadExistingImage = (toolId) => {
+    const filename = `${toolId}.png`;
+    imagesService
+      .getImage(filename)
+      .then((response) => {
+        // Convertir blob a URL
+        const url = URL.createObjectURL(response.data);
+        setPreview(url);
+      })
+      .catch((error) => {
+        console.log(`No hay imagen existente para toolId ${toolId}:`, error);
+      });
+  };
 
   const validateFields = () => {
     const errors = [];
@@ -84,7 +111,91 @@ const EditTool = () => {
       fErrors.diaryFineFee = true;
     }
 
+    const st = parseFloat(stock);
+    if (isNaN(st) || st < 0) {
+      errors.push("Stock debe ser un número mayor o igual a 0.");
+      fErrors.stock = true;
+    }
+
+    const ldf = parseFloat(lowDmgFee);
+    if (isNaN(ldf) || ldf < 0) {
+      errors.push("Low Damage Fee debe ser un número mayor o igual a 0.");
+      fErrors.lowDmgFee = true;
+    }
+
     return { errors, fErrors };
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      const file = files[0];
+      // validar que sea imagen
+      if (file.type.startsWith("image/")) {
+        setImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+        // Subir la imagen usando imagesService
+        uploadImage(file);
+      } else {
+        alert("Por favor, selecciona un archivo de imagen.");
+      }
+    }
+  };
+
+  const handleFileInput = (e) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const file = files[0];
+      if (file.type.startsWith("image/")) {
+        setImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+        // Subir la imagen usando imagesService
+        uploadImage(file);
+      } else {
+        alert("Por favor, selecciona un archivo de imagen.");
+      }
+    }
+  };
+
+  const uploadImage = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    // Nombre personalizado: ${toolId}.png
+    const customFilename = `${toolId}.png`;
+    
+    imagesService
+      .uploadImage(formData, customFilename)
+      .then((response) => {
+        console.log("Imagen subida exitosamente:", response.data);
+        console.log("Imagen guardada como:", response.data.filename);
+      })
+      .catch((error) => {
+        console.log("Error al subir la imagen:", error);
+        alert("Error al subir la imagen");
+      });
   };
 
   const saveTool = (e) => {
@@ -99,15 +210,41 @@ const EditTool = () => {
       return;
     }
 
+    // Subir imagen si fue seleccionada
+    if (image) {
+      const formData = new FormData();
+      formData.append("file", image);
+      const customFilename = `${toolId}.png`;
+      
+      imagesService
+        .uploadImage(formData, customFilename)
+        .then((response) => {
+          console.log("Imagen subida exitosamente:", response.data);
+          // Después de subir la imagen, guardar la herramienta
+          saveToolData();
+        })
+        .catch((error) => {
+          console.log("Error al subir la imagen:", error);
+          alert("Error al subir la imagen");
+        });
+    } else {
+      // Si no hay imagen, guardar directamente
+      saveToolData();
+    }
+  };
+
+  const saveToolData = () => {
     const tool = {
       toolId,
-      toolName: toolName.trim(),
+      tool_name: toolName.trim(),
       category: category.trim(),
-      diaryFineFee: Number(diaryFineFee),
-      loanFee: Number(loanFee),
-      repositionFee: Number(repositionFee),
-      initialState: initialState.trim(),
+      diary_fine_fee: Number(diaryFineFee),
+      loan_fee: Number(loanFee),
+      reposition_fee: Number(repositionFee),
+      initial_state: initialState.trim(),
       disponibility: disponibility.trim(),
+      stock: Number(stock),
+      low_dmg_fee: Number(lowDmgFee),
     };
 
     toolsService
@@ -156,10 +293,10 @@ const EditTool = () => {
           sx={{
             p: 4,
             minWidth: 350,
-            maxWidth: 450,
+            maxWidth: 500,
             width: "90%",
             background: "rgba(255,255,255,0.85)",
-            color: "#222", 
+            color: "#222",
           }}
         >
           <Box
@@ -260,6 +397,94 @@ const EditTool = () => {
                 error={!!fieldErrors.diaryFineFee}
               />
             </FormControl>
+
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <TextField
+                id="stock"
+                label="Stock"
+                type="number"
+                value={stock}
+                variant="standard"
+                onChange={(e) => setStock(e.target.value)}
+                error={!!fieldErrors.stock}
+              />
+            </FormControl>
+
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <TextField
+                id="lowDmgFee"
+                label="Low Damage Fee"
+                type="number"
+                value={lowDmgFee}
+                variant="standard"
+                onChange={(e) => setLowDmgFee(e.target.value)}
+                error={!!fieldErrors.lowDmgFee}
+              />
+            </FormControl>
+
+            <hr />
+
+            {/* Drag and Drop zone */}
+            <Typography variant="h6" sx={{ mb: 2, mt: 2, fontWeight: "bold" }}>
+              Imagen de la herramienta
+            </Typography>
+
+            <Box
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              sx={{
+                width: "100%",
+                border: "2px dashed",
+                borderColor: dragActive ? "primary.main" : "gray",
+                borderRadius: 2,
+                p: 3,
+                textAlign: "center",
+                backgroundColor: dragActive ? "rgba(25, 118, 210, 0.1)" : "rgba(0,0,0,0.02)",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                mb: 2,
+              }}
+            >
+              <input
+                type="file"
+                id="fileInput"
+                accept="image/*"
+                onChange={handleFileInput}
+                style={{ display: "none" }}
+              />
+              <label htmlFor="fileInput" style={{ cursor: "pointer", width: "100%" }}>
+                <CloudUploadIcon sx={{ fontSize: 40, color: "primary.main", mb: 1 }} />
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Arrastra una imagen aquí o haz clic para seleccionar
+                </Typography>
+                <Typography variant="caption" sx={{ color: "gray" }}>
+                  Formatos soportados: JPG, PNG, GIF, WebP
+                </Typography>
+              </label>
+            </Box>
+
+            {/* Preview de imagen */}
+            {preview && (
+              <Box sx={{ mb: 2, width: "100%" }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Vista previa:
+                </Typography>
+                <Box
+                  component="img"
+                  src={preview}
+                  alt="Preview"
+                  sx={{
+                    width: "100%",
+                    maxHeight: 200,
+                    objectFit: "contain",
+                    borderRadius: 1,
+                    border: "1px solid #ccc",
+                  }}
+                />
+              </Box>
+            )}
 
             <FormControl sx={{ mb: 2 }}>
               <Button
