@@ -334,10 +334,18 @@ const EditTool = () => {
                 id="category"
                 label="Category"
                 value={category}
+                select
                 variant="standard"
                 onChange={(e) => setCategory(e.target.value)}
                 error={!!fieldErrors.category}
-              />
+              >
+                <MenuItem value="Herramientas manuales">Herramientas manuales</MenuItem>
+                <MenuItem value="Electroportátiles">Electroportátiles</MenuItem>
+                <MenuItem value="Jardinería">Jardinería</MenuItem>
+                <MenuItem value="Medición y nivelación">Medición y nivelación</MenuItem>
+                <MenuItem value="Construcción y elevación">Construcción y elevación</MenuItem>
+                <MenuItem value="Especializadas">Especializadas</MenuItem>
+              </TextField>
             </FormControl>
 
             <FormControl fullWidth sx={{ mb: 2 }}>
