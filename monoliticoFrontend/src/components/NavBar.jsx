@@ -70,7 +70,7 @@ export default function Navbar() {
           </IconButton>
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            ToolRent: Sistema de Renta De Herramientas
+            ToolRent: Sistema de Renta De Herramientas ♥
           </Typography>
           {initialized && (
             <>
