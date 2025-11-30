@@ -7,20 +7,20 @@ pipeline {
         stage('Build maven'){
             steps{
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/PBust0sN/monolitico-tingeso']])
-                bat 'mvn clean package'
+                bat 'cd monoliticoBackend && mvn clean package'
             }
         }
 
         stage('Unit Tests') {
             steps {
-                bat 'mvn test' 
+                bat 'cd monoliticoBackend && mvn test' 
             }
         }
         stage('Build And Push image to Docker Hub'){
             steps{
                 script{
                    withCredentials([string(credentialsId: 'docker-credentials')]) {
-                        bat 'docker build -t pbust0sn/toolrent-backend:latest .'
+                        bat 'cd monoliticoBackend && docker build -t pbust0sn/toolrent-backend:latest .'
                         bat 'docker push pbust0sn/toolrent-backend:latest'
                    }
                 }
