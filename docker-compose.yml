@@ -104,7 +104,6 @@ services:
         - "8090:8090" # backend
       volumes:
         - ./monoliticoFrontend/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-        - ./monoliticoFrontend/dist:/usr/share/nginx/html:ro
       depends_on:
         - frontend
         - backend1
