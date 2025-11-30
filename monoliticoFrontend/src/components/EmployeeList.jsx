@@ -236,7 +236,7 @@ const EmployeeList = () => {
                     <TableCell align="left" sx={{ maxWidth: 180 }}>{client.client_id}</TableCell>
                     <TableCell align="center" sx={{ maxWidth: 100 }}>
                       <img
-                        src={imageMap[client.client_id] || "/default-avatar.png"}
+                        src={imageMap[client.client_id] || "/vite.svg"}
                         style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 6 }}
                         alt={`Avatar ${client.client_id}`}
                       />

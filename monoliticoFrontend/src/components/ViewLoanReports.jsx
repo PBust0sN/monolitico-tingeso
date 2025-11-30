@@ -32,7 +32,7 @@ function ViewLoanReports() {
 					const loans = res.data;
 					console.log(loans);
 					setLoansReport(loans);
-					// Obtener herramientas asociadas a cada préstamo usando toolsLoanReportService y toolsReportService
+					// get tools for each loan and store in a map 
 					const toolsMap = {};
 					for (const loan of loans) {
 						console.log('Procesando loan:', loan);
@@ -42,7 +42,7 @@ function ViewLoanReports() {
 						if (toolIds.length === 0) {
 							console.log('No hay herramientas asociadas a este préstamo:', loan.loanReportId);
 						}
-						// Obtener todas las herramientas usando toolsReportService.get(id)
+						// get tool details for each id 
 						const toolsList = await Promise.all(
 							toolIds.map(id => toolsReportService.get(id).then(res => res.data))
 						);
@@ -69,7 +69,7 @@ function ViewLoanReports() {
 
 	return (
 		<Box sx={{ position: "relative", minHeight: "100vh" }}>
-			{/* Fondo difuminado */}
+			{/* background */}
 			<Box
 				sx={{
 					position: "fixed",
@@ -86,7 +86,7 @@ function ViewLoanReports() {
 				}}
 			/>
 			<Box sx={{ position: "relative", zIndex: 1, p: 4, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", minHeight: "80vh" }}>
-				{/* Frame superior */}
+				{/* superior frame */}
 				<Paper sx={{ minWidth: 1200, width: "100%", mb: 3, background: "rgba(255,255,255,0.85)", p: 3 }}>
 					<Typography variant="h5" align="center" sx={{ fontWeight: "bold", mb: 2 }}>Detalle del Reporte</Typography>
 					{report ? (
@@ -100,7 +100,7 @@ function ViewLoanReports() {
 						<Typography variant="body2" color="text.secondary">No se encontró información del reporte.</Typography>
 					)}
 				</Paper>
-				{/* Frame inferior: lista de préstamos y herramientas asociadas */}
+				{/* loan list and tools asociated */}
 				<Paper sx={{ maxWidth: 1200, width: "100%", background: "rgba(255,255,255,0.85)", p: 3 }}>
 					<Typography variant="h6" align="center" sx={{ fontWeight: "bold", mb: 2 }}>Préstamos y Herramientas Asociadas</Typography>
 					{loansReport.length === 0 ? (
@@ -108,7 +108,7 @@ function ViewLoanReports() {
 					) : (
 						loansReport.map((lr, idx) => (
 							<Box key={"loan-"+idx} sx={{ mb: 4 }}>
-								{/* Info del préstamo en no más de 2 filas */}
+								{/* loan info */}
 								<TableContainer>
 									<Table size="small">
 										<TableBody>
@@ -131,27 +131,27 @@ function ViewLoanReports() {
 										</TableBody>
 									</Table>
 								</TableContainer>
-								{/* Herramientas asociadas, identadas */}
+								{/* asociated tools */}
 								<Box sx={{ pl: 6, pt: 1 }}>
 									<Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>Herramientas asociadas</Typography>
 									<TableContainer>
 										<Table size="small">
 											<TableHead>
 												<TableRow>
-													{/* <TableCell sx={{ fontWeight: "bold" }}>ID Herramienta</TableCell> */}
+													
 													<TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
 													<TableCell sx={{ fontWeight: "bold" }}>Categoría</TableCell>
-													{/* <TableCell sx={{ fontWeight: "bold" }}>Disponibilidad</TableCell> */}
+													
 												</TableRow>
 											</TableHead>
 											<TableBody>
 												{(toolsByLoan[lr.loanReportId] && toolsByLoan[lr.loanReportId].length > 0) ? (
 													toolsByLoan[lr.loanReportId].map((tool, tIdx) => (
 														<TableRow key={tool.toolReportId + "-" + tIdx}>
-															{/* <TableCell>{tool.toolId}</TableCell> */}
+															
 															<TableCell>{tool.toolName}</TableCell>
 															<TableCell>{tool.category}</TableCell>
-															{/* <TableCell>{tool.disponibility}</TableCell> */}
+															
 														</TableRow>
 													))
 												) : (

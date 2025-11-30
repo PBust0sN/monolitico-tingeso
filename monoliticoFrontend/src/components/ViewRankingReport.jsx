@@ -26,7 +26,7 @@ function ViewRankingReport() {
       toolsRankingService.getAllByReportId(reportId)
         .then(async res => {
           const rankingList = res.data;
-          // rankingList: [{ toolId, ... }]
+          
           const toolsList = await Promise.all(
             rankingList.map(r => toolsReportService.get(r.toolId).then(res => res.data))
           );
@@ -38,7 +38,7 @@ function ViewRankingReport() {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",
@@ -55,7 +55,7 @@ function ViewRankingReport() {
         }}
       />
       <Box sx={{ position: "relative", zIndex: 1, p: 4, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", minHeight: "80vh" }}>
-        {/* Info del reporte */}
+        {/* report info */}
         <Paper sx={{ minWidth: 800, width: "100%", mb: 3, background: "rgba(255,255,255,0.85)", p: 3 }}>
           <Typography variant="h5" align="center" sx={{ fontWeight: "bold", mb: 2 }}>Detalle del Reporte de Ranking</Typography>
           {report ? (
@@ -68,7 +68,7 @@ function ViewRankingReport() {
             <Typography variant="body2" color="text.secondary">No se encontró información del reporte.</Typography>
           )}
         </Paper>
-        {/* Lista de herramientas del ranking */}
+        {/* ranking of tools */}
         <Paper sx={{ minWidth: 800, width: "100%", background: "rgba(255,255,255,0.85)", p: 3 }}>
           <Typography variant="h6" align="center" sx={{ fontWeight: "bold", mb: 2 }}>Herramientas del Ranking</Typography>
           {tools.length === 0 ? (

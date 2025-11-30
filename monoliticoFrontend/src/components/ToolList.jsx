@@ -9,10 +9,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Box from "@mui/material/Box"; // <-- Agrega esto si no lo tienes
+import Box from "@mui/material/Box"; 
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
@@ -116,7 +115,7 @@ const ToolList = () => {
                   </Typography>
                 </TableCell>
               </TableRow> 
-              {/* Fila de búsqueda y botón */}
+              {/* row of search */}
               <TableRow>
                 <TableCell colSpan={9} align="left">
                   <TextField
@@ -155,7 +154,7 @@ const ToolList = () => {
                   </Link>
                 </TableCell>
               </TableRow>
-              {/* Fila de encabezados */}
+              {/* row of labels */}
               <TableRow>
                 <TableCell align="left" sx={{  maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Id

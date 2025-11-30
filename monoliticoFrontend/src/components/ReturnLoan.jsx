@@ -1,20 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate , useLocation} from "react-router-dom";
-import loansService from "../services/loans.service";
-import toolsService from "../services/tools.service";
-import toolsLoansService from "../services/toolsLoans.service";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import { useNavigate , useLocation} from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
 
 const ReturnLoan = () => {
     const location = useLocation();
@@ -23,7 +12,7 @@ const ReturnLoan = () => {
 
   return (
     <Box sx={{ position: "relative", minHeight: "100vh" }}>
-      {/* Fondo difuminado */}
+      {/* background */}
       <Box
         sx={{
           position: "fixed",

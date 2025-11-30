@@ -33,7 +33,7 @@ const NewLoan = () => {
       .getAll()
       .then((response) => {
         setToolOptions(response.data);
-        // Cargar imágenes para cada herramienta
+        // load images for each tool fetched
         response.data.forEach(tool => {
           loadImage(tool.toolId);
         });
@@ -48,7 +48,7 @@ const NewLoan = () => {
     imagesService
       .getImage(filename)
       .then((response) => {
-        // Convertir blob a URL
+        // convert blob to object URL
         const url = URL.createObjectURL(response.data);
         setImageMap(prev => ({
           ...prev,

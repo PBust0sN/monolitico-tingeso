@@ -22,11 +22,10 @@ import FeedIcon from '@mui/icons-material/Feed';
 export default function Sidemenu({ open, toggleDrawer }) {
   const navigate = useNavigate();
 
-  // Ref para el contenedor interno del Drawer
+  // Ref for the drawer element to detect outside clicks
   const drawerRef = React.useRef(null);
 
-  // Listener global para clicks fuera del drawer. Cierra el drawer cuando esté abierto y
-  // el click ocurre fuera del elemento referenciado.
+  // listener for clicks outside the drawer to close it when open 
   React.useEffect(() => {
     if (!open) return;
     const handleOutsideClick = (e) => {
@@ -128,9 +127,9 @@ export default function Sidemenu({ open, toggleDrawer }) {
         hideBackdrop={true}
         PaperProps={{
           sx: {
-            backgroundColor: "rgba(255, 255, 255, 0.71)", // transparente
-            backdropFilter: "blur(8px)",              // opcional: desenfoque
-            boxShadow: "none",                        // opcional: sin sombra
+            backgroundColor: "rgba(255, 255, 255, 0.71)",
+            backdropFilter: "blur(8px)",              
+            boxShadow: "none",                        
           }
         }}
       >

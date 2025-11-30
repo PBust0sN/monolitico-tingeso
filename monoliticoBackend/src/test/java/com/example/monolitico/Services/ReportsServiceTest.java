@@ -174,4 +174,32 @@ class ReportsServiceTest {
         assertNotNull(saved.getReportDate());
         verify(reportsRepository, times(1)).save(newReport);
     }
+
+    @Test
+    void testGetAllByClientId() {
+        when(reportsRepository.findByClientIdReport(10L))
+                .thenReturn(Collections.singletonList(report));
+
+        List<ReportsEntity> result = reportsServices.getAllByClientId(10L);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(reportsRepository, times(1)).findByClientIdReport(10L);
+    }
+
+    @Test
+    void testSaveReport_OverridesExistingDate() {
+        ReportsEntity old = new ReportsEntity();
+        old.setReportDate(Date.valueOf("2000-01-01"));
+
+        when(reportsRepository.save(any(ReportsEntity.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        ReportsEntity saved = reportsServices.saveReport(old);
+
+        assertNotEquals(Date.valueOf("2000-01-01"), saved.getReportDate());
+        assertNotNull(saved.getReportDate());
+        verify(reportsRepository, times(1)).save(old);
+    }
+
 }

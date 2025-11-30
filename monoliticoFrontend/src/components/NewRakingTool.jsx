@@ -53,7 +53,7 @@ const NewRakingTool = () => {
 		}
 
 		setLoading(false);
-		// Si viene con clientId de la URL, regresar a ClientList. Si no, ir a MyReports
+		
 		if (urlClientId) {
 			navigate("/client/list");
 		} else {

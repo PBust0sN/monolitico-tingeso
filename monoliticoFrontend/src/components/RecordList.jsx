@@ -133,11 +133,11 @@ const RecordList = () => {
                   </Typography>
                 </TableCell>
               </TableRow> 
-              {/* Fila de búsqueda avanzada */}
+              {/* advance search row */}
               <TableRow sx={{ '& .MuiTableCell-root': { paddingTop: 1, paddingBottom: 1 } }}>
                 <TableCell colSpan={8} sx={{ py: 0 }}>
                   <Box sx={{ height: 43, display: "flex", gap: 2, alignItems: "center" }}>
-                    {/* Desplegable de herramientas */}
+                    {/* tools*/}
                     <TextField
                       select
                       label="Herramienta"
@@ -156,7 +156,7 @@ const RecordList = () => {
                         </MenuItem>
                       ))}
                     </TextField>
-                    {/* Calendario de fechas */}
+                    {/* calendar */}
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                       <DatePicker
                         label="Fecha inicio"
@@ -180,14 +180,14 @@ const RecordList = () => {
                         }}
                       />
                     </LocalizationProvider>
-                    {/* Botón de búsqueda */}
+                    {/* search button*/}
                     <Button
                       variant="contained"
                       color="primary"
                       onClick={handleSearch}
                       startIcon={<SearchIcon />}
                       sx={{
-                        height: 56,            // aumentar alto del botón
+                        height: 56,          
                         minWidth: 140,
                         display: 'flex',
                         alignItems: 'center',
@@ -202,7 +202,7 @@ const RecordList = () => {
                 </TableCell>
                 
               </TableRow>
-              {/* Fila de encabezados */}
+              {/* row of labels */}
               <TableRow>
                 <TableCell align="left" sx={{  maxWidth: 180, fontWeight: "bold", color: "black" }}>
                   Id
