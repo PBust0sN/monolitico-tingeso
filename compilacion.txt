@@ -1,0 +1,30 @@
+COMPILACION DEV:
+
+- en ./keycloak-26.3.4/bin ejeuctar el comando 
+kc.bat start-dev --http-port=8080
+- en ./monoliticoFrontend ejeuctar el comando 
+npm intall 
+y luego 
+npm run dev
+- ejecutar el proyecto en intellij (el backend)
+
+COMPILACION PROD:
+
+- en descargar jenkins desde https://www.jenkins.io/download/ luego posicionarse
+en la carpeta donde se descarge el jenkins.war y ejecutar 
+java -jar jenkins.war --htppPort=9090
+
+- abrir docker desktop (esperar a que inicie)
+- en ./monolitico-tingeso ejecutar
+
+docker compose down (para bajar los contenedores)
+
+docker compose up --build -d (para subir los compiladores --build para construirlos
+denuevo y -d para que nos deje ocupar la cmd despues de la acción)
+
+para ver un cambio relejado en el proyecto
+
+1. comitear los cambios al repositorio de git
+2. hay que ir a la dirección  localhost:9090 y correr los pipes back y/o front
+como corresponda
+3. hacer docker compose up --build -d 

@@ -1,5 +1,25 @@
+# Git
 .git
 .gitignore
+
 Dockerfile*
 *.logs
 .vscode
+
+# Dependencias (se instalan dentro de la imagen, no las copies desde fuera)
+node_modules
+npm-debug.log
+
+# Archivos de compilación previos
+dist
+build
+
+# Datos de volúmenes (¡Muy importante para que no copie tu BD!)
+mysql_data
+uploads
+data
+
+# Entorno local
+.env
+Dockerfile
+docker-compose.yml
