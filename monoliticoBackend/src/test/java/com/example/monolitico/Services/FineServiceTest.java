@@ -175,4 +175,73 @@ public class FineServiceTest {
         verify(clientService, times(1)).updateClient(client);
         assertEquals("activo", client.getState());
     }
+    @Test
+    void testGetFineById_NotFound() {
+        when(fineRepository.findById(99L)).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> fineService.getFineById(99L));
+    }
+
+    @Test
+    void testGetAllFinesByClientId() {
+        when(fineRepository.findByClientId(10L)).thenReturn(List.of(fine));
+
+        List<FineEntity> result = fineService.getAllFinesByClientId(10L);
+
+        assertEquals(1, result.size());
+        verify(fineRepository, times(1)).findByClientId(10L);
+    }
+
+    @Test
+    void testPayFine_DoesNotActivateClient() {
+        ClientEntity client = new ClientEntity();
+        client.setState("bloqueado");
+
+        // fineRepository.findByClientId → varias multas pendientes
+        when(clientService.getClientById(1L)).thenReturn(client);
+        when(fineRepository.findById(1L)).thenReturn(Optional.of(fine));
+        when(fineRepository.getPendingFinesByClientId(1L))
+                .thenReturn(List.of(new FineEntity(), new FineEntity())); // 2 pendientes
+
+        fineService.payFine(1L, 1L);
+
+        assertEquals("pagado", fine.getState());
+        verify(fineRepository, times(1)).save(fine);
+
+        // No debería activar al cliente
+        verify(clientService, never()).updateClient(any());
+    }
+
+    @Test
+    void testPayFine_FineNotFound() {
+        when(fineRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class,
+                () -> fineService.payFine(10L, 1L));
+    }
+
+    @Test
+    void testPayFine_RepositoryPendingFinesCalled() {
+        when(clientService.getClientById(1L)).thenReturn(client);
+        when(fineRepository.findById(1L)).thenReturn(Optional.of(fine));
+        when(fineRepository.getPendingFinesByClientId(1L)).thenReturn(Collections.emptyList());
+
+        fineService.payFine(1L, 1L);
+
+        verify(fineRepository, times(1)).getPendingFinesByClientId(1L);
+    }
+
+    @Test
+    void testSaveFine_Exception() {
+        when(fineRepository.save(any())).thenThrow(new RuntimeException("DB error"));
+
+        assertThrows(RuntimeException.class, () -> fineService.saveFine(fine));
+    }
+
+    @Test
+    void testUpdateFine_Exception() {
+        when(fineRepository.save(any())).thenThrow(new RuntimeException("DB error"));
+
+        assertThrows(RuntimeException.class, () -> fineService.updateFine(fine));
+    }
+
 }

@@ -18,6 +18,10 @@ public class ImageService {
     @Value("${app.upload.dir}")
     private String uploadDir;
 
+    public void setUploadDir(String uploadDir) {
+        this.uploadDir = uploadDir;
+    }
+
     public Optional<String> saveImage(MultipartFile file) {
         return saveImage(file, null);
     }

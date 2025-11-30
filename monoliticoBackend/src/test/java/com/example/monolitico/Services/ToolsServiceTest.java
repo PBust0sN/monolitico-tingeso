@@ -157,4 +157,59 @@ class ToolsServiceTest {
 
         assertEquals(11L, result.getStock());
     }
+
+    @Test
+    void testSaveToolFailsWhenCategoryNull() {
+        tool.setCategory(null);
+
+        Optional<ToolsEntity> result = toolsService.saveTool(tool);
+
+        assertTrue(result.isEmpty());
+        verify(toolsRepository, never()).save(any());
+        verify(recordsServices, never()).saveRecord(any());
+    }
+
+    @Test
+    void testSaveToolFailsWhenRepositionFeeNull() {
+        tool.setRepositionFee(null);
+
+        Optional<ToolsEntity> result = toolsService.saveTool(tool);
+
+        assertTrue(result.isEmpty());
+        verify(toolsRepository, never()).save(any());
+        verify(recordsServices, never()).saveRecord(any());
+    }
+
+    @Test
+    void testDeleteToolsThrowsException() {
+        doThrow(new RuntimeException("DB error"))
+                .when(toolsRepository).deleteById(1L);
+
+        Exception e = assertThrows(Exception.class, () -> toolsService.deleteTools(1L));
+
+        assertEquals("DB error", e.getMessage());
+    }
+
+    @Test
+    void testHasDisponibilityAndStockFalse() {
+        tool.setDisponibility("No disponible");
+        tool.setStock(0L);
+
+        when(toolsRepository.findById(1L)).thenReturn(Optional.of(tool));
+
+        boolean result = toolsService.hasDisponibilityAndStock(1L);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void testFindRankingMax10() {
+        when(toolsRepository.findRanking()).thenReturn(List.of(tool));
+
+        List<ToolsEntity> result = toolsService.findRankingMax10();
+
+        assertEquals(1, result.size());
+        verify(toolsRepository, times(1)).findRanking();
+    }
+
 }

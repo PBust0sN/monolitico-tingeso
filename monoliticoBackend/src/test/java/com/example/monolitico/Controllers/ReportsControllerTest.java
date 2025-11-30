@@ -95,4 +95,82 @@ class ReportsControllerTest {
         assertEquals(204, response.getStatusCodeValue());
         verify(reportsServices, times(1)).deleteReport(1L);
     }
+
+    @Test
+    void testGetAllReports_EmptyList() {
+        when(reportsServices.getAllReports()).thenReturn(List.of());
+
+        ResponseEntity<List<ReportsEntity>> response = reportsController.getAllReports();
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertTrue(response.getBody().isEmpty());
+        verify(reportsServices, times(1)).getAllReports();
+    }
+
+    @Test
+    void testGetReportById_NotFound() {
+        when(reportsServices.getReportsById(99L)).thenReturn(null);
+
+        ResponseEntity<ReportsEntity> response = reportsController.getRecordById(99L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertNull(response.getBody()); // El controller igual retorna 200
+        verify(reportsServices).getReportsById(99L);
+    }
+
+    @Test
+    void testGetAllClient() {
+        when(reportsServices.getAllByClientId(101L)).thenReturn(List.of(reportExample));
+
+        ResponseEntity<List<ReportsEntity>> response = reportsController.getAllClient(101L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(1, response.getBody().size());
+        assertEquals(reportExample, response.getBody().get(0));
+        verify(reportsServices).getAllByClientId(101L);
+    }
+
+    @Test
+    void testGetAllClient_Empty() {
+        when(reportsServices.getAllByClientId(101L)).thenReturn(List.of());
+
+        ResponseEntity<List<ReportsEntity>> response = reportsController.getAllClient(101L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertTrue(response.getBody().isEmpty());
+        verify(reportsServices).getAllByClientId(101L);
+    }
+
+    @Test
+    void testSaveReport_NullBody() {
+        when(reportsServices.saveReport(null)).thenReturn(null);
+
+        ResponseEntity<ReportsEntity> response = reportsController.saveRecord(null);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertNull(response.getBody());
+        verify(reportsServices).saveReport(null);
+    }
+
+    @Test
+    void testUpdateReport_NullBody() {
+        when(reportsServices.updateReport(null)).thenReturn(null);
+
+        ResponseEntity<ReportsEntity> response = reportsController.updateRecord(null);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertNull(response.getBody());
+        verify(reportsServices).updateReport(null);
+    }
+
+    @Test
+    void testDeleteReport_NotDeleted() throws Exception {
+        when(reportsServices.deleteReport(1L)).thenReturn(false);
+
+        ResponseEntity<ReportsEntity> response = reportsController.deleteRecord(1L);
+
+        assertEquals(204, response.getStatusCodeValue()); // el controller devuelve 204 siempre
+        verify(reportsServices).deleteReport(1L);
+    }
+
 }
