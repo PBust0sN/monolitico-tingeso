@@ -17,10 +17,12 @@ pipeline {
             steps{
                 dir(monoliticoFrontend){
                     script{
-                       withCredentials([string(credentialsId: 'docker-credentials')]) {
-                            bat 'docker build -t pbust0sn/toolrent-frontend:latest .'
-                            bat 'docker push pbust0sn/toolrent-frontend:latest'
-                       }
+                       withCredentials([string(credentialsId: 'dock', variable: 'DOCKER_TOKEN')]) {
+                        bat 'echo %DOCKER_TOKEN% | docker login -u pbust0sn --password-stdin'
+                        bat 'docker build -t pbust0sn/toolrent-frontend:latest .'
+                        bat 'docker push pbust0sn/toolrent-frontend:latest'
+                        bat 'docker logout'
+                        }
                     }
 
                 }
