@@ -10,12 +10,6 @@ pipeline {
                 bat 'cd monoliticoBackend && mvn clean package'
             }
         }
-
-        stage('Unit Tests') {
-            steps {
-                bat 'cd monoliticoBackend && mvn test' 
-            }
-        }
         stage('Build And Push image to Docker Hub'){
             steps{
                 script{
